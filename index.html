@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daria Glishchinskaia</title>
+
+  <style>
+    :root{
+      --topbar-height: 72px;
+
+      --topbar-bg-closed: transparent;
+      --topbar-bg-open: #ffffff;
+
+      --text-closed: rgba(255,255,255,0.92);
+      --text-open: #000000;
+
+      --name-size: 16px;
+      --name-letter-spacing: 0.28em;
+
+      --menu-size: 13px;
+      --menu-letter-spacing: 0.18em;
+
+      --anim: 420ms cubic-bezier(.2,.8,.2,1);
+      --side-padding: 24px;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Full-screen hero */
+    .hero {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url("assets/hero.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 0;
+    }
+
+    /* Optional top readability gradient (subtle) */
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.22) 0%,
+        rgba(0,0,0,0.00) 40%,
+        rgba(0,0,0,0.00) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Topbar */
+    .topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-height);
+  background: transparent;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background var(--anim);
+}
+
+.topbar.is-open {
+  background: #fff;
+}
+
+/* Center group */
+.topbar__center {
+  display: flex;
+  align-items: center;
+  gap: 32px; /* final spacing when open */
+  position: relative;
+}
+
+/* Name button */
+.topbar__toggle {
+  all: unset;
+  cursor: pointer;
+  user-select: none;
+
+  font-size: var(--name-size);
+  letter-spacing: var(--name-letter-spacing);
+  text-transform: uppercase;
+  color: var(--text-closed);
+  line-height: 1;
+
+  transition: color var(--anim);
+}
+
+.topbar.is-open .topbar__toggle {
+  color: #000;
+}
+
+/* Menu items (shared) */
+.topbar__item {
+  font-size: var(--menu-size);
+  letter-spacing: var(--menu-letter-spacing);
+  text-transform: uppercase;
+  color: #000;
+  text-decoration: none;
+  line-height: 1;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--anim),
+    transform var(--anim);
+}
+
+/* Start collapsed near center */
+.topbar__item--left {
+  transform: translateX(40px);
+}
+
+.topbar__item--right {
+  transform: translateX(-40px);
+}
+
+/* Open state */
+.topbar.is-open .topbar__item {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+/* Optional hover */
+.topbar__item:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+
+    /* Mobile tuning */
+    @media (max-width: 420px) {
+      :root {
+        --name-size: 14px;
+        --menu-size: 12px;
+        --slide: 120px;
+        --side-padding: 16px;
+      }
+      :root { --name-letter-spacing: 0.22em; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero" aria-hidden="true"></div>
+
+<header class="topbar" id="topbar">
+  <div class="topbar__center">
+    <a class="topbar__item topbar__item--left" href="#about">About</a>
+
+    <button
+      class="topbar__toggle"
+      id="menuToggle"
+      type="button"
+      aria-expanded="false"
+    >
+      DARIA GLISHCHINSKAIA
+    </button>
+
+    <a class="topbar__item topbar__item--right" href="#gallery">Gallery</a>
+  </div>
+</header>
+
+
+  <script>
+    (function () {
+      const topbar = document.getElementById("topbar");
+      const toggle = document.getElementById("menuToggle");
+
+      function setOpen(isOpen) {
+        topbar.classList.toggle("is-open", isOpen);
+        toggle.setAttribute("aria-expanded", String(isOpen));
+      }
+
+      // Toggle on click
+      toggle.addEventListener("click", () => {
+        const isOpen = !topbar.classList.contains("is-open");
+        setOpen(isOpen);
+      });
+
+      // Optional: close on Escape
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") setOpen(false);
+      });
+
+      // Optional: close when clicking a menu item
+      topbar.addEventListener("click", (e) => {
+        const link = e.target.closest("a.topbar__item");
+        if (link) setOpen(false);
+      });
+    })();
+  </script>
+</body>
+</html>
