@@ -81,6 +81,7 @@
       "img/3.jpg",
       "img/4.jpg",
       "img/5.jpeg",
+      "img/default.jpeg"
     ];
 
     const ZONE_COUNT = 6;
@@ -158,57 +159,45 @@
     }
 
     function createZones() {
-      document.querySelectorAll(".zone").forEach(z => z.remove());
+  document.querySelectorAll(".zone").forEach(z => z.remove());
 
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+  // Static zones (percent-based so they scale with screen size)
+  // Adjust left/top/width/height values to fine-tune positions and sizes.
+  const ZONES = [
+    // top-left
+    { left: 0.16, top: 0.08, width: 0.20, height: 0.22 },
 
-      const placed = [];
-      let attempts = 0;
-      const maxAttempts = 2000;
+    // top-right
+    { left: 0.66, top: 0.08, width: 0.20, height: 0.22 },
 
-      while (placed.length < ZONE_COUNT && attempts < maxAttempts) {
-        attempts++;
+    // bottom-left
+    { left: 0.06, top: 0.70, width: 0.22, height: 0.24 },
 
-        const w = Math.floor(rand(MIN_W, MAX_W) * vw);
-        const h = Math.floor(rand(MIN_H, MAX_H) * vh);
+    // bottom-center
+    { left: 0.40, top: 0.72, width: 0.20, height: 0.22 },
 
-        const x = Math.floor(rand(EDGE_PAD, Math.max(EDGE_PAD, vw - w - EDGE_PAD)));
-        const y = Math.floor(rand(EDGE_PAD, Math.max(EDGE_PAD, vh - h - EDGE_PAD)));
+    // bottom-right
+    { left: 0.78, top: 0.70, width: 0.20, height: 0.24 },
+  ];
 
-        const candidate = { x, y, w, h };
+  for (const z of ZONES) {
+    const zone = document.createElement("div");
+    zone.className = "zone";
 
-        // Clear center area: moving cursor between zones changes nothing
-        if (insideCenterExclusion(candidate, vw, vh)) continue;
+    zone.style.left = (z.left * 100) + "vw";
+    zone.style.top = (z.top * 100) + "vh";
+    zone.style.width = (z.width * 100) + "vw";
+    zone.style.height = (z.height * 100) + "vh";
 
-        let ok = true;
-        for (const r of placed) {
-          if (rectsOverlap(candidate, r, GAP_MIN)) {
-            ok = false;
-            break;
-          }
-        }
-        if (!ok) continue;
+    zone.addEventListener("mouseenter", () => {
+      const img = pickRandomHoverImage();
+      setBackgroundSafely(img);
+    });
 
-        placed.push(candidate);
-      }
+    document.body.appendChild(zone);
+  }
+}
 
-      for (const rect of placed) {
-        const zone = document.createElement("div");
-        zone.className = "zone";
-        zone.style.left = rect.x + "px";
-        zone.style.top = rect.y + "px";
-        zone.style.width = rect.w + "px";
-        zone.style.height = rect.h + "px";
-
-        zone.addEventListener("mouseenter", () => {
-          const img = pickRandomHoverImage();
-          setBackgroundSafely(img);
-        });
-
-        document.body.appendChild(zone);
-      }
-    }
 
     // Preload (reduces flicker)
     (function preload() {
