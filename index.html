@@ -4,213 +4,230 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Daria Glishchinskaia</title>
-
   <style>
-    :root{
-      --topbar-height: 72px;
-
-      --topbar-bg-closed: transparent;
-      --topbar-bg-open: #ffffff;
-
-      --text-closed: rgba(255,255,255,0.92);
-      --text-open: #000000;
-
-      --name-size: 16px;
-      --name-letter-spacing: 0.28em;
-
-      --menu-size: 13px;
-      --menu-letter-spacing: 0.18em;
-
-      --anim: 420ms cubic-bezier(.2,.8,.2,1);
-      --side-padding: 24px;
+    :root {
+      --bg: #000;
+      --fg: #fff;
     }
 
     html, body {
       height: 100%;
       margin: 0;
-      overflow: hidden;
-      background: #000;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Full-screen hero */
-    .hero {
+    body {
+      background: var(--bg);
+      overflow: hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Full-screen background layer */
+    #stage {
       position: fixed;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: url("assets/hero.jpg");
-      background-size: cover;
+      background-color: var(--bg);
       background-position: center;
       background-repeat: no-repeat;
-      z-index: 0;
+      background-size: cover;
+
+      /* IMPORTANT: a defined picture is always shown on load */
+      background-image: url("img/default.jpg");
     }
 
-    /* Optional top readability gradient (subtle) */
-    .hero::after {
-      content: "";
+    /* Center title with static black-filled frame */
+    #title {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      color: var(--fg);
+      font-size: clamp(22px, 3vw, 40px);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+
+      background: #000;
+      padding: 0.35em 0.6em;   /* adjust here */
+      white-space: nowrap;
+
+      user-select: none;
+      pointer-events: none;    /* hover zones still work */
+      z-index: 2;
+    }
+
+    /* Invisible hover zones */
+    .zone {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(0,0,0,0.22) 0%,
-        rgba(0,0,0,0.00) 40%,
-        rgba(0,0,0,0.00) 100%
-      );
-      pointer-events: none;
+      background: transparent;
+      z-index: 1;
     }
 
-    /* Topbar */
-    .topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--topbar-height);
-  background: transparent;
-  z-index: 10;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: background var(--anim);
-}
-
-.topbar.is-open {
-  background: #fff;
-}
-
-/* Center group */
-.topbar__center {
-  display: flex;
-  align-items: center;
-  gap: 32px; /* final spacing when open */
-  position: relative;
-}
-
-/* Name button */
-.topbar__toggle {
-  all: unset;
-  cursor: pointer;
-  user-select: none;
-
-  font-size: var(--name-size);
-  letter-spacing: var(--name-letter-spacing);
-  text-transform: uppercase;
-  color: var(--text-closed);
-  line-height: 1;
-
-  transition: color var(--anim);
-}
-
-.topbar.is-open .topbar__toggle {
-  color: #000;
-}
-
-/* Menu items (shared) */
-.topbar__item {
-  font-size: var(--menu-size);
-  letter-spacing: var(--menu-letter-spacing);
-  text-transform: uppercase;
-  color: #000;
-  text-decoration: none;
-  line-height: 1;
-  white-space: nowrap;
-
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity var(--anim),
-    transform var(--anim);
-}
-
-/* Start collapsed near center */
-.topbar__item--left {
-  transform: translateX(40px);
-}
-
-.topbar__item--right {
-  transform: translateX(-40px);
-}
-
-/* Open state */
-.topbar.is-open .topbar__item {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(0);
-}
-
-/* Optional hover */
-.topbar__item:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-
-    /* Mobile tuning */
-    @media (max-width: 420px) {
-      :root {
-        --name-size: 14px;
-        --menu-size: 12px;
-        --slide: 120px;
-        --side-padding: 16px;
-      }
-      :root { --name-letter-spacing: 0.22em; }
-    }
+    /* Optional debug */
+    /* .zone { outline: 1px solid rgba(255,255,255,0.18); } */
   </style>
 </head>
-
 <body>
-  <div class="hero" aria-hidden="true"></div>
-
-<header class="topbar" id="topbar">
-  <div class="topbar__center">
-    <a class="topbar__item topbar__item--left" href="about.html">About</a>
-
-
-
-    <button
-      class="topbar__toggle"
-      id="menuToggle"
-      type="button"
-      aria-expanded="false"
-    >
-      DARIA GLISHCHINSKAIA
-    </button>
-
-    <a class="topbar__item topbar__item--right" href="gallery.html">Gallery</a>
-  </div>
-</header>
-
+  <div id="stage" aria-hidden="true"></div>
+  <div id="title">Daria Glishchinskaia</div>
 
   <script>
-    (function () {
-      const topbar = document.getElementById("topbar");
-      const toggle = document.getElementById("menuToggle");
+    /* 1) Defined background on first load (must match CSS url above) */
+    const DEFAULT_BG = "img/default.jpeg";
 
-      function setOpen(isOpen) {
-        topbar.classList.toggle("is-open", isOpen);
-        toggle.setAttribute("aria-expanded", String(isOpen));
+    /* 2) Hover pool: exactly five images */
+    const HOVER_IMAGES = [
+      "img/1.jpg",
+      "img/2.jpg",
+      "img/3.jpg",
+      "img/4.jpg",
+      "img/5.jpeg",
+    ];
+
+    const ZONE_COUNT = 6;
+
+    // Random sizing constraints (in viewport fractions)
+    const MIN_W = 0.14;
+    const MAX_W = 0.32;
+    const MIN_H = 0.14;
+    const MAX_H = 0.32;
+
+    // Spacing constraints
+    const EDGE_PAD = 24;
+    const GAP_MIN = 18;
+    const CENTER_EXCLUSION = 0.20;
+
+    const stage = document.getElementById("stage");
+
+    // Start from default, so random selection can avoid it if desired
+    let currentBg = DEFAULT_BG;
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pickRandomHoverImage() {
+      if (HOVER_IMAGES.length === 0) return null;
+      if (HOVER_IMAGES.length === 1) return HOVER_IMAGES[0];
+
+      // Avoid immediate repeats
+      let candidate = null;
+      for (let i = 0; i < 10; i++) {
+        candidate = HOVER_IMAGES[Math.floor(Math.random() * HOVER_IMAGES.length)];
+        if (candidate !== currentBg) break;
+      }
+      return candidate;
+    }
+
+    // Switch only after image is confirmed loadable.
+    // If it fails, keep current background (never clears to black).
+    function setBackgroundSafely(url) {
+      if (!url) return;
+
+      const img = new Image();
+      img.onload = () => {
+        currentBg = url;
+        stage.style.backgroundImage = `url("${url}")`;
+      };
+      img.onerror = () => {
+        // keep current background; do not change to black
+      };
+      img.src = url;
+    }
+
+    function rectsOverlap(a, b, gapPx = 0) {
+      return !(
+        a.x + a.w + gapPx <= b.x ||
+        b.x + b.w + gapPx <= a.x ||
+        a.y + a.h + gapPx <= b.y ||
+        b.y + b.h + gapPx <= a.y
+      );
+    }
+
+    function insideCenterExclusion(rect, vw, vh) {
+      const cx = vw / 2;
+      const cy = vh / 2;
+
+      const rx = rect.x + rect.w / 2;
+      const ry = rect.y + rect.h / 2;
+
+      const dx = rx - cx;
+      const dy = ry - cy;
+
+      const r = Math.min(vw, vh) * CENTER_EXCLUSION;
+      return (dx * dx + dy * dy) < (r * r);
+    }
+
+    function createZones() {
+      document.querySelectorAll(".zone").forEach(z => z.remove());
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      const placed = [];
+      let attempts = 0;
+      const maxAttempts = 2000;
+
+      while (placed.length < ZONE_COUNT && attempts < maxAttempts) {
+        attempts++;
+
+        const w = Math.floor(rand(MIN_W, MAX_W) * vw);
+        const h = Math.floor(rand(MIN_H, MAX_H) * vh);
+
+        const x = Math.floor(rand(EDGE_PAD, Math.max(EDGE_PAD, vw - w - EDGE_PAD)));
+        const y = Math.floor(rand(EDGE_PAD, Math.max(EDGE_PAD, vh - h - EDGE_PAD)));
+
+        const candidate = { x, y, w, h };
+
+        // Clear center area: moving cursor between zones changes nothing
+        if (insideCenterExclusion(candidate, vw, vh)) continue;
+
+        let ok = true;
+        for (const r of placed) {
+          if (rectsOverlap(candidate, r, GAP_MIN)) {
+            ok = false;
+            break;
+          }
+        }
+        if (!ok) continue;
+
+        placed.push(candidate);
       }
 
-      // Toggle on click
-      toggle.addEventListener("click", () => {
-        const isOpen = !topbar.classList.contains("is-open");
-        setOpen(isOpen);
-      });
+      for (const rect of placed) {
+        const zone = document.createElement("div");
+        zone.className = "zone";
+        zone.style.left = rect.x + "px";
+        zone.style.top = rect.y + "px";
+        zone.style.width = rect.w + "px";
+        zone.style.height = rect.h + "px";
 
-      // Optional: close on Escape
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") setOpen(false);
-      });
+        zone.addEventListener("mouseenter", () => {
+          const img = pickRandomHoverImage();
+          setBackgroundSafely(img);
+        });
 
-      // Optional: close when clicking a menu item
-      topbar.addEventListener("click", (e) => {
-        const link = e.target.closest("a.topbar__item");
-        if (link) setOpen(false);
+        document.body.appendChild(zone);
+      }
+    }
+
+    // Preload (reduces flicker)
+    (function preload() {
+      [DEFAULT_BG, ...HOVER_IMAGES].forEach(src => {
+        const img = new Image();
+        img.src = src;
       });
     })();
+
+    // Ensure JS agrees with CSS default (and “locks in” once loaded)
+    setBackgroundSafely(DEFAULT_BG);
+
+    createZones();
+
+    let resizeTimer = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(createZones, 120);
+    });
   </script>
 </body>
 </html>
