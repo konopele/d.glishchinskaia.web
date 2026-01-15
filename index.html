@@ -4,129 +4,314 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Daria Glishchinskaia</title>
+
   <style>
-    :root {
-      --bg: #000;
-      --fg: #fff;
-      --gap: 12px; /* visible but small spacing between portraits */
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --gap:14px;           /* spacing between portraits in the default composition */
+      --ui-pad:44px;        /* name/email inset from edges */
+      --compH:70vh;         /* JS will overwrite with an exact pixel value */
     }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-
-    body {
-      background: var(--bg);
-      overflow: hidden;
+    html,body{height:100%;margin:0}
+    body{
+      background:var(--bg);
+      overflow:hidden;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--fg);
     }
 
-    /* Stage layers */
-    #stage {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
+    /* ===== Background stage ===== */
+    #stage{
+      position:fixed;
+      inset:0;
+      background:var(--bg);
     }
 
-    /* Single-image background layer */
-    #bgSingle {
-      position: absolute;
-      inset: 0;
-      background-color: var(--bg);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      opacity: 0;
-      pointer-events: none;
+    /* Single-image background (random hover outcomes) */
+    #bgSingle{
+      position:absolute;
+      inset:0;
+      background-color:var(--bg);
+      background-position:center;
+      background-repeat:no-repeat;
+      background-size:cover;
+      opacity:0;                 /* starts hidden; composite is default */
+      pointer-events:none;
+      transition: opacity 180ms linear;
     }
 
-    /* Composite background layer (default) */
-    #bgComposite {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: 1fr;
-      gap: var(--gap);
-      padding: var(--gap);
-      background: var(--bg);
-      opacity: 1;
-      pointer-events: none;
+    /* Default composition container (always centered vertically: equal top/bottom intervals) */
+    #bgComposite{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;         /* equal top/bottom margins */
+      justify-content:center;
+      padding:var(--gap);
+      background:var(--bg);
+      opacity:1;
+      pointer-events:none;
+      transition: opacity 180ms linear;
     }
 
-    /* Portrait tiles: preserve aspect ratio (no cropping) */
-    .tile {
-  background-color: var(--bg);
-  background-repeat: no-repeat;
+    /* Composition wrapper switches between 4x1 and 2x2 */
+    .compWrap{
+      display:flex;
+      gap:var(--gap);
+      height:var(--compH);
+      max-width: calc(100vw - (2 * var(--gap)));
+      max-height: calc(100vh - (2 * var(--gap)));
+    }
 
-  /* Align tops & bottoms: height locked to tile height */
-  background-size: auto 100%;
-  background-position: center;
-}
+    .compImg{
+      height:100%;
+      width:auto;                 /* no cropping; width adjusts naturally */
+      display:block;
+      background:var(--bg);
+    }
 
-
-    /* On vertical screens: 2x2 layout */
-    @media (max-aspect-ratio: 1/1) {
-      #bgComposite {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+    @media (max-aspect-ratio: 1/1){
+      .compWrap{
+        display:grid;
+        grid-template-columns:auto auto;
+        grid-template-rows:auto auto;
+        gap:var(--gap);
+        height:var(--compH);
+      }
+      .compImg{
+        height:100%;
+        width:auto;
+        justify-self:center;
       }
     }
 
-    /* Title */
-    #title {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-
-      color: var(--fg);
-      font-size: clamp(22px, 3vw, 40px);
-      letter-spacing: 0.02em;
-      line-height: 1.1;
-
-      background: #000;
-      padding: 0.35em 0.6em;
-      white-space: nowrap;
-
-      user-select: none;
-      pointer-events: none;
-      z-index: 3;
+    /* ===== UI overlays ===== */
+    #name{
+      position:fixed;
+      top:var(--ui-pad);
+      left:var(--ui-pad);
+      z-index:5;
+      font-size:18px;
+      line-height:1.2;
+      letter-spacing:0.01em;
+      opacity:0.9;
+      pointer-events:none;
+      white-space:nowrap;
+      /* keep original font for now (inherits body) */
     }
 
-    /* Invisible hover zones */
-    .zone {
-      position: absolute;
-      background: transparent;
-      z-index: 2;
+    #email{
+      position:fixed;
+      left:var(--ui-pad);
+      bottom:var(--ui-pad);
+      z-index:5;
+      font-size:16px;
+      line-height:1.2;
+      opacity:0.85;
+      pointer-events:auto;
+      color:rgba(255,255,255,0.85);
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    #email:hover{ text-decoration:underline; }
+
+    /* ===== Center “shiny” button ===== */
+    /* Hit area remains constant and covers the maximum glow. */
+    #menuBtn{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:200px;                /* constant clickable area */
+      height:200px;
+      z-index:6;
+      display:grid;
+      place-items:center;
+      text-decoration:none;
+      color:inherit;
+      -webkit-tap-highlight-color: transparent;
+      outline:none;
     }
 
-    /* Debug helper (optional) */
-    /* .zone { outline: 1px solid rgba(255,255,255,0.18); } */
+    /* The visible orb 
+    #menuBtn .orb{
+      width:92px;
+      height:92px;
+      border-radius:999px;
+      position:relative;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.55) 18%, rgba(255,255,255,0.12) 46%, rgba(255,255,255,0) 70%),
+        radial-gradient(circle at 55% 60%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 60%);
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.25));
+      animation: orbPulse 2.2s ease-in-out infinite;
+    }*/
+
+    /* Glow halo (expands more than orb) */
+    #menuBtn .orb::before{
+      content:"";
+      position:absolute;
+      inset:-70px;                /* max glow radius; still inside the hit area */
+      border-radius:600px;
+      background:
+        radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.00) 62%);
+      filter: blur(0.6px);
+      animation: glowPulse 2.2s ease-in-out infinite;
+    }
+
+    /* Subtle specular streak 
+    #menuBtn .orb::after{
+      content:"";
+      position:absolute;
+      left:18px;
+      top:14px;
+      width:22px;
+      height:28px;
+      border-radius:600px;
+      background: rgba(255,255,255,0.85);
+      transform: rotate(18deg);
+      filter: blur(0.3px);
+      opacity:0.85;
+    }*/
+
+    /*@keyframes orbPulse{
+      0%,100% { transform: scale(0.96); }
+      50%     { transform: scale(1.06); }
+    }
+    @keyframes glowPulse{
+      0%,100% { transform: scale(0.88); opacity:0.95; }
+      50%     { transform: scale(1.12); opacity:0.95; }
+    }*/
+
+    /* ===== Center corona button (no orb, only glow) ===== */
+#menuBtn{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:260px;                 /* constant clickable area (covers max glow) */
+  height:260px;
+  z-index:6;
+  display:grid;
+  place-items:center;
+  text-decoration:none;
+  color:inherit;
+  -webkit-tap-highlight-color: transparent;
+  outline:none;
+}
+
+/* The visible corona/glow */
+#menuBtn .halo{
+  width:160px;
+  height:160px;
+  border-radius:999px;
+  position:relative;
+  pointer-events:none;
+
+  /* Pulse the visible glow, not the hit area */
+  animation: haloPulse 2.2s ease-in-out infinite;
+  filter: url(#corona) drop-shadow(0 0 18px rgba(255,255,255,0.35));
+}
+
+/* Corona texture + core glow.
+   Center is opacity 1.0 as requested. */
+#menuBtn .halo::before{
+  content:"";
+  position:absolute;
+  inset:-60px;                 /* maximum glow radius */
+  border-radius:999px;
+
+  background:
+    radial-gradient(circle,
+      rgba(255,255,255,1.00) 0%,    /* FULL opacity center */
+      rgba(255,255,255,0.55) 18%,
+      rgba(255,255,255,0.18) 40%,
+      rgba(255,255,255,0.00) 70%
+    );
+
+  /* A second faint layer adds “corona bands” */
+  mask-image:
+    radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 78%);
+  opacity: 0.95;
+}
+
+/* Optional: subtle shimmering irregularity without changing click area */
+#menuBtn .halo::after{
+  content:"";
+  position:absolute;
+  inset:-60px;
+  border-radius:999px;
+  background:
+    radial-gradient(circle,
+      rgba(255,255,255,0.00) 0%,
+      rgba(255,255,255,0.10) 52%,
+      rgba(255,255,255,0.00) 75%
+    );
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  filter: url(#corona);
+  animation: coronaDrift 3.6s ease-in-out infinite;
+}
+
+@keyframes haloPulse{
+  0%,100% { transform: scale(0.92); }
+  50%     { transform: scale(1.08); }
+}
+
+@keyframes coronaDrift{
+  0%,100% { transform: rotate(-4deg) scale(0.98); }
+  50%     { transform: rotate(6deg)  scale(1.02); }
+}
+
+
+    /* ===== Invisible hover zones ===== */
+    .zone{
+      position:absolute;
+      background:transparent;
+      z-index:4;
+    }
+    /* Debug zones */
+    /* .zone{ outline:1px solid rgba(255,255,255,0.18); } */
   </style>
 </head>
+
+<svg width="0" height="0" style="position:absolute; left:-9999px; top:-9999px" aria-hidden="true" focusable="false">
+    <filter id="corona" x="-40%" y="-40%" width="180%" height="180%">
+      <!-- Noise field -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+      <!-- Convert noise into a displacement -->
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
 
 <body>
   <div id="stage" aria-hidden="true">
     <div id="bgSingle"></div>
 
     <div id="bgComposite">
-      <div class="tile" id="tile1"></div>
-      <div class="tile" id="tile2"></div>
-      <div class="tile" id="tile3"></div>
-      <div class="tile" id="tile4"></div>
+      <div class="compWrap">
+        <img class="compImg" id="comp1" alt="" />
+        <img class="compImg" id="comp2" alt="" />
+        <img class="compImg" id="comp3" alt="" />
+        <img class="compImg" id="comp4" alt="" />
+      </div>
     </div>
   </div>
 
-  <div id="title">Daria Glishchinskaia</div>
+  <div id="name">Daria Glishchinskaia</div>
+  <a id="email" href="mailto:darrrrria.g@gmail.com">darrrrria.g@gmail.com</a>
+
+  <a id="menuBtn" href="menu.html" aria-label="Open menu">
+    <span class="halo" aria-hidden="true"></span>
+  </a>
+  
 
   <script>
     /***********************
-     * CONFIG (EDIT THESE)
+     * CONFIG (EDIT PATHS)
      ***********************/
-
-    // The four portrait images used in the default composition (also used when "COMPOSITE" is randomly selected)
+    // 4 portrait images used for the default composition
     const COMPOSITE_IMAGES = [
       "img/p1.jpg",
       "img/p2.jpg",
@@ -134,8 +319,7 @@
       "img/p4.jpg",
     ];
 
-    // Random options on hover:
-    // Include singles PLUS the composite token as one option.
+    // Random outcomes on hover (include COMPOSITE as one option)
     const RANDOM_OPTIONS = [
       "img/1.jpg",
       "img/2.jpg",
@@ -145,54 +329,87 @@
       "COMPOSITE",
     ];
 
-    // Static hover zones like your sketch (edit positions/sizes if needed)
+    // Static hover areas like your sketch (5 shown). Add a 6th if needed.
     const ZONES = [
-      // top-left
-      { left: 0.16, top: 0.08, width: 0.20, height: 0.22 },
-      // top-right
-      { left: 0.66, top: 0.08, width: 0.20, height: 0.22 },
-      // bottom-left
-      { left: 0.06, top: 0.70, width: 0.22, height: 0.24 },
-      // bottom-center
-      { left: 0.40, top: 0.72, width: 0.20, height: 0.22 },
-      // bottom-right
-      { left: 0.78, top: 0.70, width: 0.20, height: 0.24 },
+      { left: 0.16, top: 0.08, width: 0.20, height: 0.22 }, // top-left
+      { left: 0.66, top: 0.08, width: 0.20, height: 0.22 }, // top-right
+      { left: 0.06, top: 0.70, width: 0.22, height: 0.24 }, // bottom-left
+      { left: 0.40, top: 0.72, width: 0.20, height: 0.22 }, // bottom-center
+      { left: 0.78, top: 0.70, width: 0.20, height: 0.24 }, // bottom-right
     ];
 
     /***********************
-     * IMPLEMENTATION
+     * ELEMENTS / STATE
      ***********************/
-
     const bgSingle = document.getElementById("bgSingle");
     const bgComposite = document.getElementById("bgComposite");
+    const nameEl = document.getElementById("name");
 
-    const tileEls = [
-      document.getElementById("tile1"),
-      document.getElementById("tile2"),
-      document.getElementById("tile3"),
-      document.getElementById("tile4"),
+    const compEls = [
+      document.getElementById("comp1"),
+      document.getElementById("comp2"),
+      document.getElementById("comp3"),
+      document.getElementById("comp4"),
     ];
 
-    // In-memory cache of loaded Image objects
+    // In-memory cache (prevents re-downloading / delayed onload switches)
     const imageCache = new Map();
 
-    // Prevent “late load applies again” race condition
+    // “Latest request wins” guard to prevent late loads applying after a newer choice
     let bgRequestId = 0;
 
-    // Optional small cooldown to avoid rapid re-triggers at zone edges
+    // Small cooldown to avoid edge jitter firing multiple mouseenter events
     let lastSwitchAt = 0;
     const SWITCH_COOLDOWN_MS = 120;
 
+    // Track what is currently shown
     let currentOption = "COMPOSITE";
 
+    /***********************
+     * LANGUAGE BY VISITOR
+     * (Practical approach: browser language + optional IP country lookup)
+     ***********************/
+    const NAME_EN = "Daria Glishchinskaia";
+    const NAME_RU = "Дарья Глишинская";
+
+    function setNameByHint(isRu) {
+      nameEl.textContent = isRu ? NAME_RU : NAME_EN;
+      document.documentElement.lang = isRu ? "ru" : "en";
+    }
+
+    function detectLanguage() {
+      // 1) Fast hint: browser language
+      const navLang = (navigator.language || "").toLowerCase();
+      if (navLang.startsWith("ru")) {
+        setNameByHint(true);
+        return;
+      }
+
+      // 2) IP-based geolocation (non-blocking; safe fallback to EN)
+      // If this request is blocked by the host/CORS, EN remains.
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 1400);
+
+      fetch("https://ipapi.co/json/", { signal: controller.signal })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (!data || !data.country_code) return;
+          const cc = String(data.country_code).toUpperCase();
+          const ruCountries = new Set(["RU","BY","KZ","UA","KG","AM","AZ","GE","MD","TJ","TM","UZ"]);
+          setNameByHint(ruCountries.has(cc));
+        })
+        .catch(() => { /* ignore */ })
+        .finally(() => clearTimeout(t));
+    }
+
+    /***********************
+     * PRELOAD / CACHE
+     ***********************/
     function preloadOne(url) {
       return new Promise((resolve, reject) => {
         if (imageCache.has(url)) return resolve();
         const img = new Image();
-        img.onload = () => {
-          imageCache.set(url, img);
-          resolve();
-        };
+        img.onload = () => { imageCache.set(url, img); resolve(); };
         img.onerror = () => reject(url);
         img.src = url;
       });
@@ -201,18 +418,53 @@
     function preloadAll() {
       const urls = [
         ...COMPOSITE_IMAGES,
-        ...RANDOM_OPTIONS.filter(x => x !== "COMPOSITE"),
+        ...RANDOM_OPTIONS.filter(x => x !== "COMPOSITE")
       ];
       return Promise.allSettled(urls.map(preloadOne));
     }
 
-    function applyComposite() {
-      // Apply images to tiles (they are already cached; we just set CSS)
-      for (let i = 0; i < 4; i++) {
-        tileEls[i].style.backgroundImage = `url("${COMPOSITE_IMAGES[i]}")`;
-      }
+    /***********************
+     * COMPOSITE LAYOUT
+     * - No cropping
+     * - Images share identical height (tops/bottoms aligned)
+     * - Composite vertically centered => equal top/bottom page intervals
+     ***********************/
+    function ratio(url) {
+      const img = imageCache.get(url);
+      if (!img || !img.naturalWidth || !img.naturalHeight) return 0.66; // portrait fallback
+      return img.naturalWidth / img.naturalHeight;
+    }
 
-      // Show composite, hide single
+    function updateCompositeHeight() {
+      const gapPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--gap")) || 14;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const isPortraitScreen = (vw / vh) <= 1;
+
+      const availW = vw - (2 * gapPx);
+      const availH = vh - (2 * gapPx);
+
+      if (!isPortraitScreen) {
+        // 4 in a row: width = H * sum(ratios) + 3*gap
+        const rSum = COMPOSITE_IMAGES.map(ratio).reduce((a,b)=>a+b,0);
+        const hByWidth = (availW - 3 * gapPx) / rSum;
+        const h = Math.max(120, Math.min(availH, hByWidth));
+        document.documentElement.style.setProperty("--compH", `${h}px`);
+      } else {
+        // 2x2: fit each row of 2; ensure total height fits
+        const r = COMPOSITE_IMAGES.map(ratio);
+        const hRow1 = (availW - gapPx) / (r[0] + r[1]);
+        const hRow2 = (availW - gapPx) / (r[2] + r[3]);
+        const hByHeight = (availH - gapPx) / 2;
+        const h = Math.max(120, Math.min(hRow1, hRow2, hByHeight));
+        document.documentElement.style.setProperty("--compH", `${h}px`);
+      }
+    }
+
+    function applyComposite() {
+      for (let i = 0; i < 4; i++) compEls[i].src = COMPOSITE_IMAGES[i];
+      updateCompositeHeight();
+
       bgComposite.style.opacity = "1";
       bgSingle.style.opacity = "0";
       currentOption = "COMPOSITE";
@@ -221,42 +473,47 @@
     function applySingle(url) {
       const myId = ++bgRequestId;
 
-      // Only switch if the image is already cached (or at least known loaded)
-      if (!imageCache.has(url)) {
-        // If not cached (should not happen if preload succeeded), load safely:
-        preloadOne(url).then(() => {
-          if (myId !== bgRequestId) return;
-          bgSingle.style.backgroundImage = `url("${url}")`;
-          bgSingle.style.opacity = "1";
-          bgComposite.style.opacity = "0";
-          currentOption = url;
-        }).catch(() => {
-          // Keep current background; never blank to black
-        });
-        return;
-      }
-
-      // Cached path: instant apply, latest request wins
-      requestAnimationFrame(() => {
+      // If cached, apply instantly; otherwise try one safe load
+      const doApply = () => {
         if (myId !== bgRequestId) return;
         bgSingle.style.backgroundImage = `url("${url}")`;
         bgSingle.style.opacity = "1";
         bgComposite.style.opacity = "0";
         currentOption = url;
-      });
+      };
+
+      if (imageCache.has(url)) {
+        requestAnimationFrame(doApply);
+      } else {
+        preloadOne(url).then(doApply).catch(() => { /* keep current */ });
+      }
     }
 
     function pickRandomOption() {
-      if (RANDOM_OPTIONS.length === 1) return RANDOM_OPTIONS[0];
+  if (RANDOM_OPTIONS.length === 0) return null;
+  if (RANDOM_OPTIONS.length === 1) return RANDOM_OPTIONS[0];
 
-      let candidate = null;
-      for (let i = 0; i < 12; i++) {
-        candidate = RANDOM_OPTIONS[Math.floor(Math.random() * RANDOM_OPTIONS.length)];
-        if (candidate !== currentOption) break;
-      }
-      return candidate;
-    }
+  let candidate = null;
 
+  // Try a few times to avoid choosing the same as currentOption
+  for (let i = 0; i < 20; i++) {
+    candidate = RANDOM_OPTIONS[Math.floor(Math.random() * RANDOM_OPTIONS.length)];
+    if (candidate !== currentOption) return candidate;
+  }
+
+  // Fallback: pick the first different option deterministically
+  for (const opt of RANDOM_OPTIONS) {
+    if (opt !== currentOption) return opt;
+  }
+
+  // Should never happen, but safe fallback
+  return RANDOM_OPTIONS[0];
+}
+
+
+    /***********************
+     * STATIC HOVER ZONES
+     ***********************/
     function createZones() {
       document.querySelectorAll(".zone").forEach(z => z.remove());
 
@@ -282,14 +539,16 @@
       }
     }
 
-    // Boot
-    preloadAll().finally(() => {
-      // Default view is the composite composition
-      applyComposite();
-      createZones();
-    });
+    /***********************
+     * BOOT
+     ***********************/
+    detectLanguage();
 
-    // (Zones are percent-based; resize does not require regeneration, but safe to keep if you later change logic)
+    preloadAll().finally(() => {
+      applyComposite();     // default composition on load
+      createZones();
+      window.addEventListener("resize", updateCompositeHeight);
+    });
   </script>
 </body>
 </html>

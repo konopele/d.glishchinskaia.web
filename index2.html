@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daria Glishchinskaia</title>
+  <style>
+    :root {
+      --bg: #000;
+      --fg: #fff;
+      --gap: 12px; /* visible but small spacing between portraits */
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      background: var(--bg);
+      overflow: hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Stage layers */
+    #stage {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+    }
+
+    /* Single-image background layer */
+    #bgSingle {
+      position: absolute;
+      inset: 0;
+      background-color: var(--bg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Composite background layer (default) */
+    #bgComposite {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 1fr;
+      gap: var(--gap);
+      padding: var(--gap);
+      background: var(--bg);
+      opacity: 1;
+      pointer-events: none;
+    }
+
+    /* Portrait tiles: preserve aspect ratio (no cropping) */
+    .tile {
+  background-color: var(--bg);
+  background-repeat: no-repeat;
+
+  /* Align tops & bottoms: height locked to tile height */
+  background-size: auto 100%;
+  background-position: center;
+}
+
+
+    /* On vertical screens: 2x2 layout */
+    @media (max-aspect-ratio: 1/1) {
+      #bgComposite {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+      }
+    }
+
+    /* Title */
+    #title {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      color: var(--fg);
+      font-size: clamp(22px, 3vw, 40px);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+
+      background: #000;
+      padding: 0.35em 0.6em;
+      white-space: nowrap;
+
+      user-select: none;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Invisible hover zones */
+    .zone {
+      position: absolute;
+      background: transparent;
+      z-index: 2;
+    }
+
+    /* Debug helper (optional) */
+    /* .zone { outline: 1px solid rgba(255,255,255,0.18); } */
+  </style>
+</head>
+
+<body>
+  <div id="stage" aria-hidden="true">
+    <div id="bgSingle"></div>
+
+    <div id="bgComposite">
+      <div class="tile" id="tile1"></div>
+      <div class="tile" id="tile2"></div>
+      <div class="tile" id="tile3"></div>
+      <div class="tile" id="tile4"></div>
+    </div>
+  </div>
+
+  <div id="title">Daria Glishchinskaia</div>
+
+  <script>
+    /***********************
+     * CONFIG (EDIT THESE)
+     ***********************/
+
+    // The four portrait images used in the default composition (also used when "COMPOSITE" is randomly selected)
+    const COMPOSITE_IMAGES = [
+      "img/p1.jpg",
+      "img/p2.jpg",
+      "img/p3.jpg",
+      "img/p4.jpg",
+    ];
+
+    // Random options on hover:
+    // Include singles PLUS the composite token as one option.
+    const RANDOM_OPTIONS = [
+      "img/1.jpg",
+      "img/2.jpg",
+      "img/3.jpg",
+      "img/4.jpg",
+      "img/5.jpg",
+      "COMPOSITE",
+    ];
+
+    // Static hover zones like your sketch (edit positions/sizes if needed)
+    const ZONES = [
+      // top-left
+      { left: 0.16, top: 0.08, width: 0.20, height: 0.22 },
+      // top-right
+      { left: 0.66, top: 0.08, width: 0.20, height: 0.22 },
+      // bottom-left
+      { left: 0.06, top: 0.70, width: 0.22, height: 0.24 },
+      // bottom-center
+      { left: 0.40, top: 0.72, width: 0.20, height: 0.22 },
+      // bottom-right
+      { left: 0.78, top: 0.70, width: 0.20, height: 0.24 },
+    ];
+
+    /***********************
+     * IMPLEMENTATION
+     ***********************/
+
+    const bgSingle = document.getElementById("bgSingle");
+    const bgComposite = document.getElementById("bgComposite");
+
+    const tileEls = [
+      document.getElementById("tile1"),
+      document.getElementById("tile2"),
+      document.getElementById("tile3"),
+      document.getElementById("tile4"),
+    ];
+
+    // In-memory cache of loaded Image objects
+    const imageCache = new Map();
+
+    // Prevent “late load applies again” race condition
+    let bgRequestId = 0;
+
+    // Optional small cooldown to avoid rapid re-triggers at zone edges
+    let lastSwitchAt = 0;
+    const SWITCH_COOLDOWN_MS = 120;
+
+    let currentOption = "COMPOSITE";
+
+    function preloadOne(url) {
+      return new Promise((resolve, reject) => {
+        if (imageCache.has(url)) return resolve();
+        const img = new Image();
+        img.onload = () => {
+          imageCache.set(url, img);
+          resolve();
+        };
+        img.onerror = () => reject(url);
+        img.src = url;
+      });
+    }
+
+    function preloadAll() {
+      const urls = [
+        ...COMPOSITE_IMAGES,
+        ...RANDOM_OPTIONS.filter(x => x !== "COMPOSITE"),
+      ];
+      return Promise.allSettled(urls.map(preloadOne));
+    }
+
+    function applyComposite() {
+      // Apply images to tiles (they are already cached; we just set CSS)
+      for (let i = 0; i < 4; i++) {
+        tileEls[i].style.backgroundImage = `url("${COMPOSITE_IMAGES[i]}")`;
+      }
+
+      // Show composite, hide single
+      bgComposite.style.opacity = "1";
+      bgSingle.style.opacity = "0";
+      currentOption = "COMPOSITE";
+    }
+
+    function applySingle(url) {
+      const myId = ++bgRequestId;
+
+      // Only switch if the image is already cached (or at least known loaded)
+      if (!imageCache.has(url)) {
+        // If not cached (should not happen if preload succeeded), load safely:
+        preloadOne(url).then(() => {
+          if (myId !== bgRequestId) return;
+          bgSingle.style.backgroundImage = `url("${url}")`;
+          bgSingle.style.opacity = "1";
+          bgComposite.style.opacity = "0";
+          currentOption = url;
+        }).catch(() => {
+          // Keep current background; never blank to black
+        });
+        return;
+      }
+
+      // Cached path: instant apply, latest request wins
+      requestAnimationFrame(() => {
+        if (myId !== bgRequestId) return;
+        bgSingle.style.backgroundImage = `url("${url}")`;
+        bgSingle.style.opacity = "1";
+        bgComposite.style.opacity = "0";
+        currentOption = url;
+      });
+    }
+
+    function pickRandomOption() {
+      if (RANDOM_OPTIONS.length === 1) return RANDOM_OPTIONS[0];
+
+      let candidate = null;
+      for (let i = 0; i < 12; i++) {
+        candidate = RANDOM_OPTIONS[Math.floor(Math.random() * RANDOM_OPTIONS.length)];
+        if (candidate !== currentOption) break;
+      }
+      return candidate;
+    }
+
+    function createZones() {
+      document.querySelectorAll(".zone").forEach(z => z.remove());
+
+      for (const z of ZONES) {
+        const zone = document.createElement("div");
+        zone.className = "zone";
+        zone.style.left = (z.left * 100) + "vw";
+        zone.style.top = (z.top * 100) + "vh";
+        zone.style.width = (z.width * 100) + "vw";
+        zone.style.height = (z.height * 100) + "vh";
+
+        zone.addEventListener("mouseenter", () => {
+          const now = Date.now();
+          if (now - lastSwitchAt < SWITCH_COOLDOWN_MS) return;
+          lastSwitchAt = now;
+
+          const option = pickRandomOption();
+          if (option === "COMPOSITE") applyComposite();
+          else applySingle(option);
+        });
+
+        document.body.appendChild(zone);
+      }
+    }
+
+    // Boot
+    preloadAll().finally(() => {
+      // Default view is the composite composition
+      applyComposite();
+      createZones();
+    });
+
+    // (Zones are percent-based; resize does not require regeneration, but safe to keep if you later change logic)
+  </script>
+</body>
+</html>
