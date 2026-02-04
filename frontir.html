@@ -63,7 +63,16 @@
   /* slight blur */
   filter: blur(0.65px);
   opacity: 0.8;
+  
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* kill the default dotted focus outline that can look like tiny blinking dots */
+.menu-link:focus,
+.menu-link:active{
+  outline: none;
+}
+
 
 
     .dots{ display:flex; gap: var(--dot-gap); }
