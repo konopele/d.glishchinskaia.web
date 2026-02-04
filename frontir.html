@@ -73,6 +73,19 @@
   outline-offset: 6px;
 }
 
+/* Remove the stray pseudo-element that creates the tiny extra dots */
+.dots::before,
+.dots::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* (Optional) also prevent pseudo-elements on the link itself */
+.menu-link::before,
+.menu-link::after{
+  content: none !important;
+  display: none !important;
+}
 
 
 
