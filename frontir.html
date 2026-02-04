@@ -1,49 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ФРОНТИР</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DARIA GLISHCHINSKAIA</title>
+
   <style>
-    /* Match your minimal black pages */
-    html, body {
-      height: 100%;
-      margin: 0;
+    :root{
+      --bg:#fff;
+      --fg:#000;
+
+      --top-gap:46px;     /* space above photos for dots */
+      --dot-size:5px;
+      --dot-gap:6px;
+      --dot-shift:-10px;  /* negative = shift left */
+
+      --edge-zone:80px;   /* px near left/right edges that triggers scrolling */
+      --max-speed:18;     /* px per frame */
+      --page-pad:0px;     /* keep 0 for flush look */
     }
-    body {
-      background: #000;
-      color: #fff;
+
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: var(--bg);
+      color: var(--fg);
       overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif; /* swap if you use another */
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* Topbar */
-    .topbar {
+:root{
+  /* ... */
+  --side-pad: 26px; /* distance from left/right borders */
+  --top-pad: 0px;   /* keep 0 unless you also want top/bottom padding */
+}
+
+/* Whole stage (no frame) */
+.stage{
+  position: fixed;
+  top: var(--top-pad);
+  bottom: var(--top-pad);
+  left: var(--side-pad);
+  right: var(--side-pad);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+
+    /* Dots link: between top edge and the photos */
+    .menu-link{
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 18px 24px;
-      box-sizing: border-box;
-      display: flex;
-      justify-content: center;
+      top: 12px;
+      left: calc(50% + var(--dot-shift));
+      transform: translateX(-50%);
       z-index: 10;
+
+      padding: 8px 12px;
+      text-decoration: none;
     }
 
-    .brand {
-      text-decoration: none;
-      color: #fff;
-      font-size: 14px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
+    .dots{ display:flex; gap: var(--dot-gap); }
+    .dot{
+      width: var(--dot-size);
+      height: var(--dot-size);
+      border-radius: 50%;
+      background: var(--fg); /* black dots */
+      opacity: 0.9;
+    }
+    .menu-link:focus-visible{
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+    /* Reserve top band, photos below */
+    .viewport{
+      position:absolute;
+      inset: 0;
+      padding-top: var(--top-gap);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* Scrolling strip */
+    .strip{
+      height: calc(100% - var(--top-gap));
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 0; /* no gaps */
+      will-change: transform;
+      transform: translate3d(0,0,0);
+    }
+
+    .strip img{
+      display: block;
+      height: 100%;
+      width: auto;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
     }
   </style>
 </head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="index.html">ФРОНТИР</a>
-  </header>
 
-  <!-- Blank page content on purpose -->
+<body>
+  <!-- Dots link to menu.html -->
+  <a class="menu-link" href="menu.html" aria-label="Open menu">
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="stage" id="stage">
+    <div class="viewport">
+      <div class="strip" id="strip">
+        <!-- Replace paths with your actual images -->
+        <img src="front/01.jpg" alt="">
+        <img src="front/02.jpg" alt="">
+        <img src="front/03.jpg" alt="">
+        <img src="front/04.jpg" alt="">
+        <img src="front/05.jpg" alt="">
+        <img src="front/06.jpg" alt="">
+        <img src="front/07.jpg" alt="">
+        <img src="front/08.jpg" alt="">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const strip = document.getElementById('strip');
+
+    // --- Horizontal auto-scroll by pointer near page borders ---
+    let x = 0;
+    let vx = 0;
+    let mouseX = window.innerWidth / 2;
+
+    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+    function bounds(){
+      const viewportW = document.documentElement.clientWidth;
+      const stripW = strip.scrollWidth;
+      const minX = Math.min(0, viewportW - stripW);
+      const maxX = 0;
+      return { minX, maxX };
+    }
+
+    function tick(){
+      const styles = getComputedStyle(document.documentElement);
+      const edgeZone = parseFloat(styles.getPropertyValue('--edge-zone')) || 80;
+      const maxSpeed = parseFloat(styles.getPropertyValue('--max-speed')) || 18;
+
+      const w = window.innerWidth;
+      let targetV = 0;
+
+      if (mouseX < edgeZone){
+        const t = 1 - (mouseX / edgeZone);
+        targetV = maxSpeed * t;      // move right
+      } else if (mouseX > w - edgeZone){
+        const t = 1 - ((w - mouseX) / edgeZone);
+        targetV = -maxSpeed * t;     // move left
+      }
+
+      vx += (targetV - vx) * 0.15;
+      x += vx;
+
+      const { minX, maxX } = bounds();
+      x = clamp(x, minX, maxX);
+
+      strip.style.transform = `translate3d(${x}px,0,0)`;
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; });
+
+    window.addEventListener('resize', () => {
+      const { minX, maxX } = bounds();
+      x = clamp(x, minX, maxX);
+      strip.style.transform = `translate3d(${x}px,0,0)`;
+    });
+
+    requestAnimationFrame(tick);
+  </script>
 </body>
 </html>
