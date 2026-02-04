@@ -30,7 +30,7 @@
 
 :root{
   /* ... */
-  --side-pad: 26px; /* distance from left/right borders */
+  --side-pad: 56px; /* distance from left/right borders */
   --top-pad: 0px;   /* keep 0 unless you also want top/bottom padding */
 }
 
@@ -46,17 +46,25 @@
 }
 
 
-    /* Dots link: between top edge and the photos */
-    .menu-link{
-      position: fixed;
-      top: 12px;
-      left: calc(50% + var(--dot-shift));
-      transform: translateX(-50%);
-      z-index: 10;
+.menu-link{
+  position: fixed;
+  top: 12px;
 
-      padding: 8px 12px;
-      text-decoration: none;
-    }
+  /* 1/4 of the page width */
+  left: 25%;
+
+  /* keep the small left shift you already liked */
+  transform: translateX(var(--dot-shift));
+
+  z-index: 10;
+  padding: 8px 12px;
+  text-decoration: none;
+
+  /* slight blur */
+  filter: blur(0.65px);
+  opacity: 0.8;
+}
+
 
     .dots{ display:flex; gap: var(--dot-gap); }
     .dot{
