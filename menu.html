@@ -116,6 +116,21 @@
     opacity: 0.9;
   }
 
+  /* keep the vertical trunk (.tree::before) as-is */
+
+/* remove the small horizontal “dash” before each item */
+a.item::before{
+  content: none !important;
+  display: none !important;
+}
+
+/* just in case there’s also an ::after from somewhere */
+a.item::after{
+  content: none !important;
+  display: none !important;
+}
+
+
   
 </style>
 
