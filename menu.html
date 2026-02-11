@@ -4,8 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Menu</title>
+<link rel="stylesheet" href="/css/style.css">
 
 <style>
+  /* Load Montserrat (local files) */
+  @font-face{
+    font-family: "Montserrat";
+    src: url("/fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face{
+    font-family: "Montserrat";
+    src: url("/fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root{
     --bg:#fff;
 
@@ -31,8 +48,9 @@
   html, body { height: 100%; margin: 0; }
   body{
     background: var(--bg);
-    font-family: Arial, Helvetica, sans-serif;
-    font-style: italic;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    font-style: italic; /* keeps your current italic look */
+    font-weight: 400;
     font-size: var(--font);
     line-height: var(--lh);
     letter-spacing: 0.02em;
@@ -41,11 +59,11 @@
 
   a{
     color: inherit;
-    text-decoration: none;           /* remove underline */
+    text-decoration: none;
   }
   a:hover{
-    color: var(--text-hover);        /* subtle UX instead of underline */
-    text-decoration: none;           /* keep underline off */
+    color: var(--text-hover);
+    text-decoration: none;
   }
 
   .wrap{
@@ -65,7 +83,7 @@
     padding-left: 28px; /* space for trunk + short arms */
   }
 
-  /* vertical trunk — lighter, and not spanning too far */
+  /* vertical trunk */
   .tree::before{
     content:"";
     position:absolute;
@@ -85,7 +103,7 @@
     color: var(--text);
   }
 
-  /* short connector arm only (no extra long horizontals) */
+  /* short connector arm (currently disabled below) */
   .item::before{
     content:"";
     position:absolute;
@@ -116,22 +134,15 @@
     opacity: 0.9;
   }
 
-  /* keep the vertical trunk (.tree::before) as-is */
-
-/* remove the small horizontal “dash” before each item */
-a.item::before{
-  content: none !important;
-  display: none !important;
-}
-
-/* just in case there’s also an ::after from somewhere */
-a.item::after{
-  content: none !important;
-  display: none !important;
-}
-
-
-  
+  /* remove the small horizontal arm before each item */
+  a.item::before{
+    content: none !important;
+    display: none !important;
+  }
+  a.item::after{
+    content: none !important;
+    display: none !important;
+  }
 </style>
 
 </head>
@@ -139,12 +150,11 @@ a.item::after{
 <body>
   <div class="wrap">
 
-    <!-- Худ. практика -->
     <section class="group">
       <div class="title">худ. практика</div>
       <div class="tree">
         <a class="item" href="repetition.html"><span>РЕПЕТИЦИЯ</span></a>
-        <a class="item" href="banditskaya-noch.html"><span>БАНДИТСКАЯ НОЧЬ</span></a>
+        <a class="item" href="sport.html"><span>БАНДИТСКАЯ НОЧЬ</span></a>
         <a class="item" href="teni.html"><span>ТЕНИ</span></a>
         <a class="item" href="kollekciya.html"><span>КОЛЛЕКЦИЯ ХРУПКИХ И НЕПРИКОСНОВЕННЫХ ОБЪЕКТОВ</span></a>
         <a class="item" href="frontir.html"><span>ФРОНТИР</span></a>
@@ -153,7 +163,6 @@ a.item::after{
       </div>
     </section>
 
-    <!-- Коммерция -->
     <section class="group">
       <div class="title">коммерция</div>
       <div class="tree">
@@ -163,7 +172,6 @@ a.item::after{
       </div>
     </section>
 
-    <!-- Singles -->
     <div class="single">
       <a href="cv.html">CV / BIO</a>
       <a href="contacts.html">КОНТАКТЫ</a>
