@@ -1,370 +1,83 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DARIA GLISHCHINSKAIA — спорт-клуб</title>
+  <title>спорт-клуб</title>
 
   <style>
-    :root{
-      --bg:#fff;
-      --fg:#000;
-
-      --top-gap:46px;     /* space above photos for dots */
-      --dot-size:5px;
-      --dot-gap:6px;
-      --dot-shift:-10px;  /* negative = shift left */
-
-      --edge-zone:80px;   /* px near left/right edges that triggers scrolling */
-      --max-speed:18;     /* px per frame */
-      --page-pad:0px;     /* keep 0 for flush look */
+    /* 1) Load YOUR font (put Montserrat-SemiBoldItalic.ttf in the same folder as this HTML) */
+    @font-face {
+      font-family: "MontserratSemiBoldItalic";
+      src: url("./fonts/montserrat/Montserrat-ThinItalic.ttf") format("truetype");
+      font-weight: 600;
+      font-style: italic;
+      font-display: swap;
     }
 
-    html, body { height: 100%; margin: 0; }
-    body{
-      background: var(--bg);
-      color: var(--fg);
-      overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
+    :root {
+      --ink: #111;
+      --bg: #fff;
     }
 
-:root{
-  /* ... */
-  --side-pad: 56px; /* distance from left/right borders */
-  --top-pad: 0px;   /* keep 0 unless you also want top/bottom padding */
-}
-
-/* Whole stage (no frame) */
-.stage{
-  position: fixed;
-  top: var(--top-pad);
-  bottom: var(--top-pad);
-  left: var(--side-pad);
-  right: var(--side-pad);
-  background: var(--bg);
-  overflow: hidden;
-}
-
-
-.menu-link{
-  position: fixed;
-  top: 12px;
-
-  /* 1/4 of the page width */
-  left: 25%;
-
-  /* keep the small left shift you already liked */
-  transform: translateX(var(--dot-shift));
-
-  z-index: 10;
-  padding: 8px 12px;
-  text-decoration: none;
-
-  /* slight blur */
-  filter: blur(0.65px);
-  opacity: 0.8;
-  
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* kill the default dotted focus outline that can look like tiny blinking dots */
-.menu-link:focus-visible{
-  outline: 2px solid #000;
-  outline-offset: 6px;
-}
-
-/* Remove the stray pseudo-element that creates the tiny extra dots */
-.dots::before,
-.dots::after{
-  content: none !important;
-  display: none !important;
-}
-
-/* (Optional) also prevent pseudo-elements on the link itself */
-.menu-link::before,
-.menu-link::after{
-  content: none !important;
-  display: none !important;
-}
-
-
-
-    .dots{ display:flex; gap: var(--dot-gap); }
-    .dot{
-      width: var(--dot-size);
-      height: var(--dot-size);
-      border-radius: 50%;
-      background: var(--fg); /* black dots */
-      opacity: 0.9;
-    }
-    .menu-link:focus-visible{
-      outline: 2px solid var(--fg);
-      outline-offset: 4px;
-    }
-
-    /* Reserve top band, photos below */
-    .viewport{
-      position:absolute;
-      inset: 0;
-      padding-top: var(--top-gap);
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    /* Scrolling strip */
-    .strip{
-      height: calc(100% - var(--top-gap));
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      gap: 0; /* no gaps */
-      will-change: transform;
-      transform: translate3d(0,0,0);
-    }
-
-    .strip img{
-      display: block;
+    html, body {
       height: 100%;
-      width: auto;
-      object-fit: cover;
-      user-select: none;
-      -webkit-user-drag: none;
-      pointer-events: none;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
     }
-    /* ===== sport-club intro "page" ===== */
-:root{
-  /* tweak these 3 numbers if you want micro-adjustments */
-  --intro-w: clamp(360px, 44vw, 520px);  /* keeps right image visible */
-  --intro-x: 115px;                      /* left offset for text */
-  --intro-title-y: 120px;                /* title vertical position */
-  --intro-txt-y: 290px;                  /* txt vertical position */
-  --intro-color: #7a7a7a;
-}
 
-/* viewport becomes stacking context */
-.viewport{ position: absolute; inset:0; padding-top: var(--top-gap); overflow:hidden; }
+    /* 2) Full-viewport page (NO centering/scaling wrappers) */
+    .page {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg);
+      overflow: hidden;
+    }
 
-/* Fixed text layer */
-.intro-layer{
-  position: absolute;            /* fixed relative to viewport */
-  inset: 0;                      /* full area under top-gap */
-  z-index: 0;                    /* behind strip */
-  pointer-events: none;          /* don't block scrolling */
-}
+    /* 3) Shared text style */
+    .t {
+      position: absolute;
+      font-family: "MontserratSemiBoldItalic", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1;
+      white-space: nowrap;
 
-/* Strip stays above */
-.strip{ position: relative; z-index: 1; }
+      /* keep it clean/sharp-ish */
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: auto;
+      -moz-osx-font-smoothing: auto;
+    }
 
-/* Your text positions (match screenshot) */
-.intro-layer .title{
-  position: absolute;
-  left: 115px;
-  top: 120px;
-  font-style: italic;
-  color: #7a7a7a;
-  font-size: 18px;
-  line-height: 1;
-  pointer-events: none;
-}
+    /*
+      4) Positions (pixel-locked)
+      These are from your reference image coordinate system.
+      If you want them slightly more left/up, just decrease left/top values.
+    */
 
-.intro-layer .txt{
-  position: absolute;
-  left: 115px;
-  top: 290px;
-  font-style: italic;
-  color: #7a7a7a;
-  font-size: 18px;
-  line-height: 1;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
+    /* "спорт-клуб" */
+    .title {
+      left: 80px;
+      top: 157px;
+      font-size: 28px;
+    }
 
-  pointer-events: auto;          /* re-enable only for the button */
-}
-
-/* ===== txt modal (hidden by default) ===== */
-.modal-backdrop{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  display: none;         /* IMPORTANT: hide by default */
-  z-index: 50;
-}
-
-.modal-backdrop.open{ display: block; }
-
-.modal{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  width: min(560px, calc(100% - 28px));
-  background: #fff;
-  border-radius: 18px;
-  padding: 18px 18px 14px 18px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.25);
-  color:#111;
-  font-style: normal;
-}
-
-.modal h3{
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.modal p{
-  margin: 0 0 14px 0;
-  color:#333;
-  line-height: 1.4;
-  font-size: 14px;
-}
-
-.modal .actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-}
-
-.btn{
-  border: 1px solid rgba(0,0,0,.16);
-  background: #fff;
-  padding: 8px 12px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-.btn:hover{ background: rgba(0,0,0,.04); }
-
+    /* "txt" */
+    .mid {
+      left: 198px;
+      top: 45%;
+      font-size: 22px;
+    }
   </style>
 </head>
 
 <body>
-  <!-- Dots link to menu.html (UNCHANGED) -->
-  <!-- Dots link to menu.html -->
-  <a class="menu-link" href="menu.html" aria-label="Open menu">
-    <span class="dots" aria-hidden="true">
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-    </span>
-  </a>
-
-  <div class="stage" id="stage">
-    <div class="viewport">
-      <div class="strip" id="strip">
-        <!-- Replace paths with your actual images -->
-
-<div class="intro-layer" aria-hidden="false">
-  <div class="title">спорт-клуб</div>
-  <button class="txt" id="txtBtn" type="button">txt</button>
-</div>
-
-
-        <!-- 14 photos in THE SAME STRIP (same sizing + movement as frontier) -->
-        <img src="sport/01.jpg" alt="">
-        <img src="sport/02.jpg" alt="">
-        <img src="sport/03.jpg" alt="">
-        <img src="sport/04.jpg" alt="">
-        <img src="sport/05.jpg" alt="">
-        <img src="sport/06.jpg" alt="">
-        <img src="sport/07.jpg" alt="">
-        <img src="sport/08.jpg" alt="">
-        <img src="sport/09.jpg" alt="">
-        <img src="sport/10.jpg" alt="">
-        <img src="sport/11.jpg" alt="">
-        <img src="sport/12.jpg" alt="">
-        <img src="sport/13.jpg" alt="">
-        <img src="sport/14.jpg" alt="">
-
-      </div>
-    </div>
+  <div class="page">
+    <div class="t title">спорт-клуб</div>
+    <div class="t mid">txt</div>
   </div>
-
-  <!-- txt popup -->
-  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal">
-      <h3>Информация</h3>
-      <p>
-        Вставь текст для “txt” (описание / контекст / кредиты).
-      </p>
-      <div class="actions">
-        <button class="btn" id="modalClose" type="button">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const strip = document.getElementById('strip');
-
-    // --- Horizontal auto-scroll by pointer near page borders ---
-    let x = 0;
-    let vx = 0;
-    let mouseX = window.innerWidth / 2;
-
-    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
-
-    function bounds(){
-      const viewportW = document.documentElement.clientWidth;
-      const stripW = strip.scrollWidth;
-      const minX = Math.min(0, viewportW - stripW);
-      const maxX = 0;
-      return { minX, maxX };
-    }
-
-    function tick(){
-      const styles = getComputedStyle(document.documentElement);
-      const edgeZone = parseFloat(styles.getPropertyValue('--edge-zone')) || 80;
-      const maxSpeed = parseFloat(styles.getPropertyValue('--max-speed')) || 18;
-
-      const w = window.innerWidth;
-      let targetV = 0;
-
-      if (mouseX < edgeZone){
-        const t = 1 - (mouseX / edgeZone);
-        targetV = maxSpeed * t;      // move right
-      } else if (mouseX > w - edgeZone){
-        const t = 1 - ((w - mouseX) / edgeZone);
-        targetV = -maxSpeed * t;     // move left
-      }
-
-      vx += (targetV - vx) * 0.15;
-      x += vx;
-
-      const { minX, maxX } = bounds();
-      x = clamp(x, minX, maxX);
-
-      strip.style.transform = `translate3d(${x}px,0,0)`;
-      requestAnimationFrame(tick);
-    }
-
-    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; });
-
-    window.addEventListener('resize', () => {
-      const { minX, maxX } = bounds();
-      x = clamp(x, minX, maxX);
-      strip.style.transform = `translate3d(${x}px,0,0)`;
-    });
-
-    requestAnimationFrame(tick);
-    // --- txt modal toggle ---
-const txtBtn = document.getElementById('txtBtn');
-const modalBackdrop = document.getElementById('modalBackdrop');
-const modalClose = document.getElementById('modalClose');
-
-function openModal(open){
-  modalBackdrop.classList.toggle('open', open);
-  modalBackdrop.setAttribute('aria-hidden', String(!open));
-}
-
-txtBtn.addEventListener('click', () => openModal(true));
-modalClose.addEventListener('click', () => openModal(false));
-modalBackdrop.addEventListener('click', (e) => {
-  if (e.target === modalBackdrop) openModal(false);
-});
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') openModal(false);
-});
-
-  </script>
 </body>
 </html>
