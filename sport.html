@@ -1,83 +1,310 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>спорт-клуб</title>
+  <title>спорт-клуб — Дарья Глищинская</title>
 
   <style>
-    /* 1) Load YOUR font (put Montserrat-SemiBoldItalic.ttf in the same folder as this HTML) */
-    @font-face {
-      font-family: "Montserrat-ThinItalic";
-      src: url("./fonts/montserrat/Montserrat-ThinItalic.ttf") format("truetype");
-      font-weight: 600;
-      font-style: italic;
-      font-display: swap;
+    :root{
+      --bg:#fff;
+      --fg:#000;
+
+      --top-gap:46px;     /* space above photos for dots */
+      --dot-size:5px;
+      --dot-gap:6px;
+      --dot-shift:-10px;  /* negative = shift left */
+
+      --edge-zone:80px;   /* px near left/right edges that triggers scrolling */
+      --max-speed:18;     /* px per frame */
+      --page-pad:0px;     /* keep 0 for flush look */
     }
 
-    :root {
-      --ink: #111;
-      --bg: #fff;
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
+    html, body { height: 100%; margin: 0; }
+    body{
       background: var(--bg);
-      color: var(--ink);
+      color: var(--fg);
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* 2) Full-viewport page (NO centering/scaling wrappers) */
-    .page {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: var(--bg);
+:root{
+  --bg:#fff;
+  --fg:#000;
+
+  --top-gap:46px;
+
+  --dot-size:5px;
+  --dot-gap:6px;
+  --dot-shift:-10px;
+
+  --page-pad-top:0px;
+
+  /* ✅ frames */
+  --left-frame: 30vw;   /* left white area = 30% of screen */
+  --right-frame: 0px;   /* remove right frame */
+  --end-gap: 24px;      /* small white frame at the very end (right side) */
+
+  --page-pad:0px;
+
+  --intro-w: 24vw;                 /* ✅ narrower than before */
+  --intro-min: 220px;              /* safety on small screens */
+  --intro-max: 360px;              /* safety on huge screens */
+
+  --intro-left: clamp(28px, 3vw, 56px); /* x-position of text */
+  --intro-top:  clamp(70px, 10vh, 120px); /* y-position for title */
+  --intro-gap:  clamp(50px, 10vh, 110px); /* distance title -> txt */
+}
+
+/* Whole stage (no border/frame) */
+.stage{
+  top: var(--page-pad-top);
+  bottom: var(--page-pad-top);
+  left: var(--left-frame);
+  right: var(--right-frame);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.intro-panel{
+  flex: 0 0 clamp(var(--intro-min), var(--intro-w), var(--intro-max));
+  height: 100%;
+  background: var(--bg);
+  position: relative;   /* ✅ for absolute-positioned text */
+  box-sizing: border-box;
+}
+
+.intro-title{
+  /* MOVE TITLE HERE */
+  position: absolute;
+  top: var(--intro-top);
+  left: var(--intro-left);
+
+  
+  /* CHANGE TITLE FONT STYLING HERE */
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+.intro-txt{
+  /* MOVE txt HERE */
+  position: absolute;
+  top: calc(var(--intro-top) + var(--intro-gap));
+  left: var(--intro-left);
+
+  /* CHANGE txt FONT STYLING HERE */
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+
+
+
+
+.menu-link{
+  position: fixed;
+  top: 12px;
+  left: 90%;
+  transform: translateX(-50%) translateX(var(--dot-shift));
+  z-index: 10;
+  padding: 8px 12px;
+  text-decoration: none;
+  filter: blur(3.25px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* kill the default dotted focus outline that can look like tiny blinking dots */
+.menu-link:focus-visible{
+  outline: 2px solid #000;
+  outline-offset: 6px;
+}
+
+/* Remove the stray pseudo-element that creates the tiny extra dots */
+.dots::before,
+.dots::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* (Optional) also prevent pseudo-elements on the link itself */
+.menu-link::before,
+.menu-link::after{
+  content: none !important;
+  display: none !important;
+}
+
+
+
+    .dots{ display:flex; gap: var(--dot-gap); }
+    .dot{
+      width: var(--dot-size);
+      height: var(--dot-size);
+      border-radius: 50%;
+      background: var(--fg); /* black dots */
+      opacity: 0.9;
+    }
+    .menu-link:focus-visible{
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+    /* Reserve top band, photos below */
+    .viewport{
+      position:absolute;
+      inset: 0;
+      padding-top: var(--top-gap);
+      box-sizing: border-box;
       overflow: hidden;
     }
 
-    /* 3) Shared text style */
-    .t {
-      position: absolute;
-      font-family: "Montserrat-ThinItalic";
-      font-weight: 600;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1;
-      white-space: nowrap;
+    /* Scrolling strip */
+.strip{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0;
+  will-change: transform;
+  transform: translate3d(0,0,0);
+}
 
-      /* keep it clean/sharp-ish */
-      text-rendering: geometricPrecision;
-      -webkit-font-smoothing: auto;
-      -moz-osx-font-smoothing: auto;
-    }
+.start-spacer,
+.end-spacer{
+  flex: 0 0 var(--end-gap);
+  height: 100%;
+}
 
-    /*
-      4) Positions (pixel-locked)
-      These are from your reference image coordinate system.
-      If you want them slightly more left/up, just decrease left/top values.
-    */
-
-    /* "спорт-клуб" */
-    .title {
-      left: 70%;
-      top: 157px;
-      font-size: 28px;
-    }
-
-    /* "txt" */
-    .mid {
-      left: 198px;
-      top: 45%;
-      font-size: 22px;
+    .strip img{
+      display: block;
+      height: 100%;
+      width: auto;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <div class="t title">спорт-клуб</div>
-    <div class="t mid">txt</div>
+  <!-- Dots link to menu.html -->
+  <a class="menu-link" href="menu.html" aria-label="Open menu">
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="stage" id="stage">
+    <div class="viewport">
+<div class="strip" id="strip">
+  <!-- small left white gap only visible at the far-right limit -->
+  <span class="start-spacer" aria-hidden="true"></span>
+
+  <!-- ✅ new moving “white picture” -->
+  <div class="intro-panel">
+    <div class="intro-title">спорт-клуб</div>
+    <button class="intro-txt" id="txtBtn" type="button">txt</button>
   </div>
+
+
+        <!-- 14 photos in THE SAME STRIP (same sizing + movement as frontier) -->
+        <img src="sport/01.jpg" alt="">
+        <img src="sport/02.jpg" alt="">
+        <img src="sport/03.jpg" alt="">
+        <img src="sport/04.jpg" alt="">
+        <img src="sport/05.jpg" alt="">
+        <img src="sport/06.jpg" alt="">
+        <img src="sport/07.jpg" alt="">
+        <img src="sport/08.jpg" alt="">
+        <img src="sport/09.jpg" alt="">
+        <img src="sport/10.jpg" alt="">
+        <img src="sport/11.jpg" alt="">
+        <img src="sport/12.jpg" alt="">
+        <img src="sport/13.jpg" alt="">
+        <img src="sport/14.jpg" alt="">
+
+  <span class="end-spacer" aria-hidden="true"></span>
+</div>
+
+
+</div>
+
+    </div>
+  </div>
+
+<script>
+  const strip = document.getElementById('strip');
+  const stage = document.getElementById('stage');
+
+  let x = 0;
+
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+  // ✅ bounds based on the visible stage, not the full window
+  function bounds(){
+    const stageW = stage.clientWidth;
+    const stripW = strip.scrollWidth; // includes padding-right end-gap
+    const minX = Math.min(0, stageW - stripW); // farthest left you can go
+    const maxX = 0;                             // flush left, never any left gap
+    return { minX, maxX };
+  }
+
+  function apply(){
+    const { minX, maxX } = bounds();
+    x = clamp(x, minX, maxX);
+    strip.style.transform = `translate3d(${x}px,0,0)`;
+  }
+
+  // ✅ wheel-only scroll
+  window.addEventListener('wheel', (e) => {
+    // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
+    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
+
+    const speed = 1.2; // tune
+    x -= delta * speed;
+
+    apply();
+    e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('resize', apply);
+  window.addEventListener('load', () => { x = 0; apply(); });
+
+  // -------------------------
+  // keep your modal code below (UNCHANGED)
+  // -------------------------
+
+  const txtBtn = document.getElementById('txtBtn');
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal(open){
+    modalBackdrop.classList.toggle('open', open);
+    modalBackdrop.setAttribute('aria-hidden', String(!open));
+  }
+
+  txtBtn.addEventListener('click', () => openModal(true));
+  modalClose.addEventListener('click', () => openModal(false));
+  modalBackdrop.addEventListener('click', (e) => {
+    if (e.target === modalBackdrop) openModal(false);
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') openModal(false);
+  });
+</script>
+
 </body>
 </html>

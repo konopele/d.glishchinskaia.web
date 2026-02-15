@@ -3,9 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DARIA GLISHCHINSKAIA</title>
+  <title>фронтир — Дарья Глищинская</title>
 
   <style>
+    @font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
     :root{
       --bg:#fff;
       --fg:#000;
@@ -20,52 +49,110 @@
       --page-pad:0px;     /* keep 0 for flush look */
     }
 
-    html, body { height: 100%; margin: 0; }
-    body{
-      background: var(--bg);
-      color: var(--fg);
-      overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-:root{
-  /* ... */
-  --side-pad: 56px; /* distance from left/right borders */
-  --top-pad: 0px;   /* keep 0 unless you also want top/bottom padding */
+body{
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
-/* Whole stage (no frame) */
+:root{
+  --bg:#fff;
+  --fg:#000;
+
+  --top-gap:46px;
+
+  --dot-size:5px;
+  --dot-gap:6px;
+  --dot-shift:-10px;
+
+  --page-pad-top:0px;
+
+  /* ✅ frames */
+  --left-frame: 30vw;   /* left white area = 30% of screen */
+  --right-frame: 0px;   /* remove right frame */
+  --end-gap: 24px;      /* small white frame at the very end (right side) */
+
+  --page-pad:0px;
+
+  --intro-w: 24vw;                 /* ✅ narrower than before */
+  --intro-min: 220px;              /* safety on small screens */
+  --intro-max: 360px;              /* safety on huge screens */
+
+  --intro-left: clamp(28px, 3vw, 56px); /* x-position of text */
+  --intro-top:  clamp(70px, 10vh, 120px); /* y-position for title */
+  --intro-gap:  clamp(50px, 10vh, 110px); /* distance title -> txt */
+}
+
+/* Whole stage (no border/frame) */
 .stage{
-  position: fixed;
-  top: var(--top-pad);
-  bottom: var(--top-pad);
-  left: var(--side-pad);
-  right: var(--side-pad);
+  top: var(--page-pad-top);
+  bottom: var(--page-pad-top);
+  left: var(--left-frame);
+  right: var(--right-frame);
   background: var(--bg);
   overflow: hidden;
 }
+
+.intro-panel{
+  flex: 0 0 clamp(var(--intro-min), var(--intro-w), var(--intro-max));
+  height: 100%;
+  background: var(--bg);
+  position: relative;   /* ✅ for absolute-positioned text */
+  box-sizing: border-box;
+}
+
+.intro-title{
+  /* MOVE TITLE HERE */
+  position: absolute;
+  top: var(--intro-top);
+  left: var(--intro-left);
+
+  
+  /* CHANGE TITLE FONT STYLING HERE */
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+.intro-txt{
+  /* MOVE txt HERE */
+  position: absolute;
+  top: calc(var(--intro-top) + var(--intro-gap));
+  left: var(--intro-left);
+
+  /* CHANGE txt FONT STYLING HERE */
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+
+
 
 
 .menu-link{
   position: fixed;
   top: 12px;
-
-  /* 1/4 of the page width */
-  left: 25%;
-
-  /* keep the small left shift you already liked */
-  transform: translateX(var(--dot-shift));
-
+  left: 90%;
+  transform: translateX(-50%) translateX(var(--dot-shift));
   z-index: 10;
   padding: 8px 12px;
   text-decoration: none;
-
-  /* slight blur */
-  filter: blur(0.65px);
-  opacity: 0.8;
-  
+  filter: blur(3.25px);
   -webkit-tap-highlight-color: transparent;
 }
+
 
 /* kill the default dotted focus outline that can look like tiny blinking dots */
 .menu-link:focus-visible{
@@ -112,15 +199,21 @@
     }
 
     /* Scrolling strip */
-    .strip{
-      height: calc(100% - var(--top-gap));
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      gap: 0; /* no gaps */
-      will-change: transform;
-      transform: translate3d(0,0,0);
-    }
+.strip{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0;
+  will-change: transform;
+  transform: translate3d(0,0,0);
+}
+
+.start-spacer,
+.end-spacer{
+  flex: 0 0 var(--end-gap);
+  height: 100%;
+}
 
     .strip img{
       display: block;
@@ -144,73 +237,94 @@
 
   <div class="stage" id="stage">
     <div class="viewport">
-      <div class="strip" id="strip">
-        <!-- Replace paths with your actual images -->
-        <img src="front/01.jpg" alt="">
-        <img src="front/02.jpg" alt="">
-        <img src="front/03.jpg" alt="">
-        <img src="front/04.jpg" alt="">
-        <img src="front/05.jpg" alt="">
-        <img src="front/06.jpg" alt="">
-        <img src="front/07.jpg" alt="">
-        <img src="front/08.jpg" alt="">
-      </div>
+<div class="strip" id="strip">
+  <!-- small left white gap only visible at the far-right limit -->
+  <span class="start-spacer" aria-hidden="true"></span>
+
+  <!-- ✅ new moving “white picture” -->
+  <div class="intro-panel">
+    <div class="intro-title">фронтир</div>
+    <button class="intro-txt" id="txtBtn" type="button">txt</button>
+  </div>
+
+  <img src="front/01.jpg" alt="">
+  <img src="front/02.jpg" alt="">
+  <img src="front/03.jpg" alt="">
+  <img src="front/04.jpg" alt="">
+  <img src="front/05.jpg" alt="">
+  <img src="front/06.jpg" alt="">
+  <img src="front/07.jpg" alt="">
+  <img src="front/08.jpg" alt="">
+
+  <span class="end-spacer" aria-hidden="true"></span>
+</div>
+
+
+</div>
+
     </div>
   </div>
 
-  <script>
-    const strip = document.getElementById('strip');
+<script>
+  const strip = document.getElementById('strip');
+  const stage = document.getElementById('stage');
 
-    // --- Horizontal auto-scroll by pointer near page borders ---
-    let x = 0;
-    let vx = 0;
-    let mouseX = window.innerWidth / 2;
+  let x = 0;
 
-    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
-    function bounds(){
-      const viewportW = document.documentElement.clientWidth;
-      const stripW = strip.scrollWidth;
-      const minX = Math.min(0, viewportW - stripW);
-      const maxX = 0;
-      return { minX, maxX };
-    }
+  // ✅ bounds based on the visible stage, not the full window
+  function bounds(){
+    const stageW = stage.clientWidth;
+    const stripW = strip.scrollWidth; // includes padding-right end-gap
+    const minX = Math.min(0, stageW - stripW); // farthest left you can go
+    const maxX = 0;                             // flush left, never any left gap
+    return { minX, maxX };
+  }
 
-    function tick(){
-      const styles = getComputedStyle(document.documentElement);
-      const edgeZone = parseFloat(styles.getPropertyValue('--edge-zone')) || 80;
-      const maxSpeed = parseFloat(styles.getPropertyValue('--max-speed')) || 18;
+  function apply(){
+    const { minX, maxX } = bounds();
+    x = clamp(x, minX, maxX);
+    strip.style.transform = `translate3d(${x}px,0,0)`;
+  }
 
-      const w = window.innerWidth;
-      let targetV = 0;
+  // ✅ wheel-only scroll
+  window.addEventListener('wheel', (e) => {
+    // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
+    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
 
-      if (mouseX < edgeZone){
-        const t = 1 - (mouseX / edgeZone);
-        targetV = maxSpeed * t;      // move right
-      } else if (mouseX > w - edgeZone){
-        const t = 1 - ((w - mouseX) / edgeZone);
-        targetV = -maxSpeed * t;     // move left
-      }
+    const speed = 1.2; // tune
+    x -= delta * speed;
 
-      vx += (targetV - vx) * 0.15;
-      x += vx;
+    apply();
+    e.preventDefault();
+  }, { passive: false });
 
-      const { minX, maxX } = bounds();
-      x = clamp(x, minX, maxX);
+  window.addEventListener('resize', apply);
+  window.addEventListener('load', () => { x = 0; apply(); });
 
-      strip.style.transform = `translate3d(${x}px,0,0)`;
-      requestAnimationFrame(tick);
-    }
+  // -------------------------
+  // keep your modal code below (UNCHANGED)
+  // -------------------------
 
-    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; });
+  const txtBtn = document.getElementById('txtBtn');
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalClose = document.getElementById('modalClose');
 
-    window.addEventListener('resize', () => {
-      const { minX, maxX } = bounds();
-      x = clamp(x, minX, maxX);
-      strip.style.transform = `translate3d(${x}px,0,0)`;
-    });
+  function openModal(open){
+    modalBackdrop.classList.toggle('open', open);
+    modalBackdrop.setAttribute('aria-hidden', String(!open));
+  }
 
-    requestAnimationFrame(tick);
-  </script>
+  txtBtn.addEventListener('click', () => openModal(true));
+  modalClose.addEventListener('click', () => openModal(false));
+  modalBackdrop.addEventListener('click', (e) => {
+    if (e.target === modalBackdrop) openModal(false);
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') openModal(false);
+  });
+</script>
+
 </body>
 </html>
