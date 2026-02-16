@@ -3,37 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>фронтир — Дарья Глищинская</title>
+  <title>DARIA GLISHCHINSKAIA</title>
 
   <style>
-    @font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
+    .secondary-topstrip{
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 48px;              /* choose your strip height */
+      background: #fff;          /* solid white */
+      opacity: 1;                /* explicitly non-transparent */
+      z-index: 999999;           /* above everything */
+      display: flex;
+      align-items: center;
+      justify-content: left; /* dots on the right */
+      padding: 0 16px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.08); /* optional divider */
+    }
+
+    .secondary-content{
+      padding-top: 56px; /* match header height so content doesn't go under it */
+    }
+
+    .kebab{
+      background: transparent;
+      border: 0;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+    }
 
     :root{
       --bg:#fff;
@@ -44,137 +43,77 @@
       --dot-gap:6px;
       --dot-shift:-10px;  /* negative = shift left */
 
-      --edge-zone:80px;   /* px near left/right edges that triggers scrolling */
+      --edge-zone:80px;   /* px near top/bottom edges that triggers scrolling */
       --max-speed:18;     /* px per frame */
       --page-pad:0px;     /* keep 0 for flush look */
     }
 
-body{
-  background: var(--bg);
-  color: var(--fg);
-  overflow: hidden;
-  font-family: "Montserrat", Arial, Helvetica, sans-serif;
-}
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: var(--bg);
+      color: var(--fg);
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-:root{
-  --bg:#fff;
-  --fg:#000;
+    :root{
+      /* ... */
+      --side-pad: 56px; /* distance from left/right borders */
+      --top-pad: 0px;   /* keep 0 unless you also want top/bottom padding */
+    }
 
-  --top-gap:46px;
+    /* Whole stage (no frame) */
+    .stage{
+      position: fixed;
+      top: var(--top-pad);
+      bottom: var(--top-pad);
+      left: var(--side-pad);
+      right: var(--side-pad);
+      background: var(--bg);
+      overflow: hidden;
+    }
 
-  --dot-size:5px;
-  --dot-gap:6px;
-  --dot-shift:-10px;
+    /* ===== DOTS (UNCHANGED) ===== */
+    .menu-link{
+      position: fixed;
+      top: 12px;
 
-  --page-pad-top:0px;
+      /* 1/4 of the page width */
+      left: 25%;
 
-  /* ✅ frames */
-  --left-frame: 30vw;   /* left white area = 30% of screen */
-  --right-frame: 0px;   /* remove right frame */
-  --end-gap: 24px;      /* small white frame at the very end (right side) */
+      /* keep the small left shift you already liked */
+      transform: translateX(var(--dot-shift));
 
-  --page-pad:0px;
+      z-index: 10;
+      padding: 8px 12px;
+      text-decoration: none;
 
-  --intro-w: 24vw;                 /* ✅ narrower than before */
-  --intro-min: 220px;              /* safety on small screens */
-  --intro-max: 360px;              /* safety on huge screens */
+      /* slight blur */
+      filter: blur(0.65px);
+      opacity: 0.8;
 
-  --intro-left: clamp(28px, 3vw, 56px); /* x-position of text */
-  --intro-top:  clamp(70px, 10vh, 120px); /* y-position for title */
-  --intro-gap:  clamp(50px, 10vh, 110px); /* distance title -> txt */
-}
+      -webkit-tap-highlight-color: transparent;
+    }
 
-/* Whole stage (no border/frame) */
-.stage{
-  top: var(--page-pad-top);
-  bottom: var(--page-pad-top);
-  left: var(--left-frame);
-  right: var(--right-frame);
-  background: var(--bg);
-  overflow: hidden;
-}
+    /* kill the default dotted focus outline that can look like tiny blinking dots */
+    .menu-link:focus-visible{
+      outline: 2px solid #000;
+      outline-offset: 6px;
+    }
 
-.intro-panel{
-  flex: 0 0 clamp(var(--intro-min), var(--intro-w), var(--intro-max));
-  height: 100%;
-  background: var(--bg);
-  position: relative;   /* ✅ for absolute-positioned text */
-  box-sizing: border-box;
-}
+    /* Remove the stray pseudo-element that creates the tiny extra dots */
+    .dots::before,
+    .dots::after{
+      content: none !important;
+      display: none !important;
+    }
 
-.intro-title{
-  /* MOVE TITLE HERE */
-  position: absolute;
-  top: var(--intro-top);
-  left: var(--intro-left);
-
-  
-  /* CHANGE TITLE FONT STYLING HERE */
-  margin: 0;
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  font-weight: 400;
-  opacity: 0.75;
-}
-
-.intro-txt{
-  /* MOVE txt HERE */
-  position: absolute;
-  top: calc(var(--intro-top) + var(--intro-gap));
-  left: var(--intro-left);
-
-  /* CHANGE txt FONT STYLING HERE */
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--fg);
-  padding: 0;
-  font-family: inherit;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  font-weight: 400;
-  opacity: 0.55;
-  cursor: pointer;
-}
-
-
-
-
-
-.menu-link{
-  position: fixed;
-  top: 12px;
-  left: 90%;
-  transform: translateX(-50%) translateX(var(--dot-shift));
-  z-index: 10;
-  padding: 8px 12px;
-  text-decoration: none;
-  filter: blur(3.25px);
-  -webkit-tap-highlight-color: transparent;
-}
-
-
-/* kill the default dotted focus outline that can look like tiny blinking dots */
-.menu-link:focus-visible{
-  outline: 2px solid #000;
-  outline-offset: 6px;
-}
-
-/* Remove the stray pseudo-element that creates the tiny extra dots */
-.dots::before,
-.dots::after{
-  content: none !important;
-  display: none !important;
-}
-
-/* (Optional) also prevent pseudo-elements on the link itself */
-.menu-link::before,
-.menu-link::after{
-  content: none !important;
-  display: none !important;
-}
-
-
+    /* (Optional) also prevent pseudo-elements on the link itself */
+    .menu-link::before,
+    .menu-link::after{
+      content: none !important;
+      display: none !important;
+    }
 
     .dots{ display:flex; gap: var(--dot-gap); }
     .dot{
@@ -188,6 +127,7 @@ body{
       outline: 2px solid var(--fg);
       outline-offset: 4px;
     }
+    /* ===== END DOTS ===== */
 
     /* Reserve top band, photos below */
     .viewport{
@@ -198,37 +138,99 @@ body{
       overflow: hidden;
     }
 
-    /* Scrolling strip */
+    /* Scrolling strip (VERTICAL) */
+/* Reserve top band, photos below (keep yours) */
+.viewport{
+  position:absolute;
+  inset: 0;
+  padding-top: var(--top-gap);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ===== NEW: editorial grid strip ===== */
+/* --- LAYOUT: screenshot grid --- */
 .strip{
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 28px;
+  padding: 26px 0 80px;       /* top + bottom breathing room */
+  align-content: start;
   will-change: transform;
   transform: translate3d(0,0,0);
 }
 
-.start-spacer,
-.end-spacer{
-  flex: 0 0 var(--end-gap);
-  height: 100%;
+/* Each tile controls its crop */
+.item{
+  width: 100%;
+  overflow: hidden;
+  background: transparent;
 }
 
-    .strip img{
-      display: block;
-      height: 100%;
-      width: auto;
-      object-fit: cover;
-      user-select: none;
-      -webkit-user-drag: none;
-      pointer-events: none;
-    }
+.item img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* ====== PLACEMENT MAP (matches your screenshot) ====== */
+
+/* 1) Top panorama */
+.hero{
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 5;
+}
+
+/* 2) Staggered smalls under hero:
+      left medium, center portrait, right column two portraits stacked */
+.s2-left   { grid-column: 1 / span 6;  aspect-ratio: 4 / 3; }
+.s2-center { grid-column: 6 / span 3;  aspect-ratio: 2 / 3; }
+.s2-r-top  { grid-column: 10 / span 3; aspect-ratio: 2 / 3; }
+.s2-r-bot  { grid-column: 10 / span 3; aspect-ratio: 2 / 3; }
+
+/* 3) Big left + right portrait (the “main pair”) */
+.big-left  { grid-column: 1 / span 7;  aspect-ratio: 4 / 5; }
+.big-right { grid-column: 9 / span 4;  aspect-ratio: 3 / 4; }
+
+/* 4) Full-width contact sheet band + inset portrait on the right */
+.band{
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 6;       /* wide strip */
+}
+.band-inset{
+  grid-column: 9 / span 4;    /* sits over the band on the right */
+  aspect-ratio: 3 / 4;
+  z-index: 2;
+}
+
+/* 5) Three scattered mid row */
+.mid-left  { grid-column: 1 / span 4;  aspect-ratio: 4 / 3; }
+.mid-center{ grid-column: 5 / span 4;  aspect-ratio: 3 / 4; }
+.mid-right { grid-column: 10 / span 3; aspect-ratio: 3 / 4; }
+.mid-right2{ grid-column: 10 / span 3; aspect-ratio: 3 / 4; }
+
+/* 6) Row of 4 headshots */
+.head{ grid-column: span 3; aspect-ratio: 1 / 1; }
+
+/* 7) Bottom two big images */
+.bottom-left  { grid-column: 1 / span 6; aspect-ratio: 4 / 3; }
+.bottom-right { grid-column: 7 / span 6; aspect-ratio: 4 / 3; }
+
+
   </style>
 </head>
 
 <body>
-  <!-- Dots link to menu.html -->
+  <!-- moved from <head> to <body> (valid HTML) -->
+  <header class="secondary-topstrip">
+    <button class="kebab" aria-label="More options">⋯</button>
+  </header>
+
+  <!-- Dots link to menu.html (UNCHANGED) -->
   <a class="menu-link" href="menu.html" aria-label="Open menu">
     <span class="dots" aria-hidden="true">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -238,92 +240,87 @@ body{
   <div class="stage" id="stage">
     <div class="viewport">
 <div class="strip" id="strip">
-  <!-- small left white gap only visible at the far-right limit -->
-  <span class="start-spacer" aria-hidden="true"></span>
+<div class="strip" id="strip">
+  <!-- Row 1 -->
+  <div class="item hero"><img src="front/01.jpg" alt=""></div>
 
-  <!-- ✅ new moving “white picture” -->
-  <div class="intro-panel">
-    <div class="intro-title">фронтир</div>
-    <button class="intro-txt" id="txtBtn" type="button">txt</button>
-  </div>
+  <!-- Row 2 (4 across) -->
+  <div class="item r2a"><img src="front/02.jpg" alt=""></div>
+  <div class="item r2b"><img src="front/03.jpg" alt=""></div>
+  <div class="item r2c"><img src="front/04.jpg" alt=""></div>
+  <div class="item r2d"><img src="front/05.jpg" alt=""></div>
 
-  <img src="front/01.jpg" alt="">
-  <img src="front/02.jpg" alt="">
-  <img src="front/03.jpg" alt="">
-  <img src="front/04.jpg" alt="">
-  <img src="front/05.jpg" alt="">
-  <img src="front/06.jpg" alt="">
-  <img src="front/07.jpg" alt="">
-  <img src="front/08.jpg" alt="">
+  <!-- Row 3 (2 across) -->
+  <div class="item r3a"><img src="front/06.jpg" alt=""></div>
+  <div class="item r3b"><img src="front/07.jpg" alt=""></div>
 
-  <span class="end-spacer" aria-hidden="true"></span>
+  <!-- Row 4 (4 small) -->
+  <div class="item r4"><img src="front/08.jpg" alt=""></div>
+  <div class="item r4"><img src="front/09.jpg" alt=""></div>
+  <div class="item r4"><img src="front/10.jpg" alt=""></div>
+  <div class="item r4"><img src="front/11.jpg" alt=""></div>
+
+  <!-- Row 5 (2 large) -->
+  <div class="item r5"><img src="front/12.jpg" alt=""></div>
+  <div class="item r5"><img src="front/13.jpg" alt=""></div>
+
+  <!-- Row 6 (4 small) -->
+  <div class="item r6"><img src="front/14.jpg" alt=""></div>
+  <div class="item r6"><img src="front/15.jpg" alt=""></div>
+  <div class="item r6"><img src="front/16.jpg" alt=""></div>
+  <div class="item r6"><img src="front/17.jpg" alt=""></div>
+
+  <!-- Row 7 (3 images) -->
+  <div class="item r7a"><img src="front/18.jpg" alt=""></div>
+  <div class="item r7b"><img src="front/19.jpg" alt=""></div>
+  <div class="item r7c"><img src="front/20.jpg" alt=""></div>
 </div>
 
-
-</div>
 
     </div>
   </div>
 
 <script>
   const strip = document.getElementById('strip');
-  const stage = document.getElementById('stage');
 
-  let x = 0;
+  // current translateY (0 = top)
+  let y = 0;
 
   function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
-  // ✅ bounds based on the visible stage, not the full window
   function bounds(){
-    const stageW = stage.clientWidth;
-    const stripW = strip.scrollWidth; // includes padding-right end-gap
-    const minX = Math.min(0, stageW - stripW); // farthest left you can go
-    const maxX = 0;                             // flush left, never any left gap
-    return { minX, maxX };
+    const viewportH = document.documentElement.clientHeight;
+    const stripH = strip.scrollHeight;
+    const minY = Math.min(0, viewportH - stripH); // negative if content taller than viewport
+    const maxY = 0;
+    return { minY, maxY };
   }
 
   function apply(){
-    const { minX, maxX } = bounds();
-    x = clamp(x, minX, maxX);
-    strip.style.transform = `translate3d(${x}px,0,0)`;
+    strip.style.transform = `translate3d(0,${y}px,0)`;
   }
 
-  // ✅ wheel-only scroll
+  // Wheel / trackpad scroll
   window.addEventListener('wheel', (e) => {
-    // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
-    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
-
-    const speed = 1.2; // tune
-    x -= delta * speed;
-
-    apply();
+    // prevent the page from scrolling normally
     e.preventDefault();
+
+    // deltaY: + means scroll down (content should move up => y decreases)
+    y -= e.deltaY;
+
+    const { minY, maxY } = bounds();
+    y = clamp(y, minY, maxY);
+    apply();
   }, { passive: false });
 
-  window.addEventListener('resize', apply);
-  window.addEventListener('load', () => { x = 0; apply(); });
-
-  // -------------------------
-  // keep your modal code below (UNCHANGED)
-  // -------------------------
-
-  const txtBtn = document.getElementById('txtBtn');
-  const modalBackdrop = document.getElementById('modalBackdrop');
-  const modalClose = document.getElementById('modalClose');
-
-  function openModal(open){
-    modalBackdrop.classList.toggle('open', open);
-    modalBackdrop.setAttribute('aria-hidden', String(!open));
-  }
-
-  txtBtn.addEventListener('click', () => openModal(true));
-  modalClose.addEventListener('click', () => openModal(false));
-  modalBackdrop.addEventListener('click', (e) => {
-    if (e.target === modalBackdrop) openModal(false);
+  // Keep position valid on resize
+  window.addEventListener('resize', () => {
+    const { minY, maxY } = bounds();
+    y = clamp(y, minY, maxY);
+    apply();
   });
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') openModal(false);
-  });
+
+  apply();
 </script>
 
 </body>
