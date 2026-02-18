@@ -102,7 +102,7 @@ body{
   box-sizing: border-box;
 }
 
-.intro-title{
+.intro-title{ /* здесь ты стайлишь надпись фронтир */
   /* MOVE TITLE HERE */
   position: absolute;
   top: var(--intro-top);
@@ -118,7 +118,7 @@ body{
   font-style: italic;
 }
 
-.intro-txt{
+.intro-txt{ /* здесь ты стайлишь надпись txt */
   /* MOVE txt HERE */
   position: absolute;
   top: 40%;
@@ -136,7 +136,6 @@ body{
   font-weight: 400;
   opacity: 0.55;
   cursor: pointer;
-  
   font-style: italic;
 }
 
@@ -146,8 +145,8 @@ body{
 
 .menu-link{
   position: fixed;
-  top: 12px;
-  left: 98%;
+  top: 12px; /* горизонтальная позиция точек */
+  left: 98%; /* горизонтальная позиция точек меняется здесь в данном случае % от ширины страницы (можешь попробовать и дробные) */
   transform: translateX(-50%) translateX(var(--dot-shift));
   z-index: 10;
   padding: 8px 12px;
