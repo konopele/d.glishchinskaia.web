@@ -95,7 +95,7 @@ body{
 }
 
 .intro-panel{
-  flex: 0 0 clamp(var(--intro-min), var(--intro-w), var(--intro-max));
+  flex: 0 0 600px;
   height: 100%;
   background: var(--bg);
   position: relative;   /* ✅ for absolute-positioned text */
@@ -111,17 +111,18 @@ body{
   
   /* CHANGE TITLE FONT STYLING HERE */
   margin: 0;
-  font-size: 13px;
+  font-size: 32px;
   letter-spacing: 0.08em;
   font-weight: 400;
   opacity: 0.75;
+  font-style: italic;
 }
 
 .intro-txt{
   /* MOVE txt HERE */
   position: absolute;
-  top: calc(var(--intro-top) + var(--intro-gap));
-  left: var(--intro-left);
+  top: 40%;
+  left: 60%;
 
   /* CHANGE txt FONT STYLING HERE */
   appearance: none;
@@ -130,11 +131,13 @@ body{
   color: var(--fg);
   padding: 0;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 32px;
   letter-spacing: 0.02em;
   font-weight: 400;
   opacity: 0.55;
   cursor: pointer;
+  
+  font-style: italic;
 }
 
 
@@ -144,7 +147,7 @@ body{
 .menu-link{
   position: fixed;
   top: 12px;
-  left: 90%;
+  left: 98%;
   transform: translateX(-50%) translateX(var(--dot-shift));
   z-index: 10;
   padding: 8px 12px;
