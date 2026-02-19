@@ -8,8 +8,19 @@
 
 
 <style>
+  .signature{
+  position: absolute;
+  top: 34px;     /* tweak */
+  left: 56px;    /* tweak */
+  width: 360px;  /* tweak */
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
 .menu-stage{
   position: relative;
+  top: 8px;
   width: 900px;          /* set as you like */
   margin: 60px 0 0 60px; /* page placement */
 }
@@ -62,6 +73,8 @@
 </head>
 
 <body>
+  <img class="signature" src="img/signature.png" alt="Daria Glishchinskaia">
+
   <div class="menu-stage">
   <img class="tree-img" src="img/tree.png" alt="" aria-hidden="true">
 
