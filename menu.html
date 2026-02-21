@@ -78,6 +78,9 @@
       margin: 0;
       overflow: hidden;       /* stops scroll */
       overscroll-behavior: none;
+      overflow-y: hidden;
+      overflow-x: auto;   /* allow horizontal scroll */
+      overscroll-behavior: none;
       touch-action: none;     /* prevents swipe scroll on mobile */
     }
 
@@ -103,6 +106,8 @@
       position: relative;
       height: 100%;
       box-sizing: border-box;
+      width: max-content; /* page grows to content width */
+      min-width: 100vw;   /* but never smaller than viewport */
     }
 
     /* Signature (top-left angle area) */
