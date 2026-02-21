@@ -4,140 +4,226 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Menu</title>
-<link rel="stylesheet" href="/css/style.css">
 
+  <style>
+    /* --- Montserrat (local) --- */
+    @font-face{
+      font-family: "Montserrat";
+      src: url("/fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face{
+      font-family: "Montserrat";
+      src: url("/fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
 
-<style>
-  .signature{
-  position: absolute;
-  top: 34px;     /* tweak */
-  left: 56px;    /* tweak */
-  width: 360px;  /* tweak */
-  height: auto;
-  user-select: none;
-  pointer-events: none;
-}
+    :root{
+      /* colors */
+      --bg:#fff;
+      --text:#7a7a7a;
+      --hover:#4a4a4a;
+      --line:#9a9a9a;
 
-.menu-stage{
-  position: relative;
-  top: 8px;
-  width: 900px;          /* set as you like */
-  margin: 60px 0 0 60px; /* page placement */
-}
+      /* typography */
+      --font: 16px;
+      --lh: 28px;
 
+      /* stage placement */
+      --pad-x: 56px;
+      --pad-y: 40px;
 
+      /* SINGLE SOURCES OF TRUTH for trunk placement */
+      --trunk-abs-x: 56px;    /* trunk X in viewport coords */
+      --art-top: 150px;       /* trunk Y for "худ.практика" header line */
+      --com-top: 390px;       /* trunk Y for "коммерция" header line */
 
+      /* trunk segment sizes */
+      --trunk-art-h: 199px; /*top vertical line length*/
+      --trunk-com-h: 87px; /*bottom vertical line length*/
 
-.links{
-  position: absolute;
-  top: 0;                /* align with top of image */
-  left: 0;
-  /* move the links to the right of the tree graphic */
-  transform: translate(70px, 0); /* X,Y fine-tune here */
-  font-family: "Montserrat", Arial, sans-serif;
-  font-style: italic;
-  font-size: 16px;
-  line-height: 28px;
-  color: #7a7a7a;
-}
+      /* line lengths */
+      --hHead: 26px;          /* solid header line length */
+      --hDash: 44px;          /* dashed item line length */
+      --hSolidSmall: 18px;    /* short solid lines for CV/Contacts */
 
-.links .title{
-  margin: 0 0 10px 0;
-}
+      /* spacing */
+      --text-gap: 12px;       /* gap between line and text */
+      --gap-after-art: 30px;
+      --gap-after-commercial: 26px;
 
-.links a{
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
+      /* dash pattern */
+      --dash: 8px;
+      --dash-gap: 7px;
 
-.links a:hover{
-  color: #4a4a4a;
-  text-decoration: none;
-}
+      /* signature */
+      --sig-w: 320px;
+      --sig-x: 56px;
+      --sig-y: 40px;
 
-.tree-img{
-    height: 442px;
-    position: absolute;
-    top: 56px;
-}
+      /* menu column X bound to trunk */
+      --menu-left: calc(var(--trunk-abs-x) + var(--hHead) + var(--text-gap));
+      /* text baselines bound to trunk Y */
+      --art-menu-top: calc(var(--art-top) - (var(--lh) / 2));
+      --com-menu-top: calc(var(--com-top) - (var(--lh) / 2));
+    }
 
-.title{
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: var(--bg);
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: var(--font);
+      line-height: var(--lh);
+      letter-spacing: 0.02em;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    a, a:visited, a:hover, a:active{
+      color: inherit;
+      text-decoration: none !important;
+    }
+    a:hover{ color: var(--hover); }
+
+    .stage{
+      position: relative;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Signature (top-left angle area) */
+    .signature{
+      position: absolute;
+      left: var(--sig-x);
+      top: var(--sig-y);
+      width: var(--sig-w);
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Trunk segments (X + Y are controlled by variables) */
+    .trunk{
+      position: absolute;
+      left: var(--trunk-abs-x);
+      width: 1px;
+      background: var(--line);
+      opacity: 0.65;
+    }
+    .trunk.art{ top: var(--art-top); height: var(--trunk-art-h); }
+    .trunk.com{ top: var(--com-top); height: var(--trunk-com-h); }
+
+    /* Header solid lines (start at trunk X, Y bound to trunk Y) */
+    .head-line{
+      position: absolute;
+      left: var(--trunk-abs-x);
+      height: 1px;
+      width: var(--hHead);
+      background: var(--line);
+      opacity: 0.65;
+    }
+    .head-line.art{ top: var(--art-top); }
+    .head-line.com{ top: var(--com-top); }
+
+    /* Menu blocks: left bound to trunk X, top bound to trunk Y */
+    .menu{
+      position: absolute;
+      left: var(--menu-left);
+      width: 1200px;
+    }
+    .menu.art{
+        top: var(--art-menu-top);
+        position: absolute;
+        left: 57px;
+    }
+    .menu.com{
+        top: var(--com-menu-top);
+        position: absolute;
+        left: 57px;
+    }
+
+    .row{
+      display: flex;
+      align-items: center;
+      gap: 0;      
+    }
+
+    .line{
+      flex: 0 0 auto;
+      height: 1px;
+      background: var(--line);
+      opacity: 0.65;
+    }
+    .line.dashed{
+      width: var(--hDash);
+      background: repeating-linear-gradient(
+        to right,
+        var(--line) 0 var(--dash),
+        transparent var(--dash) calc(var(--dash) + var(--dash-gap))
+      );
+    }
+    .line.solid.tiny{ width: var(--hSolidSmall);
     position: relative;
-    top: 43px;
-    left: -38px;
-}
+left: -18px;}
 
-</style>
+    .title-row{ margin-bottom: 2px;
+    position: relative;
+    left: 30px;}
+    .spacer{ height: var(--gap-after-art); }
+    .spacer2{ height: var(--gap-after-commercial); }
 
+    .singles{ margin-top: 2px; }
+    .singles .row{ margin-left: 18px; }
+  </style>
 </head>
 
 <body>
-  <img class="signature" src="img/signature.png" alt="Daria Glishchinskaia">
+  <div class="stage">
+    <!-- Signature -->
+    <img class="signature" src="img/signature.png" alt="Daria Glishchinskaia" aria-hidden="true">
 
-  <div class="menu-stage">
-  <img class="tree-img" src="img/tree.png" alt="" aria-hidden="true">
+    <!-- Trunks -->
+    <div class="trunk art" aria-hidden="true"></div>
+    <div class="trunk com" aria-hidden="true"></div>
 
-<div class="links">
-    <div class="title" style="
-    position: relative;
-    top: 43px;
-    left: -38px;
-">худ. практика</div>
-    <a href="repetition.html" style="
-    position: relative;
-    top: 40px;
-">РЕПЕТИЦИЯ</a>
-    <a href="sport.html" style="
-    position: relative;
-    top: 43px;
-">СПОРТ-КЛУБ</a>
-    <a href="teni.html" style="
-    position: relative;
-    top: 51px;
-">ТЕНИ</a>
-    <a href="kollekciya.html" style="
-    position: relative;
-    top: 56px;
-">КОЛЛЕКЦИЯ ХРУПКИХ И НЕПРИКОСНОВЕННЫХ ОБЪЕКТОВ</a>
-    <a href="frontir.html" style="
-    position: relative;
-    top: 63px;
-    padding-top: 36px;
-">ФРОНТИР</a>
-    <a href="bram.html">B.R.A.M</a>
-    <a href="shots.html" style="
-    padding-top: 40px;
-">КАДРЫ (SHOTS)</a>
+    <!-- Header solid lines -->
+    <div class="head-line art" aria-hidden="true"></div>
+    <div class="head-line com" aria-hidden="true"></div>
 
-    <div class="title" style="top: 6px;left: -38px;position: relative;">коммерция</div>
-    <a href="reportage.html" style="
-    position: relative;
-    top: -1px;
-">РЕПОРТАЖИ</a>
-    <a href="brands.html" style="
-    position: relative;
-    top: 5px;
-">ДЛЯ БРЕНДОВ</a>
-    <a href="portraits.html" style="
-    position: relative;
-    padding-top: 11px;
-">ПОРТРЕТЫ</a>
+    <!-- ART MENU (top bound to --art-top) -->
+    <div class="menu art">
+      <div class="row title-row"><div class="label">худ.практика</div></div>
 
-    <div class="single" style="margin-top:22px;">
-      <a href="cv.html" style="
-    position: relative;
-    top: -15px;
-    left: -24px;
-">CV / BIO</a>
-      <a href="contacts.html" style="
-    position: relative;
-    top: -10px;
-    left: -24px;
-">КОНТАКТЫ</a>
+      <div class="row"><div class="line dashed"></div><a href="repetition.html">РЕПЕТИЦИЯ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="sport.html">СПОРТ-КЛУБ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="teni.html">ТЕНИ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="kollekciya.html">КОЛЛЕКЦИЯ ХРУПКИХ И НЕПРИКОСНОВЕННЫХ ОБЪЕКТОВ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="frontir.html">ФРОНТИР</a></div>
+      <div class="row"><div class="line dashed"></div><a href="bram.html">B.R.A.M</a></div>
+      <div class="row"><div class="line dashed"></div><a href="shots.html">КАДРЫ (SHOTS)</a></div>
+    </div>
+
+    <!-- COMMERCIAL MENU (top bound to --com-top) -->
+    <div class="menu com">
+      <div class="row title-row"><div class="label">коммерция</div></div>
+
+      <div class="row"><div class="line dashed"></div><a href="reportage.html">РЕПОРТАЖИ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="brands.html">ДЛЯ БРЕНДОВ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="portraits.html">ПОРТРЕТЫ</a></div>
+
+      <div class="spacer2"></div>
+
+      <div class="singles">
+        <div class="row"><div class="line solid tiny"></div><a href="cv.html">CV / BIO</a></div>
+        <div class="row"><div class="line solid tiny"></div><a href="contacts.html">КОНТАКТЫ</a></div>
+      </div>
     </div>
   </div>
-</div>
-
 </body>
 </html>
