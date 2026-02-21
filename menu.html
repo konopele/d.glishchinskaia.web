@@ -72,7 +72,15 @@
       --com-menu-top: calc(var(--com-top) - (var(--lh) / 2));
     }
 
-    html, body { height: 100%; margin: 0; }
+    html, body{
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;       /* stops scroll */
+      overscroll-behavior: none;
+      touch-action: none;     /* prevents swipe scroll on mobile */
+    }
+    
     body{
       background: var(--bg);
       font-family: "Montserrat", Arial, Helvetica, sans-serif;
