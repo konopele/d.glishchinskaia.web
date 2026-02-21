@@ -6,177 +6,138 @@
   <title>Menu</title>
 <link rel="stylesheet" href="/css/style.css">
 
+
 <style>
-  /* Load Montserrat (local files) */
-  @font-face{
-    font-family: "Montserrat";
-    src: url("/fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face{
-    font-family: "Montserrat";
-    src: url("/fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-  }
+  .signature{
+  position: absolute;
+  top: 34px;     /* tweak */
+  left: 56px;    /* tweak */
+  width: 360px;  /* tweak */
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
 
-  :root{
-    --bg:#fff;
+.menu-stage{
+  position: relative;
+  top: 8px;
+  width: 900px;          /* set as you like */
+  margin: 60px 0 0 60px; /* page placement */
+}
 
-    /* old feeling: lighter ink */
-    --text:#7a7a7a;     /* main menu text */
-    --text-hover:#4a4a4a;
 
-    /* tree lines should be even lighter */
-    --line:#9a9a9a;
 
-    --pad-left: 95px;
-    --pad-top: 70px;
 
-    --font: 16px;
-    --lh: 28px;
+.links{
+  position: absolute;
+  top: 0;                /* align with top of image */
+  left: 0;
+  /* move the links to the right of the tree graphic */
+  transform: translate(70px, 0); /* X,Y fine-tune here */
+  font-family: "Montserrat", Arial, sans-serif;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 28px;
+  color: #7a7a7a;
+}
 
-    --trunk-x: 10px;    /* x position of vertical trunk */
-    --arm: 14px;        /* SHORT connector arm */
-    --arm-gap: 10px;    /* gap between arm end and text */
-    --dash: "- - - ";
-  }
+.links .title{
+  margin: 0 0 10px 0;
+}
 
-  html, body { height: 100%; margin: 0; }
-  body{
-    background: var(--bg);
-    font-family: "Montserrat", Arial, Helvetica, sans-serif;
-    font-style: italic; /* keeps your current italic look */
-    font-weight: 400;
-    font-size: var(--font);
-    line-height: var(--lh);
-    letter-spacing: 0.02em;
-    color: var(--text);
-  }
+.links a{
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
 
-  a{
-    color: inherit;
-    text-decoration: none;
-  }
-  a:hover{
-    color: var(--text-hover);
-    text-decoration: none;
-  }
+.links a:hover{
+  color: #4a4a4a;
+  text-decoration: none;
+}
 
-  .wrap{
-    padding-left: var(--pad-left);
-    padding-top: var(--pad-top);
-  }
+.tree-img{
+    height: 442px;
+    position: absolute;
+    top: 56px;
+}
 
-  .group{ margin-bottom: 26px; }
-
-  .title{
-    margin: 0 0 6px 0;
-    color: var(--text);
-  }
-
-  .tree{
+.title{
     position: relative;
-    padding-left: 28px; /* space for trunk + short arms */
-  }
+    top: 43px;
+    left: -38px;
+}
 
-  /* vertical trunk */
-  .tree::before{
-    content:"";
-    position:absolute;
-    left: var(--trunk-x);
-    top: 10px;
-    bottom: 10px;
-    width: 1px;
-    background: var(--line);
-    opacity: 0.6;
-  }
-
-  .item{
-    position: relative;
-    display: block;
-    padding-left: calc(var(--arm) + var(--arm-gap));
-    white-space: nowrap;
-    color: var(--text);
-  }
-
-  /* short connector arm (currently disabled below) */
-  .item::before{
-    content:"";
-    position:absolute;
-    left: var(--trunk-x);
-    top: 50%;
-    width: var(--arm);
-    height: 1px;
-    background: var(--line);
-    opacity: 0.5;
-    transform: translateY(-50%);
-  }
-
-  /* dashed prefix */
-  .item span::before{
-    content: var(--dash);
-    opacity: 0.9;
-  }
-
-  /* bottom singles */
-  .single{ margin-top: 14px; }
-  .single a{
-    display:block;
-    margin-top: 10px;
-    white-space: nowrap;
-  }
-  .single a::before{
-    content: "— ";
-    opacity: 0.9;
-  }
-
-  /* remove the small horizontal arm before each item */
-  a.item::before{
-    content: none !important;
-    display: none !important;
-  }
-  a.item::after{
-    content: none !important;
-    display: none !important;
-  }
 </style>
 
 </head>
 
 <body>
-  <div class="wrap">
+  <img class="signature" src="img/signature.png" alt="Daria Glishchinskaia">
 
-    <section class="group">
-      <div class="title">худ. практика</div>
-      <div class="tree">
-        <a class="item" href="repetition.html"><span>РЕПЕТИЦИЯ</span></a>
-        <a class="item" href="sport.html"><span>СПОРТКЛУБ</span></a>
-        <a class="item" href="teni.html"><span>ТЕНИ</span></a>
-        <a class="item" href="kollekciya.html"><span>КОЛЛЕКЦИЯ ХРУПКИХ И НЕПРИКОСНОВЕННЫХ ОБЪЕКТОВ</span></a>
-        <a class="item" href="frontir.html"><span>ФРОНТИР</span></a>
-        <a class="item" href="bram.html"><span>B.R.A.M</span></a>
-        <a class="item" href="shots.html"><span>КАДРЫ (SHOTS)</span></a>
-      </div>
-    </section>
+  <div class="menu-stage">
+  <img class="tree-img" src="img/tree.png" alt="" aria-hidden="true">
 
-    <section class="group">
-      <div class="title">коммерция</div>
-      <div class="tree">
-        <a class="item" href="reportage.html"><span>РЕПОРТАЖИ</span></a>
-        <a class="item" href="brands.html"><span>ДЛЯ БРЕНДОВ</span></a>
-        <a class="item" href="portraits.html"><span>ПОРТРЕТЫ</span></a>
-      </div>
-    </section>
+<div class="links">
+    <div class="title" style="
+    position: relative;
+    top: 43px;
+    left: -38px;
+">худ. практика</div>
+    <a href="repetition.html" style="
+    position: relative;
+    top: 40px;
+">РЕПЕТИЦИЯ</a>
+    <a href="sport.html" style="
+    position: relative;
+    top: 43px;
+">СПОРТ-КЛУБ</a>
+    <a href="teni.html" style="
+    position: relative;
+    top: 51px;
+">ТЕНИ</a>
+    <a href="kollekciya.html" style="
+    position: relative;
+    top: 56px;
+">КОЛЛЕКЦИЯ ХРУПКИХ И НЕПРИКОСНОВЕННЫХ ОБЪЕКТОВ</a>
+    <a href="frontir.html" style="
+    position: relative;
+    top: 63px;
+    padding-top: 36px;
+">ФРОНТИР</a>
+    <a href="bram.html">B.R.A.M</a>
+    <a href="shots.html" style="
+    padding-top: 40px;
+">КАДРЫ (SHOTS)</a>
 
-    <div class="single">
-      <a href="cv.html">CV / BIO</a>
-      <a href="contacts.html">КОНТАКТЫ</a>
+    <div class="title" style="top: 6px;left: -38px;position: relative;">коммерция</div>
+    <a href="reportage.html" style="
+    position: relative;
+    top: -1px;
+">РЕПОРТАЖИ</a>
+    <a href="brands.html" style="
+    position: relative;
+    top: 5px;
+">ДЛЯ БРЕНДОВ</a>
+    <a href="portraits.html" style="
+    position: relative;
+    padding-top: 11px;
+">ПОРТРЕТЫ</a>
+
+    <div class="single" style="margin-top:22px;">
+      <a href="cv.html" style="
+    position: relative;
+    top: -15px;
+    left: -24px;
+">CV / BIO</a>
+      <a href="contacts.html" style="
+    position: relative;
+    top: -10px;
+    left: -24px;
+">КОНТАКТЫ</a>
     </div>
-
   </div>
+</div>
+
 </body>
 </html>
