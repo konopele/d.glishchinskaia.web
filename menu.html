@@ -80,7 +80,7 @@
       overscroll-behavior: none;
       touch-action: none;     /* prevents swipe scroll on mobile */
     }
-    
+
     body{
       background: var(--bg);
       font-family: "Montserrat", Arial, Helvetica, sans-serif;
@@ -188,6 +188,24 @@
 
     .singles{ margin-top: 2px; }
     .singles .row{ margin-left: 12px; }
+
+    @media (max-width: 768px){
+    /* allow only the LONG link to wrap */
+    .row a{
+      white-space: normal;     /* allow wrapping */
+      overflow: visible;       /* don’t clip */
+      text-overflow: unset;    /* remove … */
+      max-width: 100%;
+    }
+
+    /* align wrapped lines nicely under the first line */
+    .row{
+      align-items: flex-start; /* so multi-line text starts at top */
+      height: auto;            /* let row grow */
+      min-height: var(--lh);   /* keep rhythm */
+    }
+  }
+
   </style>
 </head>
 
