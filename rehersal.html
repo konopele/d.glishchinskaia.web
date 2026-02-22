@@ -232,6 +232,50 @@ body{
   -webkit-user-drag: none;
   pointer-events: none;
 }
+
+.collage{
+  position: relative;
+  width: 100%;
+  /* controls overall scroll height of the collage */
+  height: 2200px;              /* tune */
+  background: #fff;
+}
+
+/* all photos */
+.collage .p{
+  position: absolute;
+  display: block;
+  height: auto;
+  object-fit: cover;
+}
+
+/* “art-directed” placements (percent based = responsive) */
+.p1{ top: 40px;  left: 8%;  width: 84%; }   /* wide banner */
+.p2{ top: 280px; left: 12%; width: 22%; }
+.p3{ top: 260px; left: 40%; width: 20%; }
+.p4{ top: 290px; left: 68%; width: 20%; }
+
+.p5{ top: 520px; left: 10%; width: 52%; }   /* big action shot */
+.p6{ top: 560px; left: 70%; width: 20%; }
+
+.band{
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+}
+.b1{ top: 980px; height: 240px; }
+.b1 img{ height: 100%; width: auto; display:block; }
+
+/* mobile tuning */
+@media (max-width: 520px){
+  .collage{ height: 2400px; }
+  .p2{ left: 8%; width: 28%; }
+  .p3{ left: 38%; width: 26%; }
+  .p4{ left: 70%; width: 22%; }
+}
   </style>
 </head>
 
@@ -256,14 +300,28 @@ body{
     <button class="intro-txt" id="txtBtn" type="button">txt</button>
   </div>
 
-  <img src="front/01.jpg" alt="">
-  <img src="front/02.jpg" alt="">
-  <img src="front/03.jpg" alt="">
-  <img src="front/04.jpg" alt="">
-  <img src="front/05.jpg" alt="">
-  <img src="front/06.jpg" alt="">
-  <img src="front/07.jpg" alt="">
-  <img src="front/08.jpg" alt="">
+<div class="collage">
+  <!-- row 1 -->
+  <img class="p p1" src="rehersal/01.jpg" alt="">
+  <img class="p p2" src="rehersal/02.jpg" alt="">
+  <img class="p p3" src="rehersal/03.jpg" alt="">
+
+  <!-- row 2 -->
+  <img class="p p4" src="rehersal/04.jpg" alt="">
+  <img class="p p5" src="rehersal/05.jpg" alt="">
+  <img class="p p6" src="rehersal/06.jpg" alt="">
+
+  <!-- repeated strip (full width band) -->
+  <div class="band b1">
+    <img src="rehersal/07.jpg" alt="">
+    <img src="rehersal/07.jpg" alt="">
+    <img src="rehersal/07.jpg" alt="">
+    <!-- ... -->
+  </div>
+
+  <!-- more scattered photos -->
+  <img class="p p7" src="rehersal/08.jpg" alt="">
+</div>
 
   <span class="end-spacer" aria-hidden="true"></span>
 </div>
