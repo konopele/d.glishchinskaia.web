@@ -6,6 +6,35 @@
   <title>спорт-клуб — Дарья Глищинская</title>
 
   <style>
+    @font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
     :root{
       --bg:#fff;
       --fg:#000;
@@ -20,80 +49,106 @@
       --page-pad:0px;     /* keep 0 for flush look */
     }
 
-    html, body { height: 100%; margin: 0; }
-    body{
-      background: var(--bg);
-      color: var(--fg);
-      overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+body{
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
 
 :root{
   --bg:#fff;
   --fg:#000;
 
-  --top-gap:46px;
+  /* ✅ top white stripe height */
+  --topbar-h:56px;
+
+  /* keep using this as the reserved height above photos */
+  --top-gap: var(--topbar-h);
 
   --dot-size:5px;
   --dot-gap:6px;
   --dot-shift:-10px;
 
+  /* ✅ remove frames so content touches sides */
+  --left-frame: 0px;
+  --right-frame: 0px;
+
+  --end-gap: 24px;
   --page-pad-top:0px;
-
-  /* ✅ frames */
-  --left-frame: 30vw;   /* left white area = 30% of screen */
-  --right-frame: 0px;   /* remove right frame */
-  --end-gap: 24px;      /* small white frame at the very end (right side) */
-
   --page-pad:0px;
-
-  --intro-w: 24vw;                 /* ✅ narrower than before */
-  --intro-min: 220px;              /* safety on small screens */
-  --intro-max: 360px;              /* safety on huge screens */
-
-  --intro-left: clamp(28px, 3vw, 56px); /* x-position of text */
-  --intro-top:  clamp(70px, 10vh, 120px); /* y-position for title */
-  --intro-gap:  clamp(50px, 10vh, 110px); /* distance title -> txt */
 }
 
-/* Whole stage (no border/frame) */
+/* ✅ fixed top stripe, opaque, no border/frame */
+.topbar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-h);
+  background: var(--bg);
+  z-index: 20;
+}
+
+/* ✅ stage must be positioned, and touch edges */
 .stage{
-  top: var(--page-pad-top);
-  bottom: var(--page-pad-top);
-  left: var(--left-frame);
-  right: var(--right-frame);
+  position: fixed;      /* IMPORTANT: your top/left/right/bottom now apply */
+  inset: 0;             /* touch all sides */
   background: var(--bg);
   overflow: hidden;
 }
 
+/* photos start under the stripe */
+.viewport{
+  position: absolute;
+  inset: 0;
+  padding-top: var(--top-gap);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ✅ menu-link anchored inside the stripe */
+.menu-link{
+  position: fixed;
+  top: calc(var(--topbar-h) / 2);
+  left: 98%;
+  transform: translate(-50%, -50%) translateX(var(--dot-shift));
+  z-index: 30; /* above stripe */
+  padding: 8px 12px;
+  text-decoration: none;
+  filter: blur(3.25px);
+  -webkit-tap-highlight-color: transparent;
+}
+
 .intro-panel{
-  flex: 0 0 clamp(var(--intro-min), var(--intro-w), var(--intro-max));
+  flex: 0 0 500px;
   height: 100%;
   background: var(--bg);
   position: relative;   /* ✅ for absolute-positioned text */
   box-sizing: border-box;
 }
 
-.intro-title{
+.intro-title{ /* здесь ты стайлишь надпись фронтир */
   /* MOVE TITLE HERE */
   position: absolute;
   top: var(--intro-top);
-  left: var(--intro-left);
-
+  left: 45%;
+  top: 25%;
   
   /* CHANGE TITLE FONT STYLING HERE */
   margin: 0;
-  font-size: 13px;
+  font-size: 18px;
   letter-spacing: 0.08em;
   font-weight: 400;
   opacity: 0.75;
+  font-style: italic;
 }
 
-.intro-txt{
+.intro-txt{ /* здесь ты стайлишь надпись txt */
   /* MOVE txt HERE */
   position: absolute;
-  top: calc(var(--intro-top) + var(--intro-gap));
-  left: var(--intro-left);
+  top: 50%;
+  left: 30%;
 
   /* CHANGE txt FONT STYLING HERE */
   appearance: none;
@@ -102,27 +157,12 @@
   color: var(--fg);
   padding: 0;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 18px;
   letter-spacing: 0.02em;
   font-weight: 400;
   opacity: 0.55;
   cursor: pointer;
-}
-
-
-
-
-
-.menu-link{
-  position: fixed;
-  top: 12px;
-  left: 90%;
-  transform: translateX(-50%) translateX(var(--dot-shift));
-  z-index: 10;
-  padding: 8px 12px;
-  text-decoration: none;
-  filter: blur(3.25px);
-  -webkit-tap-highlight-color: transparent;
+  font-style: italic;
 }
 
 
@@ -161,14 +201,7 @@
       outline-offset: 4px;
     }
 
-    /* Reserve top band, photos below */
-    .viewport{
-      position:absolute;
-      inset: 0;
-      padding-top: var(--top-gap);
-      box-sizing: border-box;
-      overflow: hidden;
-    }
+
 
     /* Scrolling strip */
 .strip{
