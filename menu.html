@@ -61,7 +61,7 @@
       --dash-gap: 7px;
 
       /* signature */
-      --sig-w: 320px;
+      --sig-w: 420px;
       --sig-x: 56px;
       --sig-y: 40px;
 
@@ -111,15 +111,16 @@
     }
 
     /* Signature (top-left angle area) */
-    .signature{
-      position: absolute;
-      left: var(--sig-x);
-      top: var(--sig-y);
-      width: var(--sig-w);
-      height: auto;
-      pointer-events: none;
-      user-select: none;
-    }
+.signature{
+  position: absolute;
+  top: var(--sig-y);     /* keep your top offset */
+  left: 50%;             /* center point */
+  transform: translateX(-50%);
+  width: var(--sig-w);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
 
     /* Trunk segments (X + Y are controlled by variables) */
     .trunk{
@@ -196,8 +197,8 @@
 
     .hover-preview{
   position: absolute;
-  right: 70px;     /* place on the right like your reference */
-  top: 140px;      /* tweak for your layout */
+  right: 10%;     /* place on the right like your reference */
+  top: 35%;      /* tweak for your layout */
   width: 260px;    /* preview box size */
   height: 320px;
   display: none;   /* hidden by default */
@@ -249,7 +250,7 @@
       <div class="row"><div class="line dashed"></div><a href="collection.html" data-img="previews/collection.png">КОЛЛЕКЦИЯ ХРУПКИХ И НЕПРИКОСНОВЕННЫХ ОБЪЕКТОВ</a></div>
       <div class="row"><div class="line dashed"></div><a href="frontir.html" data-img="previews/frontir.png">ФРОНТИР</a></div>
       <div class="row"><div class="line dashed"></div><a href="bram.html" data-img="previews/bram.png">B.R.A.M</a></div>
-      <div class="row"><div class="line dashed"></div><a href="shots.html" data-img="previews/shots.png">КАДРЫ (SHOTS)</a></div>
+      <div class="row"><div class="line dashed"></div><a href="shots.html">КАДРЫ (SHOTS)</a></div>
     </div>
 
     <div class="hover-preview" aria-hidden="true">
