@@ -77,6 +77,7 @@ body{
   --end-gap: 24px;
   --page-pad-top:0px;
   --page-pad:0px;
+  --bottom-gap: 46px;  /* <- add this */
 }
 
 /* ✅ fixed top stripe, opaque, no border/frame */
@@ -91,20 +92,23 @@ body{
 }
 
 /* ✅ stage must be positioned, and touch edges */
-.stage{
-  position: fixed;      /* IMPORTANT: your top/left/right/bottom now apply */
-  inset: 0;             /* touch all sides */
-  background: var(--bg);
+.viewport{
+  position:absolute;
+  inset: 0;
+  padding-top: var(--top-gap);
+  padding-bottom: var(--bottom-gap);   /* <- add */
+  box-sizing: border-box;
   overflow: hidden;
 }
 
-/* photos start under the stripe */
-.viewport{
-  position: absolute;
-  inset: 0;
-  padding-top: var(--top-gap);
-  box-sizing: border-box;
-  overflow: hidden;
+.strip{
+  height: calc(100% - var(--top-gap) - var(--bottom-gap));  /* <- change */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0;
+  will-change: transform;
+  transform: translate3d(0,0,0);
 }
 
 /* ✅ menu-link anchored inside the stripe */
@@ -212,6 +216,7 @@ body{
   gap: 0;
   will-change: transform;
   transform: translate3d(0,0,0);
+  align-items: stretch;
 }
 
 .start-spacer,
@@ -229,6 +234,39 @@ body{
       -webkit-user-drag: none;
       pointer-events: none;
     }
+
+    /* ===== photo framing like your screenshots ===== */
+
+/* stop forcing full-height cropped images */
+.strip img{
+  height: auto !important;
+  width: auto !important;
+  object-fit: contain !important;
+  pointer-events: none;
+}
+
+.item{
+  height: 100%;
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 28px 36px;
+
+  box-sizing: border-box;   /* ✅ IMPORTANT: prevents “falling down” */
+}
+
+/* the image scales down to fit the cell, no cropping */
+.item > img{
+  max-height: 100%;
+  max-width: 100%;
+  display: block;
+}
+
+.item.large{ padding: 16px 26px; } /* less padding = bigger photo */
+.item.small{ padding: 90px 92px; } /* more padding = smaller photo */
   </style>
 </head>
 
@@ -254,20 +292,20 @@ body{
 
 
         <!-- 14 photos in THE SAME STRIP (same sizing + movement as frontier) -->
-        <img src="sport/01.jpg" alt="">
-        <img src="sport/02.jpg" alt="">
-        <img src="sport/03.jpg" alt="">
-        <img src="sport/04.jpg" alt="">
-        <img src="sport/05.jpg" alt="">
-        <img src="sport/06.jpg" alt="">
-        <img src="sport/07.jpg" alt="">
-        <img src="sport/08.jpg" alt="">
-        <img src="sport/09.jpg" alt="">
-        <img src="sport/10.jpg" alt="">
-        <img src="sport/11.jpg" alt="">
-        <img src="sport/12.jpg" alt="">
-        <img src="sport/13.jpg" alt="">
-        <img src="sport/14.jpg" alt="">
+<div class="item large"><img src="sport/01.jpg" alt=""></div>
+<div class="item large"><img src="sport/02.jpg" alt=""></div>
+<div class="item small"><img src="sport/03.jpg" alt=""></div>
+<div class="item large"><img src="sport/04.jpg" alt=""></div>
+<div class="item small"><img src="sport/05.jpg" alt=""></div>
+<div class="item large"><img src="sport/06.jpg" alt=""></div>
+<div class="item large"><img src="sport/07.jpg" alt=""></div>
+<div class="item large"><img src="sport/08.jpg" alt=""></div>
+<div class="item small"><img src="sport/09.jpg" alt=""></div>
+<div class="item small"><img src="sport/10.jpg" alt=""></div>
+<div class="item large"><img src="sport/11.jpg" alt=""></div>
+<div class="item small"><img src="sport/12.jpg" alt=""></div>
+<div class="item small"><img src="sport/13.jpg" alt=""></div>
+<div class="item large"><img src="sport/14.jpg" alt=""></div>
 
   <span class="end-spacer" aria-hidden="true"></span>
 </div>
