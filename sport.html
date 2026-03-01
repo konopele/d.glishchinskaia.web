@@ -99,6 +99,7 @@ body{
   padding-bottom: var(--bottom-gap);   /* <- add */
   box-sizing: border-box;
   overflow: hidden;
+  touch-action: pan-x;
 }
 
 .strip{
@@ -265,7 +266,7 @@ body{
   display: block;
 }
 
-.item.large{ padding: 16px 26px; } /* less padding = bigger photo */
+.item.large{ padding: 14px 20px; } /* less padding = bigger photo */
 .item.small{ padding: 90px 92px; } /* more padding = smaller photo */
   </style>
 </head>
@@ -375,6 +376,91 @@ body{
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') openModal(false);
   });
+
+  // ===== Mobile: touch drag + inertia for the strip =====
+let isPointerDown = false;
+let lastX = 0;
+let lastT = 0;
+let dragV = 0;        // px per frame-ish (we'll compute from time)
+let dragging = false;
+
+function getClientX(e){
+  if (e.touches && e.touches.length) return e.touches[0].clientX;
+  if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
+  return e.clientX;
+}
+
+function onDown(e){
+  isPointerDown = true;
+  dragging = true;
+  lastX = getClientX(e);
+  lastT = performance.now();
+  dragV = 0;
+}
+
+function onMove(e){
+  if (!isPointerDown) return;
+
+  const cx = getClientX(e);
+  const now = performance.now();
+  const dx = cx - lastX;
+  const dt = Math.max(1, now - lastT);
+
+  // Move strip with finger
+  x += dx;
+
+  // Estimate velocity (px/ms)
+  dragV = dx / dt;
+
+  lastX = cx;
+  lastT = now;
+
+  const { minX, maxX } = bounds();
+  x = clamp(x, minX, maxX);
+
+  strip.style.transform = `translate3d(${x}px,0,0)`;
+}
+
+function onUp(){
+  if (!isPointerDown) return;
+  isPointerDown = false;
+
+  // Convert px/ms to your vx (px/frame at ~60fps)
+  vx = dragV * 16.67;     // inertia
+  dragging = false;
+}
+
+// Use Pointer Events when available (covers touch + pen + mouse)
+if (window.PointerEvent){
+  strip.addEventListener('pointerdown', (e) => {
+    // only primary finger
+    if (e.pointerType === 'mouse') return; // mouse handled by edge-hover
+    strip.setPointerCapture(e.pointerId);
+    onDown(e);
+  });
+
+  strip.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'mouse') return;
+    onMove(e);
+  });
+
+  strip.addEventListener('pointerup', (e) => {
+    if (e.pointerType === 'mouse') return;
+    onUp();
+  });
+
+  strip.addEventListener('pointercancel', onUp);
+} else {
+  // Fallback touch events
+  strip.addEventListener('touchstart', onDown, { passive: true });
+  strip.addEventListener('touchmove', onMove, { passive: true });
+  strip.addEventListener('touchend', onUp, { passive: true });
+  strip.addEventListener('touchcancel', onUp, { passive: true });
+}
+
+// ===== Modify your tick() slightly: don’t edge-scroll while dragging =====
+// Put this ONE LINE inside tick() right after you compute targetV:
+/// if (dragging) targetV = 0;
 </script>
 
 </body>
