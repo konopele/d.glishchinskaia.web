@@ -6,6 +6,35 @@
   <title>спорт-клуб — Дарья Глищинская</title>
 
   <style>
+    /* SPORT PAGE — base wrapper (desktop + mobile) */
+.sport-page {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* MOBILE: allow natural page scrolling */
+@media (max-width: 768px) {
+  html, body {
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Critical: if sport wrapper was locking the viewport */
+  .sport-page {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+    position: relative !important;
+  }
+
+  /* If you have any inner container set to 100vh, kill it on mobile */
+  .sport-page * {
+    /* don’t do this globally site-wide; sport-only is fine */
+  }
+}
     /* Baseline responsive safety */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }

@@ -294,6 +294,24 @@ button, a { touch-action: manipulation; }
     }
     /* Debug zones */
     /* .zone{ outline:1px solid rgba(255,255,255,0.18); } */
+    /* --- Mobile: enable normal scrolling --- */
+@media (max-width: 768px) {
+  html, body {
+    height: auto !important;
+    min-height: 100%;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* If you have a global wrapper that’s 100vh/fixed */
+  .page, .wrapper, .main, .container, .content {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+}
   </style>
 </head>
 
