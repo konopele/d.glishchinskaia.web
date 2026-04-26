@@ -226,6 +226,217 @@ body{
   max-height: 100%;
 }
 
+/* --- Slide 2 layout: big-left + triple-right --- */
+.slide--duo3 .duo3{
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;              /* left slightly wider */
+  gap: clamp(18px, 4vw, 54px);
+  align-items: center;
+  overflow: hidden;
+}
+
+.slide--duo3 .left{
+  height: 100%;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+.slide--duo3 .left .media{
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;                            /* ✅ no crop */
+}
+
+.slide--duo3 .right{
+  height: 100%;
+  display: grid;
+  align-items: center;                            /* center vertically */
+  overflow: hidden;
+}
+
+.slide--duo3 .triples{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 2.2vw, 26px);
+  align-items: center;
+  justify-items: center;
+}
+
+/* each repeated image is a “card” with fixed-ish height, no crop */
+.slide--duo3 .triples .media{
+  width: 100%;
+  height: min(60vh, 520px);                       /* controls the 3-up size */
+  object-fit: contain;                            /* ✅ no crop */
+}
+
+/* responsive: stack right under left on narrow screens */
+@media (max-width: 900px){
+  .slide--duo3 .duo3{
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .slide--duo3 .triples{
+    grid-template-columns: 1fr;
+  }
+  .slide--duo3 .triples .media{
+    height: auto;
+  }
+}
+
+/* =========================
+   SLIDE 3: one photo top-right
+   ========================= */
+.slide--solo-tr .solo-tr{
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.slide--solo-tr .solo-tr .media{
+  position: absolute;
+  top: clamp(18px, 4vh, 48px);
+  right: clamp(18px, 4vw, 70px);
+  width: min(320px, 34vw);
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain; /* no crop */
+}
+
+/* =========================
+   SLIDE 4: tiled background + overlay portrait
+   (background uses cover to fill, like your reference)
+   ========================= */
+.slide--pattern .pattern{
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.slide--pattern .pattern-bg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;          /* fills the slide like your screenshot */
+  display: block;
+}
+.slide--pattern .pattern-overlay{
+  position: absolute;
+  top: 50%;
+  left: 70%;                  /* slightly right of center */
+  transform: translate(-50%, -50%);
+  width: min(320px, 26vw);
+  max-height: 70vh;
+  height: auto;
+  object-fit: contain;        /* no crop */
+  border: 2px solid rgba(0,0,0,0.35);
+  background: rgba(255,255,255,0.01);
+}
+
+/* =========================
+   SLIDE 5: left single + right triple
+   ========================= */
+.slide--left1right3 .lr13{
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(18px, 4vw, 54px);
+  align-items: center;
+  overflow: hidden;
+}
+.slide--left1right3 .lr13-left{
+  height: 100%;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+.slide--left1right3 .lr13-left .media{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.slide--left1right3 .lr13-right{
+  height: 100%;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+.slide--left1right3 .lr13-right-grid{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 2.2vw, 26px);
+  align-items: center;
+  justify-items: center;
+}
+.slide--left1right3 .lr13-right-grid .media{
+  width: 100%;
+  height: min(58vh, 520px);
+  object-fit: contain;
+}
+
+/* =========================
+   SLIDE 7: three same + one on the right
+   ========================= */
+.slide--threeplusone .tpo{
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.05fr;
+  gap: clamp(14px, 2.4vw, 28px);
+  align-items: start;
+  overflow: hidden;
+}
+.slide--threeplusone .tpo .sq{
+  width: 100%;
+  height: min(42vh, 360px);
+  object-fit: contain; /* no crop */
+}
+.slide--threeplusone .tpo .right{
+  width: 100%;
+  height: min(48vh, 420px);
+  object-fit: contain; /* no crop */
+  justify-self: end;
+  align-self: start;
+}
+
+/* responsive */
+@media (max-width: 900px){
+  .slide--left1right3 .lr13{
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .slide--left1right3 .lr13-right-grid{
+    grid-template-columns: 1fr;
+  }
+  .slide--left1right3 .lr13-right-grid .media{
+    height: auto;
+  }
+
+  .slide--threeplusone .tpo{
+    grid-template-columns: 1fr;
+  }
+  .slide--threeplusone .tpo .sq,
+  .slide--threeplusone .tpo .right{
+    height: auto;
+  }
+
+  .slide--solo-tr .solo-tr .media{
+    right: 18px;
+    width: min(320px, 70vw);
+  }
+
+  .slide--pattern .pattern-overlay{
+    left: 62%;
+    width: min(320px, 56vw);
+  }
+}
+
 /* responsive: stack on narrow screens */
 @media (max-width: 720px){
   .triptych{
@@ -268,16 +479,73 @@ body{
           </div>
         </section>
 
-        <!-- SLIDE 2 -->
-        <section class="slide" data-slide>
-          <div class="slide-inner">
-            <div class="triptych">
-              <img class="media" src="rehersal/02.jpg" alt="">
-              <img class="media" src="rehersal/03.jpg" alt="">
-              <img class="media" src="rehersal/04.jpg" alt="">
-            </div>
-          </div>
-        </section>
+<!-- SLIDE 2 (big-left + 3 copies right) -->
+<section class="slide slide--duo3" data-slide>
+  <div class="slide-inner">
+    <div class="duo3">
+      <div class="left">
+        <img class="media" src="rehersal/06.jpg" alt="">
+      </div>
+
+      <div class="right">
+        <div class="triples">
+          <img class="media" src="rehersal/07.jpg" alt="">
+          <img class="media" src="rehersal/07.jpg" alt="">
+          <img class="media" src="rehersal/07.jpg" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: one photo top-right -->
+<section class="slide slide--solo-tr" data-slide>
+  <div class="slide-inner">
+    <div class="solo-tr">
+      <img class="media" src="rehersal/04.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: tiled background + overlay -->
+<section class="slide slide--pattern" data-slide>
+  <div class="slide-inner">
+    <div class="pattern">
+      <img class="media pattern-bg" src="rehersal/08.png" alt="">
+      <img class="media pattern-overlay" src="rehersal/09.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: left single + right triple -->
+<section class="slide slide--left1right3" data-slide>
+  <div class="slide-inner">
+    <div class="lr13">
+      <div class="lr13-left">
+        <img class="media" src="rehersal/03.jpg" alt="">
+      </div>
+      <div class="lr13-right">
+        <div class="lr13-right-grid">
+          <img class="media" src="rehersal/02.jpg" alt="">
+          <img class="media" src="rehersal/02.jpg" alt="">
+          <img class="media" src="rehersal/02.jpg" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: three same + one on the right -->
+<section class="slide slide--threeplusone" data-slide>
+  <div class="slide-inner">
+    <div class="tpo">
+      <img class="media sq" src="rehersal/15.jpg" alt="">
+      <img class="media sq" src="rehersal/15.jpg" alt="">
+      <img class="media sq" src="rehersal/15.jpg" alt="">
+      <img class="media right" src="rehersal/14.jpg" alt="">
+    </div>
+  </div>
+</section>
 
       </div>
     </div>
