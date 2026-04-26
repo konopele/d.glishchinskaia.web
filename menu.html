@@ -222,6 +222,15 @@ button, a { touch-action: manipulation; }
   z-index: 5;
 }
 
+.hover-preview.is-cv{
+  left: 50%;
+  right: auto;                 /* reset */
+  transform: translateX(-50%);
+  top: 40%; /* under signature */
+  width: 360px;
+  height: auto;
+}
+
 .hover-preview__img{
   width: 100%;
   height: 100%;
@@ -284,7 +293,7 @@ button, a { touch-action: manipulation; }
       <div class="spacer2"></div>
 
       <div class="singles">
-        <div class="row"><div class="line solid tiny"></div><a href="cv-bio.html">CV / BIO</a></div>
+        <div class="row"><div class="line solid tiny"></div><a href="cv-bio.html" data-img="previews/part_smile.png">CV / BIO</a></div>
         <div class="row"><div class="line solid tiny"></div><a href="contacts.html">КОНТАКТЫ</a></div>
       </div>
     </div>
@@ -300,22 +309,29 @@ button, a { touch-action: manipulation; }
     // all menu links that have preview images
     const links = document.querySelectorAll('a[data-img]');
 
-    function show(src){
-      img.src = src;
-      preview.classList.add('is-on');
-    }
-    function hide(){
-      preview.classList.remove('is-on');
-      // optional: clear to avoid stale image flashes
-      // img.src = "";
-    }
+function show(src, el){
+  img.src = src;
 
-    links.forEach(a => {
-      a.addEventListener('mouseenter', () => show(a.dataset.img));
-      a.addEventListener('focus', () => show(a.dataset.img));   // keyboard
-      a.addEventListener('mouseleave', hide);
-      a.addEventListener('blur', hide);
-    });
+  // detect CV
+  if (el.textContent.includes('CV')) {
+    preview.classList.add('is-cv');
+  } else {
+    preview.classList.remove('is-cv');
+  }
+
+  preview.classList.add('is-on');
+}
+function hide(){
+  preview.classList.remove('is-on');
+  preview.classList.remove('is-cv'); /* prevent sticking */
+}
+
+links.forEach(a => {
+  a.addEventListener('mouseenter', () => show(a.dataset.img, a));
+  a.addEventListener('focus', () => show(a.dataset.img, a));
+  a.addEventListener('mouseleave', hide);
+  a.addEventListener('blur', hide);
+});
   })();
 </script>
 
