@@ -543,6 +543,52 @@ body{
     height: 120px;
   }
 }
+
+/* --- Fixed composition canvas (same layout on any screen) --- */
+.fixed-canvas{
+  /* your “design size” */
+  --cw: 1400;
+  --ch: 800;
+
+  width: calc(var(--cw) * 1px);
+  height: calc(var(--ch) * 1px);
+
+  position: relative;
+  transform-origin: center center;
+}
+
+/* center the canvas in the slide */
+.slide-inner{
+  display: grid;
+  place-items: center;
+}
+
+/* images inside canvas */
+.fixed-canvas .media{
+  position: absolute;
+  object-fit: contain;   /* no crop */
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+}
+
+/* helper: keep sharp and stable */
+.fixed-canvas, .fixed-canvas .media{
+  transform: translateZ(0);
+}
+
+/* --- Slide 7 fixed positions (1400x800 canvas) --- */
+.slide--fixed7 .a1{ left: 80px;  top: 130px; width: 280px; }
+.slide--fixed7 .a2{ left: 390px; top: 130px; width: 280px; }
+.slide--fixed7 .a3{ left: 700px; top: 130px; width: 280px; }
+
+/* ✅ 4th image: locked to the right edge, centered vertically against the row */
+.slide--fixed7 .b1{
+  right: 80px;
+  top: 110px;      /* slightly higher because it’s taller */
+  width: 260px;
+}
   </style>
 </head>
 
@@ -682,13 +728,16 @@ body{
 </section>
 
 <!-- SLIDE 7: three same + one on the right -->
-<section class="slide slide--threeplusone" data-slide>
+<section class="slide slide--fixed7" data-slide>
   <div class="slide-inner">
-    <div class="tpo">
-      <img class="media sq" src="rehersal/15.jpg" alt="">
-      <img class="media sq" src="rehersal/15.jpg" alt="">
-      <img class="media sq" src="rehersal/15.jpg" alt="">
-      <img class="media right" src="rehersal/14.jpg" alt="">
+    <div class="fixed-canvas" data-fixed-canvas>
+      <!-- 3 same images -->
+      <img class="media a1" src="rehersal/15.jpg" alt="">
+      <img class="media a2" src="rehersal/15.jpg" alt="">
+      <img class="media a3" src="rehersal/15.jpg" alt="">
+
+      <!-- 4th image (right) -->
+      <img class="media b1" src="rehersal/14.jpg" alt="">
     </div>
   </div>
 </section>

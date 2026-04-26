@@ -211,24 +211,26 @@ button, a { touch-action: manipulation; }
     .singles{ margin-top: 2px; }
     .singles .row{ margin-left: 12px; }
 
-    .hover-preview{
+.hover-preview{
   position: absolute;
-  right: 10%;     /* place on the right like your reference */
-  top: 35%;      /* tweak for your layout */
-  width: 260px;    /* preview box size */
+  right: 10%;
+  left: auto;
+  top: 35%;
+  width: 260px;
   height: 320px;
-  display: none;   /* hidden by default */
+  display: none;
   pointer-events: none;
   z-index: 5;
+  transform: none;
 }
 
 .hover-preview.is-cv{
   left: 50%;
-  right: auto;                 /* reset */
-  transform: translateX(-50%);
-  top: 50%; /* under signature */
+  right: auto;
+  top: 50%;
   width: 300px;
   height: auto;
+  transform: translateX(-50%);
 }
 
 .hover-preview__img{
@@ -238,6 +240,19 @@ button, a { touch-action: manipulation; }
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.hover-preview.is-cv .hover-preview__img{
+  height: auto;
+}
+
+.hover-preview.is-on{
+  display: block;
+}
+
+.hover-preview.is-on .hover-preview__img{
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* visible state */
@@ -293,8 +308,8 @@ button, a { touch-action: manipulation; }
       <div class="spacer2"></div>
 
       <div class="singles">
-        <div class="row"><div class="line solid tiny"></div><a href="cv-bio.html" data-img="previews/part_smile.png">CV / BIO</a></div>
-        <div class="row"><div class="line solid tiny"></div><a href="contacts.html" data-img="previews/part_smile.png">КОНТАКТЫ</a></div>
+        <div class="row"><div class="line solid tiny"></div><a href="cv-bio.html" data-img="previews/part_smile.png" data-type="center">CV / BIO</a></div>
+        <div class="row"><div class="line solid tiny"></div><a href="contacts.html" data-img="previews/part_smile.png" data-type="center">КОНТАКТЫ</a></div>
       </div>
     </div>
 
@@ -312,8 +327,7 @@ button, a { touch-action: manipulation; }
 function show(src, el){
   img.src = src;
 
-  // detect CV
-  if (el.textContent.includes('CV')) {
+  if (el.dataset.type === 'center') {
     preview.classList.add('is-cv');
   } else {
     preview.classList.remove('is-cv');
@@ -321,6 +335,7 @@ function show(src, el){
 
   preview.classList.add('is-on');
 }
+
 function hide(){
   preview.classList.remove('is-on');
   preview.classList.remove('is-cv'); /* prevent sticking */
