@@ -6,7 +6,7 @@
   <title>репетиция — Дарья Глищинская</title>
 
   <style>
-    @font-face{
+@font-face{
   font-family: "Montserrat";
   src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
   font-weight: 300;
@@ -23,7 +23,7 @@
 @font-face{
   font-family: "Montserrat";
   src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
-  font-weight: 400;
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
@@ -35,109 +35,132 @@
   font-display: swap;
 }
 
-    :root{
-      --bg:#fff;
-      --fg:#000;
-
-      --top-gap:46px;     /* space above photos for dots */
-      --dot-size:5px;
-      --dot-gap:6px;
-      --dot-shift:-10px;  /* negative = shift left */
-
-      --edge-zone:80px;   /* px near left/right edges that triggers scrolling */
-      --max-speed:18;     /* px per frame */
-      --page-pad:0px;     /* keep 0 for flush look */
-    }
-
-body{
-  background: var(--bg);
-  color: var(--fg);
-  overflow: hidden;
-  font-family: "Montserrat", Arial, Helvetica, sans-serif;
-}
-
 :root{
   --bg:#fff;
   --fg:#000;
 
-  /* ✅ top white stripe height */
   --topbar-h:56px;
-
-  /* keep using this as the reserved height above photos */
-  --top-gap: var(--topbar-h);
 
   --dot-size:5px;
   --dot-gap:6px;
   --dot-shift:-10px;
 
-  /* ✅ remove frames so content touches sides */
-  --left-frame: 0px;
-  --right-frame: 0px;
+  /* layout */
+  --slide-pad-x: clamp(18px, 4vw, 60px);
+  --slide-pad-y: clamp(18px, 3vh, 36px);
 
-  --end-gap: 24px;
-  --page-pad-top:0px;
-  --page-pad:0px;
+  /* image blur while loading */
+  --blur: 18px;
 }
 
-/* ✅ fixed top stripe, opaque, no border/frame */
+html, body{
+  height: 100%;
+}
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden; /* we control wheel manually */
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+/* ✅ fixed top stripe */
 .topbar{
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: var(--topbar-h);
   background: var(--bg);
   z-index: 20;
 }
 
-/* ✅ stage must be positioned, and touch edges */
-.stage{
-  position: fixed;      /* IMPORTANT: your top/left/right/bottom now apply */
-  inset: 0;             /* touch all sides */
-  background: var(--bg);
-  overflow: hidden;
-}
-
-/* photos start under the stripe */
-.viewport{
-  position: absolute;
-  inset: 0;
-  padding-top: var(--top-gap);
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-/* ✅ menu-link anchored inside the stripe */
+/* ✅ menu dots */
 .menu-link{
   position: fixed;
   top: calc(var(--topbar-h) / 2);
   left: 98%;
   transform: translate(-50%, -50%) translateX(var(--dot-shift));
-  z-index: 30; /* above stripe */
+  z-index: 30;
   padding: 8px 12px;
   text-decoration: none;
   filter: blur(3.25px);
   -webkit-tap-highlight-color: transparent;
 }
-
-/* strip is vertical => "narrow" means smaller HEIGHT */
-.intro-panel{
-  flex: 0 0 200px;   /* ✅ 200px tall */
-  height: auto;
-  width: 100%;
-  background: var(--bg);
-  position: relative;
-  box-sizing: border-box;
+.dots{ display:flex; gap: var(--dot-gap); }
+.dot{
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background: var(--fg);
+  opacity: 0.9;
+}
+.menu-link:focus-visible{
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+.dots::before,.dots::after,
+.menu-link::before,.menu-link::after{
+  content:none !important;
+  display:none !important;
 }
 
-.intro-title{ /* здесь ты стайлишь надпись фронтир */
-  /* MOVE TITLE HERE */
+/* ✅ stage + viewport below topbar */
+.stage{
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.viewport{
   position: absolute;
-  top: var(--intro-top);
-  left: 45%;
-  top: 25%;
-  
-  /* CHANGE TITLE FONT STYLING HERE */
+  top: var(--topbar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+/* --- SLIDES --- */
+.slides{
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+}
+
+/* one slide at a time */
+.slide{
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: var(--bg);
+}
+.slide.is-active{
+  display: block;
+}
+
+/* slide inner frame controls lateral gaps (not too big on fullscreen) */
+.slide-inner{
+  height: 100%;
+  width: 100%;
+  padding: var(--slide-pad-y) var(--slide-pad-x);
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden; /* never go past right edge */
+}
+
+/* optional header inside slide (like your reference) */
+.slide-head{
+  width: 100%;
+  height: clamp(90px, 18vh, 160px);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.slide-title{
   margin: 0;
   font-size: 18px;
   letter-spacing: 0.08em;
@@ -145,14 +168,8 @@ body{
   opacity: 0.75;
   font-style: italic;
 }
-
-.intro-txt{ /* здесь ты стайлишь надпись txt */
-  /* MOVE txt HERE */
-  position: absolute;
-  top: 50%;
-  left: 30%;
-
-  /* CHANGE txt FONT STYLING HERE */
+.slide-txt{
+  margin-top: 14px;
   appearance: none;
   border: 0;
   background: transparent;
@@ -167,305 +184,206 @@ body{
   font-style: italic;
 }
 
-
-/* kill the default dotted focus outline that can look like tiny blinking dots */
-.menu-link:focus-visible{
-  outline: 2px solid #000;
-  outline-offset: 6px;
-}
-
-/* Remove the stray pseudo-element that creates the tiny extra dots */
-.dots::before,
-.dots::after{
-  content: none !important;
-  display: none !important;
-}
-
-/* (Optional) also prevent pseudo-elements on the link itself */
-.menu-link::before,
-.menu-link::after{
-  content: none !important;
-  display: none !important;
-}
-
-
-
-    .dots{ display:flex; gap: var(--dot-gap); }
-    .dot{
-      width: var(--dot-size);
-      height: var(--dot-size);
-      border-radius: 50%;
-      background: var(--fg); /* black dots */
-      opacity: 0.9;
-    }
-    .menu-link:focus-visible{
-      outline: 2px solid var(--fg);
-      outline-offset: 4px;
-    }
-
-
-
-    /* Scrolling strip */
-/* Scrolling strip — VERTICAL */
-.strip{
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: column;  /* ✅ vertical */
-  flex-wrap: nowrap;
-  gap: 0;
-  will-change: transform;
-  transform: translate3d(0,0,0);
-}
-
-.start-spacer,
-.end-spacer{
-  flex: 0 0 var(--end-gap);
-  width: 100%;
-}
-
-/* images now fill width; height follows naturally */
-.strip img{
+/* image base: never overflow; no crop */
+.media{
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* ✅ never crop */
   display: block;
-  width: 100%;       /* ✅ fill viewport width */
-  height: auto;      /* ✅ natural height */
-  object-fit: cover;
-  user-select: none;
-  -webkit-user-drag: none;
-  pointer-events: none;
 }
 
-/* ✅ COLLAGE: grid = no overlap + stays inside viewport */
-/* --- COLLAGE: art-directed GRID, no overlap --- */
-/* COLLAGE: no overlap, no crop, minimal gaps */
-/* FIX lateral gaps: wider on desktop, controlled side padding */
-.collage{
-  width: 100%;
-  max-width: 1800px;                 /* ✅ allow wider collage on big screens */
-  margin: 0 auto;
+/* blur while loading */
+.media.is-loading{
+  filter: blur(var(--blur));
+  transform: translateZ(0);
+}
 
-  padding: 24px clamp(18px, 4vw, 60px) 90px;  /* ✅ responsive side padding */
-  box-sizing: border-box;
+/* --- Slide 1 (single panorama) --- */
+.slide--single .single-wrap{
+  width: 100%;
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* --- Slide 2 (three across) --- */
+.triptych{
+  width: 100%;
+  flex: 1 1 auto;
 
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 2vw, 22px);
 
-  align-items: start;
+  align-items: center;
+  justify-items: center;
   overflow: hidden;
 }
-
-/* images keep aspect ratio */
-.collage .p{
+.triptych .media{
   width: 100%;
-  height: auto;         /* ✅ natural height => no big internal whitespace */
-  display: block;
-  object-fit: contain;  /* ✅ never crop */
-  background: var(--bg);
+  height: auto;
+  max-height: 100%;
 }
 
-/* BAND: full width, fixed height strip */
-.band{
-  grid-column: 1 / -1;
-  height: 240px;
-  display: flex;
-  overflow: hidden;
-}
-.band img{
-  height: 100%;
-  width: auto;
-  display: block;
-}
-
-/* ---- Placement (COLUMN-BASED ONLY) ---- */
-/* Top panorama */
-.p1{ grid-column: 1 / -1; }
-
-/* Three under it */
-.p2{ grid-column: 1 / 5; }
-.p3{ grid-column: 5 / 9; }
-.p4{ grid-column: 9 / -1; }
-
-/* Big left + right column */
-.p5{ grid-column: 1 / 8; }
-.p6{ grid-column: 9 / -1; }
-.p7{ grid-column: 9 / -1; }
-
-/* Band */
-.b1{ grid-column: 1 / -1; }
-
-/* Scattered */
-.p8{  grid-column: 1 / 5; }
-.p9{  grid-column: 5 / 9; }
-.p10{ grid-column: 9 / -1; }
-.p11{ grid-column: 9 / -1; }
-
-/* Portrait row */
-.p12{ grid-column: 1 / 4; }
-.p13{ grid-column: 4 / 7; }
-.p14{ grid-column: 7 / 10; }
-.p15{ grid-column: 10 / -1; }
-
-/* Bottom pair */
-.p16{ grid-column: 1 / 7; }
-.p17{ grid-column: 7 / -1; }
-
-@media (max-width: 820px){
-  .collage{
-    grid-template-columns: repeat(8, 1fr);
-    padding: 18px 18px 70px;
+/* responsive: stack on narrow screens */
+@media (max-width: 720px){
+  .triptych{
+    grid-template-columns: 1fr;
     gap: 16px;
   }
-  .p1{ grid-column: 1 / -1; }
-  .p2{ grid-column: 1 / 5; }
-  .p3{ grid-column: 5 / -1; }
-  .p4{ grid-column: 1 / -1; }
-
-  .p5{ grid-column: 1 / -1; }
-  .p6{ grid-column: 1 / -1; }
-  .p7{ grid-column: 1 / -1; }
-
-  .band{ height: 200px; }
-}
-
-@media (max-width: 520px){
-  .collage{
-    grid-template-columns: 1fr;  /* single column */
+  .slide-head{
+    height: 120px;
   }
-  .p2,.p3,.p4,.p5,.p6,.p7,.p8,.p9,.p10,.p11,.p12,.p13,.p14,.p15,.p16,.p17{
-    grid-column: 1 / -1;
-  }
-  .band{ height: 180px; }
 }
   </style>
 </head>
 
 <body>
   <div class="topbar" aria-hidden="true"></div>
-  <!-- Dots link to menu.html -->
+
   <a class="menu-link" href="menu.html" aria-label="Open menu">
     <span class="dots" aria-hidden="true">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
     </span>
   </a>
 
-  <div class="stage" id="stage">
+  <div class="stage">
     <div class="viewport">
-<div class="strip" id="strip">
-  <!-- small left white gap only visible at the far-right limit -->
-  <span class="start-spacer" aria-hidden="true"></span>
+      <div class="slides" id="slides">
 
-  <!-- ✅ new moving “white picture” -->
-  <div class="intro-panel">
-    <div class="intro-title">репетиция</div>
-    <button class="intro-txt" id="txtBtn" type="button">txt</button>
-  </div>
+        <!-- SLIDE 1 -->
+        <section class="slide slide--single is-active" data-slide>
+          <div class="slide-inner">
+            <div class="slide-head">
+              <div style="text-align:center">
+                <div class="slide-title">репетиция</div>
+                <button class="slide-txt" id="txtBtn" type="button">txt</button>
+              </div>
+            </div>
 
-<div class="collage">
-  <img class="p p1" src="rehersal/01.jpg" alt="">
+            <div class="single-wrap">
+              <img class="media" src="rehersal/01.jpg" alt="">
+            </div>
+          </div>
+        </section>
 
-  <img class="p p2" src="rehersal/02.jpg" alt="">
-  <img class="p p3" src="rehersal/03.jpg" alt="">
-  <img class="p p4" src="rehersal/04.jpg" alt="">
+        <!-- SLIDE 2 -->
+        <section class="slide" data-slide>
+          <div class="slide-inner">
+            <div class="triptych">
+              <img class="media" src="rehersal/02.jpg" alt="">
+              <img class="media" src="rehersal/03.jpg" alt="">
+              <img class="media" src="rehersal/04.jpg" alt="">
+            </div>
+          </div>
+        </section>
 
-  <img class="p p5" src="rehersal/05.jpg" alt="">
-  <img class="p p6" src="rehersal/06.jpg" alt="">
-  <img class="p p7" src="rehersal/08.jpg" alt="">
-
-  <div class="band b1">
-    <img src="rehersal/07.jpg" alt="">
-    <img src="rehersal/07.jpg" alt="">
-    <img src="rehersal/07.jpg" alt="">
-    <img src="rehersal/07.jpg" alt="">
-    <img src="rehersal/07.jpg" alt="">
-  </div>
-
-  <!-- more scattered -->
-  <img class="p p8"  src="rehersal/09.jpg" alt="">
-  <img class="p p9"  src="rehersal/10.jpg" alt="">
-  <img class="p p10" src="rehersal/11.jpg" alt="">
-  <img class="p p11" src="rehersal/12.jpg" alt="">
-
-  <!-- portraits row -->
-  <img class="p p12" src="rehersal/13.jpg" alt="">
-  <img class="p p13" src="rehersal/14.jpg" alt="">
-  <img class="p p14" src="rehersal/15.jpg" alt="">
-  <img class="p p15" src="rehersal/16.jpg" alt="">
-
-  <!-- bottom pair -->
-  <img class="p p16" src="rehersal/17.jpg" alt="">
-  <img class="p p17" src="rehersal/18.jpg" alt="">
-</div>
-
-  <span class="end-spacer" aria-hidden="true"></span>
-</div>
-
-
-</div>
-
+      </div>
     </div>
   </div>
 
-<script>
-  const strip = document.getElementById('strip');
-  const stage = document.getElementById('stage');
+  <script>
+(() => {
+  const slides = Array.from(document.querySelectorAll('[data-slide]'));
+  let index = 0;
+  let locked = false;
 
-  let y = 0;
-
-  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
-
-  // ✅ bounds based on visible stage height
-  function bounds(){
-    const stageH = stage.clientHeight;
-    const stripH = strip.scrollHeight; // total content height
-    const minY = Math.min(0, stageH - stripH); // farthest up you can translate
-    const maxY = 0;                             // flush top, never any top gap
-    return { minY, maxY };
+  function setActive(i){
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
+    // kick blur management on the active slide
+    hydrateSlide(slides[index]);
   }
 
-  function apply(){
-    const { minY, maxY } = bounds();
-    y = clamp(y, minY, maxY);
-    strip.style.transform = `translate3d(0,${y}px,0)`;
+  // ---- Blur until loaded (per image) ----
+  function setLoading(img, on){
+    img.classList.toggle('is-loading', on);
   }
 
-  // ✅ wheel scroll vertically
+  function hydrateSlide(slideEl){
+    const imgs = Array.from(slideEl.querySelectorAll('img'));
+    imgs.forEach(img => {
+      // if already handled, skip
+      if (img.dataset.bound === '1') return;
+      img.dataset.bound = '1';
+
+      // start blurred if not complete yet
+      setLoading(img, !img.complete);
+
+      img.addEventListener('load', () => setLoading(img, false), { passive: true });
+      img.addEventListener('error', () => {
+        // hide broken images (and keep layout sane)
+        console.warn('Missing image:', img.getAttribute('src'));
+        img.style.display = 'none';
+      }, { passive: true });
+    });
+  }
+
+  // hydrate first slide immediately
+  hydrateSlide(slides[0]);
+
+  // ---- Instant slide switching on wheel / trackpad ----
+  function next(){ setActive(index + 1); }
+  function prev(){ setActive(index - 1); }
+
   window.addEventListener('wheel', (e) => {
-    // use vertical as primary, fall back to deltaX (trackpads)
-    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
-
-    const speed = 1.2; // tune
-    y -= delta * speed;
-
-    apply();
+    // prevent native scroll
     e.preventDefault();
+
+    if (locked) return;
+
+    // Determine dominant gesture axis:
+    const dy = e.deltaY;
+    const dx = e.deltaX;
+    const dominant = (Math.abs(dy) >= Math.abs(dx)) ? dy : dx;
+
+    // rules:
+    // wheel down / swipe up => dy > 0 => next
+    // swipe left => dx > 0 => next
+    // wheel up / swipe down => prev
+    if (dominant > 0) next();
+    else if (dominant < 0) prev();
+
+    // tiny lock to avoid accidental double-steps on inertial wheels
+    locked = true;
+    setTimeout(() => { locked = false; }, 120);
   }, { passive: false });
 
-  window.addEventListener('resize', apply);
-  window.addEventListener('load', () => { y = 0; apply(); });
-
-  // -------------------------
-  // keep your modal code below (UNCHANGED)
-  // -------------------------
-
-  const txtBtn = document.getElementById('txtBtn');
-  const modalBackdrop = document.getElementById('modalBackdrop');
-  const modalClose = document.getElementById('modalClose');
-
-  function openModal(open){
-    modalBackdrop.classList.toggle('open', open);
-    modalBackdrop.setAttribute('aria-hidden', String(!open));
-  }
-
-  txtBtn.addEventListener('click', () => openModal(true));
-  modalClose?.addEventListener('click', () => openModal(false));
-  modalBackdrop?.addEventListener('click', (e) => {
-    if (e.target === modalBackdrop) openModal(false);
-  });
+  // Optional: keyboard arrows
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') openModal(false);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') prev();
   });
-</script>
 
+  // Optional: touch swipe (mobile)
+  let sx = 0, sy = 0;
+  window.addEventListener('touchstart', (e) => {
+    if (!e.touches || !e.touches[0]) return;
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+  }, { passive: true });
+
+  window.addEventListener('touchend', (e) => {
+    if (!sx && !sy) return;
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+    const dx = sx - t.clientX;
+    const dy = sy - t.clientY;
+
+    // swipe up OR swipe left => next
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 40) next();
+      else if (dx < -40) prev();
+    } else {
+      if (dy > 40) next();
+      else if (dy < -40) prev();
+    }
+
+    sx = 0; sy = 0;
+  }, { passive: true });
+
+})();
+  </script>
 </body>
 </html>
