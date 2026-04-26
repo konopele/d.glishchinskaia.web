@@ -381,6 +381,102 @@ body{
 }
 
 /* =========================
+   SLIDE 6: internally scrollable
+   ========================= */
+.slide--scroll .slide-inner{
+  padding: 0; /* scrollpane manages padding */
+}
+
+/* The scrollable area */
+.scrollpane{
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  padding: var(--slide-pad-y) var(--slide-pad-x);
+  box-sizing: border-box;
+}
+
+/* Content taller than viewport -> scroll */
+.slide6-grid{
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 0.72fr 1fr 0.72fr;
+  grid-auto-rows: min-content;
+  gap: clamp(14px, 2.2vw, 28px);
+
+  align-items: start;
+}
+
+/* Left stack: 4 copies */
+.slide6-left{
+  display: grid;
+  gap: clamp(10px, 1.6vw, 18px);
+}
+
+/* Top center + top right */
+.slide6-top-center{ align-self: start; }
+.slide6-top-right{ align-self: start; justify-self: end; }
+
+/* Big center image */
+.slide6-center-big{
+  grid-column: 2 / 3;
+  justify-self: center;
+}
+
+/* Bottom row */
+.slide6-bottom-left{ grid-column: 1 / 2; }
+.slide6-bottom-center{ grid-column: 2 / 3; justify-self: center; }
+.slide6-bottom-right{ grid-column: 3 / 4; justify-self: end; }
+
+/* sizing (no crop) */
+.slide6-grid .media{
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* constrain some blocks so layout matches your reference proportions */
+.slide6-left .media{ max-width: 340px; }
+.slide6-top-center .media{ max-width: 420px; }
+.slide6-top-right .media{ max-width: 320px; }
+.slide6-center-big .media{ max-width: 560px; }
+.slide6-bottom-left .media{ max-width: 420px; }
+.slide6-bottom-center .media{ max-width: 320px; }
+.slide6-bottom-right .media{ max-width: 340px; }
+
+/* give scroll some “air” like your reference */
+.slide6-spacer{
+  height: clamp(40px, 10vh, 140px);
+}
+
+/* responsive */
+@media (max-width: 980px){
+  .slide6-grid{
+    grid-template-columns: 1fr;
+  }
+  .slide6-left, .slide6-top-center, .slide6-top-right,
+  .slide6-center-big, .slide6-bottom-left, .slide6-bottom-center, .slide6-bottom-right{
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+  .slide6-left .media,
+  .slide6-top-center .media,
+  .slide6-top-right .media,
+  .slide6-center-big .media,
+  .slide6-bottom-left .media,
+  .slide6-bottom-center .media,
+  .slide6-bottom-right .media{
+    max-width: min(560px, 92vw);
+  }
+}
+
+/* =========================
    SLIDE 7: three same + one on the right
    ========================= */
 .slide--threeplusone .tpo{
@@ -535,6 +631,56 @@ body{
   </div>
 </section>
 
+<!-- SLIDE 6 (scrollable) -->
+<section class="slide slide--scroll" data-slide data-scroll-slide>
+  <div class="slide-inner">
+    <div class="scrollpane">
+      <div class="slide6-grid">
+
+        <!-- left stack (x4) -->
+        <div class="slide6-left">
+          <img class="media" src="rehersal/11.jpg" alt="">
+          <img class="media" src="rehersal/11.jpg" alt="">
+          <img class="media" src="rehersal/11.jpg" alt="">
+          <img class="media" src="rehersal/11.jpg" alt="">
+        </div>
+
+        <!-- top center -->
+        <div class="slide6-top-center">
+          <img class="media" src="rehersal/12.jpg" alt="">
+        </div>
+
+        <!-- top right -->
+        <div class="slide6-top-right">
+          <img class="media" src="rehersal/13.jpg" alt="">
+        </div>
+
+        <!-- big center -->
+        <div class="slide6-center-big">
+          <img class="media" src="rehersal/16.jpg" alt="">
+        </div>
+
+        <!-- bottom row -->
+        <div class="slide6-bottom-left">
+          <img class="media" src="rehersal/17.jpg" alt="">
+        </div>
+
+        <div class="slide6-bottom-center">
+          <img class="media" src="rehersal/10.jpg" alt="">
+        </div>
+
+        <div class="slide6-bottom-right">
+          <img class="media" src="rehersal/03.jpg" alt="">
+        </div>
+
+      </div>
+
+      <!-- extra space so it feels like a “page” you scroll through -->
+      <div class="slide6-spacer" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
 <!-- SLIDE 7: three same + one on the right -->
 <section class="slide slide--threeplusone" data-slide>
   <div class="slide-inner">
@@ -551,17 +697,21 @@ body{
     </div>
   </div>
 
-  <script>
+<script>
 (() => {
   const slides = Array.from(document.querySelectorAll('[data-slide]'));
   let index = 0;
-  let locked = false;
+
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
 
   function setActive(i){
-    index = Math.max(0, Math.min(slides.length - 1, i));
+    index = clamp(i, 0, slides.length - 1);
     slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
-    // kick blur management on the active slide
     hydrateSlide(slides[index]);
+    // reset edge buffers whenever we change slides
+    edgeTopHits = 0;
+    edgeBottomHits = 0;
+    wheelAcc = 0;
   }
 
   // ---- Blur until loaded (per image) ----
@@ -572,16 +722,13 @@ body{
   function hydrateSlide(slideEl){
     const imgs = Array.from(slideEl.querySelectorAll('img'));
     imgs.forEach(img => {
-      // if already handled, skip
       if (img.dataset.bound === '1') return;
       img.dataset.bound = '1';
 
-      // start blurred if not complete yet
       setLoading(img, !img.complete);
 
       img.addEventListener('load', () => setLoading(img, false), { passive: true });
       img.addEventListener('error', () => {
-        // hide broken images (and keep layout sane)
         console.warn('Missing image:', img.getAttribute('src'));
         img.style.display = 'none';
       }, { passive: true });
@@ -589,33 +736,118 @@ body{
   }
 
   // hydrate first slide immediately
-  hydrateSlide(slides[0]);
+  if (slides[0]) hydrateSlide(slides[0]);
 
-  // ---- Instant slide switching on wheel / trackpad ----
   function next(){ setActive(index + 1); }
   function prev(){ setActive(index - 1); }
 
+  // =========================
+  // Piece-wise navigation (one gesture => one slide)
+  // + Special scroll-slide gating (Slide 6)
+  // =========================
+  let wheelAcc = 0;
+  let wheelUnlockTimer = null;
+  let wheelLocked = false;
+
+  // For the special scrollable slide:
+  // 1 stroke at edge does nothing, 2nd stroke changes slide
+  let edgeTopHits = 0;
+  let edgeBottomHits = 0;
+
+  function getActiveSlide(){
+    return slides[index];
+  }
+
+  function getScrollPaneIfAny(slideEl){
+    return slideEl?.querySelector('.scrollpane') || null;
+  }
+
+  function atTop(pane){ return pane.scrollTop <= 0; }
+  function atBottom(pane){
+    return pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1;
+  }
+
   window.addEventListener('wheel', (e) => {
-    // prevent native scroll
+    // We fully control the interaction; prevent native scrolling
     e.preventDefault();
 
-    if (locked) return;
+    const slide = getActiveSlide();
+    if (!slide) return;
 
-    // Determine dominant gesture axis:
+    // dominant axis: vertical OR horizontal (trackpad left/right)
     const dy = e.deltaY;
     const dx = e.deltaX;
     const dominant = (Math.abs(dy) >= Math.abs(dx)) ? dy : dx;
 
-    // rules:
-    // wheel down / swipe up => dy > 0 => next
-    // swipe left => dx > 0 => next
-    // wheel up / swipe down => prev
-    if (dominant > 0) next();
-    else if (dominant < 0) prev();
+    // direction: + => next, - => prev
+    const dir = dominant > 0 ? 1 : (dominant < 0 ? -1 : 0);
+    if (!dir) return;
 
-    // tiny lock to avoid accidental double-steps on inertial wheels
-    locked = true;
-    setTimeout(() => { locked = false; }, 120);
+    // ----- Special slide: internally scrollable + edge "buffer stroke" -----
+    const isScrollSlide = slide.hasAttribute('data-scroll-slide');
+    const pane = isScrollSlide ? getScrollPaneIfAny(slide) : null;
+
+    if (pane){
+      const wantNext = dir > 0;
+      const wantPrev = dir < 0;
+
+      const canScrollDown = !atBottom(pane);
+      const canScrollUp = !atTop(pane);
+
+      // If we can scroll inside in the travel direction: do it and reset buffers
+      if ((wantNext && canScrollDown) || (wantPrev && canScrollUp)){
+        edgeTopHits = 0;
+        edgeBottomHits = 0;
+
+        // make internal scroll feel natural
+        pane.scrollTop += dominant;
+        return;
+      }
+
+      // At top edge trying to go previous
+      if (wantPrev && atTop(pane)){
+        edgeTopHits += 1;
+        edgeBottomHits = 0;
+        if (edgeTopHits < 2) return;  // first stroke: buffer
+        edgeTopHits = 0;
+        prev();
+        return;
+      }
+
+      // At bottom edge trying to go next
+      if (wantNext && atBottom(pane)){
+        edgeBottomHits += 1;
+        edgeTopHits = 0;
+        if (edgeBottomHits < 2) return; // first stroke: buffer
+        edgeBottomHits = 0;
+        next();
+        return;
+      }
+
+      return;
+    }
+
+    // ----- Normal slides: one gesture => one slide -----
+    if (wheelLocked) return;
+
+    wheelAcc += dominant;
+
+    // threshold: when exceeded, advance exactly once
+    if (Math.abs(wheelAcc) >= 60){
+      wheelLocked = true;
+      wheelAcc = 0;
+
+      if (dir > 0) next();
+      else prev();
+    }
+
+    // unlock when gesture ends (wheel quiets down)
+    clearTimeout(wheelUnlockTimer);
+    wheelUnlockTimer = setTimeout(() => {
+      wheelLocked = false;
+      wheelAcc = 0;
+    }, 180);
+
   }, { passive: false });
 
   // Optional: keyboard arrows
@@ -624,22 +856,23 @@ body{
     if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') prev();
   });
 
-  // Optional: touch swipe (mobile)
+  // Optional: touch swipe (mobile) — one swipe => one slide
   let sx = 0, sy = 0;
   window.addEventListener('touchstart', (e) => {
-    if (!e.touches || !e.touches[0]) return;
-    sx = e.touches[0].clientX;
-    sy = e.touches[0].clientY;
+    const t = e.touches && e.touches[0];
+    if (!t) return;
+    sx = t.clientX;
+    sy = t.clientY;
   }, { passive: true });
 
   window.addEventListener('touchend', (e) => {
-    if (!sx && !sy) return;
     const t = e.changedTouches && e.changedTouches[0];
     if (!t) return;
+
     const dx = sx - t.clientX;
     const dy = sy - t.clientY;
 
-    // swipe up OR swipe left => next
+    // swipe up OR swipe left => next; swipe down OR swipe right => prev
     if (Math.abs(dx) > Math.abs(dy)) {
       if (dx > 40) next();
       else if (dx < -40) prev();
@@ -651,7 +884,9 @@ body{
     sx = 0; sy = 0;
   }, { passive: true });
 
+  // Ensure we start on slide 0
+  setActive(0);
 })();
-  </script>
+</script>
 </body>
 </html>
