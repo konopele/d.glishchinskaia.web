@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>репетиция — Дарья Глищинская</title>
 
-  <style>
+<style>
 @font-face{
   font-family: "Montserrat";
   src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
@@ -45,35 +45,31 @@
   --dot-gap:6px;
   --dot-shift:-10px;
 
-  /* layout */
-  --slide-pad-x: clamp(18px, 4vw, 60px);
-  --slide-pad-y: clamp(18px, 3vh, 36px);
+  --pad-x: clamp(18px, 4vw, 60px);
+  --pad-y: clamp(18px, 3vh, 36px);
 
-  /* image blur while loading */
   --blur: 18px;
 }
 
-html, body{
-  height: 100%;
-}
+html, body{ height:100%; }
 body{
-  margin: 0;
+  margin:0;
   background: var(--bg);
   color: var(--fg);
-  overflow: hidden; /* we control wheel manually */
+  overflow:hidden; /* JS controls scroll */
   font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
-/* ✅ fixed top stripe */
+/* top stripe */
 .topbar{
-  position: fixed;
-  top: 0; left: 0; right: 0;
+  position:fixed;
+  top:0; left:0; right:0;
   height: var(--topbar-h);
   background: var(--bg);
-  z-index: 20;
+  z-index:20;
 }
 
-/* ✅ menu dots */
+/* menu dots */
 .menu-link{
   position: fixed;
   top: calc(var(--topbar-h) / 2);
@@ -103,345 +99,243 @@ body{
   display:none !important;
 }
 
-/* ✅ stage + viewport below topbar */
-.stage{
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  overflow: hidden;
-}
+/* stage */
+.stage{ position:fixed; inset:0; background:var(--bg); overflow:hidden; }
 .viewport{
-  position: absolute;
+  position:absolute;
   top: var(--topbar-h);
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
+  left:0; right:0; bottom:0;
+  overflow:hidden;
 }
 
-/* --- SLIDES --- */
-.slides{
-  position: absolute;
-  inset: 0;
-  background: var(--bg);
-}
+/* slides */
+.slides{ position:absolute; inset:0; background:var(--bg); }
+.slide{ position:absolute; inset:0; display:none; background:var(--bg); }
+.slide.is-active{ display:block; }
 
-/* one slide at a time */
-.slide{
-  position: absolute;
-  inset: 0;
-  display: none;
-  background: var(--bg);
-}
-.slide.is-active{
-  display: block;
-}
-
-/* slide inner frame controls lateral gaps (not too big on fullscreen) */
 .slide-inner{
-  height: 100%;
-  width: 100%;
-  padding: var(--slide-pad-y) var(--slide-pad-x);
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  overflow: hidden; /* never go past right edge */
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  padding: var(--pad-y) var(--pad-x);
+  overflow:hidden;
 }
 
-/* optional header inside slide (like your reference) */
-.slide-head{
-  width: 100%;
-  height: clamp(90px, 18vh, 160px);
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-}
-.slide-title{
-  margin: 0;
-  font-size: 18px;
-  letter-spacing: 0.08em;
-  font-weight: 400;
-  opacity: 0.75;
-  font-style: italic;
-}
-.slide-txt{
-  margin-top: 14px;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--fg);
-  padding: 0;
-  font-family: inherit;
-  font-size: 18px;
-  letter-spacing: 0.02em;
-  font-weight: 400;
-  opacity: 0.55;
-  cursor: pointer;
-  font-style: italic;
-}
-
-/* image base: never overflow; no crop */
+/* images */
 .media{
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain; /* ✅ never crop */
-  display: block;
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  object-fit: contain; /* never crop */
 }
-
-/* blur while loading */
 .media.is-loading{
   filter: blur(var(--blur));
   transform: translateZ(0);
 }
 
-/* --- Slide 1 (single panorama) --- */
+/* ---------- SLIDE 1 ---------- */
+.slide--single .slide-inner{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;           /* no side white frames */
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* top white area with the text positioned like in the reference */
+.slide--single .slide-head{
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 170px;        /* white area above the image */
+  margin: 0;
+  z-index: 2;
+  pointer-events: none; /* so only txt button remains clickable */
+}
+
+.slide--single .slide-title{
+  position: absolute;
+  top: 58px;
+  left: 39%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  font-style: italic;
+  opacity: 0.8;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.slide--single .slide-txt{
+  position: absolute;
+  top: 95px;
+  left: 58.5%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  opacity: 0.65;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto; /* clickable */
+}
+
+/* image block */
 .slide--single .single-wrap{
-  width: 100%;
-  flex: 1 1 auto;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-
-/* --- Slide 2 (three across) --- */
-.triptych{
-  width: 100%;
-  flex: 1 1 auto;
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 2vw, 22px);
-
-  align-items: center;
-  justify-items: center;
-  overflow: hidden;
-}
-.triptych .media{
-  width: 100%;
-  height: auto;
-  max-height: 100%;
-}
-
-/* --- Slide 2 layout: big-left + triple-right --- */
-.slide--duo3 .duo3{
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;              /* left slightly wider */
-  gap: clamp(18px, 4vw, 54px);
-  align-items: center;
-  overflow: hidden;
-}
-
-.slide--duo3 .left{
-  height: 100%;
-  display: grid;
-  align-items: center;
-  overflow: hidden;
-}
-.slide--duo3 .left .media{
-  width: 100%;
-  height: 100%;
-  max-height: 100%;
-  object-fit: contain;                            /* ✅ no crop */
-}
-
-.slide--duo3 .right{
-  height: 100%;
-  display: grid;
-  align-items: center;                            /* center vertically */
-  overflow: hidden;
-}
-
-.slide--duo3 .triples{
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 2.2vw, 26px);
-  align-items: center;
-  justify-items: center;
-}
-
-/* each repeated image is a “card” with fixed-ish height, no crop */
-.slide--duo3 .triples .media{
-  width: 100%;
-  height: min(60vh, 520px);                       /* controls the 3-up size */
-  object-fit: contain;                            /* ✅ no crop */
-}
-
-/* responsive: stack right under left on narrow screens */
-@media (max-width: 900px){
-  .slide--duo3 .duo3{
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .slide--duo3 .triples{
-    grid-template-columns: 1fr;
-  }
-  .slide--duo3 .triples .media{
-    height: auto;
-  }
-}
-
-/* =========================
-   SLIDE 3: one photo top-right
-   ========================= */
-.slide--solo-tr .solo-tr{
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-.slide--solo-tr .solo-tr .media{
   position: absolute;
-  top: clamp(18px, 4vh, 48px);
-  right: clamp(18px, 4vw, 70px);
-  width: min(320px, 34vw);
-  height: auto;
-  max-height: 60vh;
-  object-fit: contain; /* no crop */
-}
-
-/* =========================
-   SLIDE 4: tiled background + overlay portrait
-   (background uses cover to fill, like your reference)
-   ========================= */
-.slide--pattern .pattern{
-  width: 100%;
-  height: 100%;
-  position: relative;
+  left: 0;
+  right: 0;
+  top: 170px;   /* starts right after the white header area */
+  bottom: 0;
   overflow: hidden;
-}
-.slide--pattern .pattern-bg{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;          /* fills the slide like your screenshot */
   display: block;
 }
-.slide--pattern .pattern-overlay{
-  position: absolute;
-  top: 50%;
-  left: 70%;                  /* slightly right of center */
-  transform: translate(-50%, -50%);
-  width: min(320px, 26vw);
-  max-height: 70vh;
+
+/* fit to WIDTH */
+.slide--single .single-wrap .media{
+  display: block;
+  width: 100%;
   height: auto;
-  object-fit: contain;        /* no crop */
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+}
+
+/* ---------- Slide 2 (layout computed in JS; no side/bottom frames) ---------- */
+.slide--duo3 .slide-inner{
+  padding: 0;            /* remove frames */
+  overflow:hidden;
+}
+.duo3{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+.duo3 .duo3-left,
+.duo3 .duo3-r{
+  position:absolute;
+  width:auto;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  object-fit: contain; /* never crop */
+}
+
+/* ---------- Slide 3 ---------- */
+.solo-tr{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+.solo-tr .media{
+  position:absolute;
+  top: clamp(10px, 2vh, 30px);
+  right: clamp(10px, 2vw, 40px);
+  width: min(360px, 35vw);
+  height:auto;
+  max-height: 70vh;
+}
+
+/* ---------- Slide 4 ---------- */
+.pattern{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+.pattern-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: cover; /* background fills */
+}
+.pattern-overlay{
+  position:absolute;
+  top:50%;
+  left:70%;
+  transform: translate(-50%, -50%);
+  width: min(340px, 28vw);
+  max-height: 75vh;
+  height:auto;
+  object-fit: contain;
   border: 2px solid rgba(0,0,0,0.35);
   background: rgba(255,255,255,0.01);
 }
 
-/* =========================
-   SLIDE 5: left single + right triple
-   ========================= */
-.slide--left1right3 .lr13{
-  width: 100%;
-  height: 100%;
-  display: grid;
+/* ---------- Slide 5 ---------- */
+.lr13{
+  width:100%;
+  height:100%;
+  display:grid;
   grid-template-columns: 0.9fr 1.1fr;
   gap: clamp(18px, 4vw, 54px);
-  align-items: center;
-  overflow: hidden;
+  align-items:center;
 }
-.slide--left1right3 .lr13-left{
-  height: 100%;
-  display: grid;
-  align-items: center;
-  overflow: hidden;
+.lr13-left, .lr13-right{
+  height:100%;
+  display:grid;
+  align-items:center;
+  overflow:hidden;
 }
-.slide--left1right3 .lr13-left .media{
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+.lr13-left .media{
+  width:100%;
+  height:100%;
 }
-.slide--left1right3 .lr13-right{
-  height: 100%;
-  display: grid;
-  align-items: center;
-  overflow: hidden;
-}
-.slide--left1right3 .lr13-right-grid{
-  width: 100%;
-  display: grid;
+.lr13-right-grid{
+  width:100%;
+  display:grid;
   grid-template-columns: repeat(3, 1fr);
   gap: clamp(12px, 2.2vw, 26px);
-  align-items: center;
-  justify-items: center;
+  align-items:center;
 }
-.slide--left1right3 .lr13-right-grid .media{
-  width: 100%;
+.lr13-right-grid .media{
+  width:100%;
   height: min(58vh, 520px);
-  object-fit: contain;
 }
 
-/* =========================
-   SLIDE 6: internally scrollable
-   ========================= */
-.slide--scroll .slide-inner{
-  padding: 0; /* scrollpane manages padding */
-}
-
-/* The scrollable area */
+/* ---------- Slide 6 (scrollable) ---------- */
+.slide--scroll .slide-inner{ padding:0; }
 .scrollpane{
-  height: 100%;
-  width: 100%;
-  overflow: auto;
+  width:100%;
+  height:100%;
+  overflow:auto;
   -webkit-overflow-scrolling: touch;
-
-  padding: var(--slide-pad-y) var(--slide-pad-x);
-  box-sizing: border-box;
+  padding: var(--pad-y) var(--pad-x);
+  box-sizing:border-box;
 }
-
-/* Content taller than viewport -> scroll */
 .slide6-grid{
-  width: 100%;
+  width:100%;
   max-width: 1400px;
-  margin: 0 auto;
-
-  display: grid;
+  margin:0 auto;
+  display:grid;
   grid-template-columns: 0.72fr 1fr 0.72fr;
-  grid-auto-rows: min-content;
   gap: clamp(14px, 2.2vw, 28px);
-
-  align-items: start;
+  align-items:start;
 }
-
-/* Left stack: 4 copies */
 .slide6-left{
-  display: grid;
+  display:grid;
   gap: clamp(10px, 1.6vw, 18px);
 }
-
-/* Top center + top right */
-.slide6-top-center{ align-self: start; }
-.slide6-top-right{ align-self: start; justify-self: end; }
-
-/* Big center image */
-.slide6-center-big{
-  grid-column: 2 / 3;
-  justify-self: center;
-}
-
-/* Bottom row */
+.slide6-top-center{ align-self:start; }
+.slide6-top-right{ align-self:start; justify-self:end; }
+.slide6-center-big{ grid-column: 2 / 3; justify-self:center; }
 .slide6-bottom-left{ grid-column: 1 / 2; }
-.slide6-bottom-center{ grid-column: 2 / 3; justify-self: center; }
-.slide6-bottom-right{ grid-column: 3 / 4; justify-self: end; }
+.slide6-bottom-center{ grid-column: 2 / 3; justify-self:center; }
+.slide6-bottom-right{ grid-column: 3 / 4; justify-self:end; }
 
-/* sizing (no crop) */
-.slide6-grid .media{
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
-
-/* constrain some blocks so layout matches your reference proportions */
+.slide6-grid .media{ width:100%; height:auto; }
 .slide6-left .media{ max-width: 340px; }
 .slide6-top-center .media{ max-width: 420px; }
 .slide6-top-right .media{ max-width: 320px; }
@@ -449,17 +343,36 @@ body{
 .slide6-bottom-left .media{ max-width: 420px; }
 .slide6-bottom-center .media{ max-width: 320px; }
 .slide6-bottom-right .media{ max-width: 340px; }
+.slide6-spacer{ height: clamp(40px, 10vh, 140px); }
 
-/* give scroll some “air” like your reference */
-.slide6-spacer{
-  height: clamp(40px, 10vh, 140px);
+/* ---------- Slide 7 ---------- */
+.tpo{
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr 1.05fr;
+  gap: clamp(14px, 2.4vw, 28px);
+  align-items:start;
+}
+.tpo .sq{
+  width:100%;
+  height: min(42vh, 360px);
+  object-fit: contain;
+}
+.tpo .right{
+  width:100%;
+  height: min(48vh, 420px);
+  object-fit: contain;
+  justify-self:end;
 }
 
 /* responsive */
 @media (max-width: 980px){
-  .slide6-grid{
-    grid-template-columns: 1fr;
-  }
+  .lr13{ grid-template-columns: 1fr; gap: 18px; }
+  .lr13-right-grid{ grid-template-columns: 1fr; }
+  .lr13-right-grid .media{ height:auto; }
+
+  .slide6-grid{ grid-template-columns: 1fr; }
   .slide6-left, .slide6-top-center, .slide6-top-right,
   .slide6-center-big, .slide6-bottom-left, .slide6-bottom-center, .slide6-bottom-right{
     grid-column: 1 / -1;
@@ -474,122 +387,11 @@ body{
   .slide6-bottom-right .media{
     max-width: min(560px, 92vw);
   }
+
+  .tpo{ grid-template-columns: 1fr; }
+  .tpo .sq, .tpo .right{ height:auto; }
 }
-
-/* =========================
-   SLIDE 7: three same + one on the right
-   ========================= */
-.slide--threeplusone .tpo{
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1.05fr;
-  gap: clamp(14px, 2.4vw, 28px);
-  align-items: start;
-  overflow: hidden;
-}
-.slide--threeplusone .tpo .sq{
-  width: 100%;
-  height: min(42vh, 360px);
-  object-fit: contain; /* no crop */
-}
-.slide--threeplusone .tpo .right{
-  width: 100%;
-  height: min(48vh, 420px);
-  object-fit: contain; /* no crop */
-  justify-self: end;
-  align-self: start;
-}
-
-/* responsive */
-@media (max-width: 900px){
-  .slide--left1right3 .lr13{
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .slide--left1right3 .lr13-right-grid{
-    grid-template-columns: 1fr;
-  }
-  .slide--left1right3 .lr13-right-grid .media{
-    height: auto;
-  }
-
-  .slide--threeplusone .tpo{
-    grid-template-columns: 1fr;
-  }
-  .slide--threeplusone .tpo .sq,
-  .slide--threeplusone .tpo .right{
-    height: auto;
-  }
-
-  .slide--solo-tr .solo-tr .media{
-    right: 18px;
-    width: min(320px, 70vw);
-  }
-
-  .slide--pattern .pattern-overlay{
-    left: 62%;
-    width: min(320px, 56vw);
-  }
-}
-
-/* responsive: stack on narrow screens */
-@media (max-width: 720px){
-  .triptych{
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .slide-head{
-    height: 120px;
-  }
-}
-
-/* --- Fixed composition canvas (same layout on any screen) --- */
-.fixed-canvas{
-  /* your “design size” */
-  --cw: 1400;
-  --ch: 800;
-
-  width: calc(var(--cw) * 1px);
-  height: calc(var(--ch) * 1px);
-
-  position: relative;
-  transform-origin: center center;
-}
-
-/* center the canvas in the slide */
-.slide-inner{
-  display: grid;
-  place-items: center;
-}
-
-/* images inside canvas */
-.fixed-canvas .media{
-  position: absolute;
-  object-fit: contain;   /* no crop */
-  width: auto;
-  height: auto;
-  max-width: none;
-  max-height: none;
-}
-
-/* helper: keep sharp and stable */
-.fixed-canvas, .fixed-canvas .media{
-  transform: translateZ(0);
-}
-
-/* --- Slide 7 fixed positions (1400x800 canvas) --- */
-.slide--fixed7 .a1{ left: 80px;  top: 130px; width: 280px; }
-.slide--fixed7 .a2{ left: 390px; top: 130px; width: 280px; }
-.slide--fixed7 .a3{ left: 700px; top: 130px; width: 280px; }
-
-/* ✅ 4th image: locked to the right edge, centered vertically against the row */
-.slide--fixed7 .b1{
-  right: 80px;
-  top: 110px;      /* slightly higher because it’s taller */
-  width: 260px;
-}
-  </style>
+</style>
 </head>
 
 <body>
@@ -605,35 +407,39 @@ body{
     <div class="viewport">
       <div class="slides" id="slides">
 
-        <!-- SLIDE 1 -->
-        <section class="slide slide--single is-active" data-slide>
-          <div class="slide-inner">
-            <div class="slide-head">
-              <div style="text-align:center">
-                <div class="slide-title">репетиция</div>
-                <button class="slide-txt" id="txtBtn" type="button">txt</button>
-              </div>
-            </div>
+<!-- SLIDE 1 -->
+<section class="slide slide--single is-active" data-slide>
+  <div class="slide-inner">
 
-            <div class="single-wrap">
-              <img class="media" src="rehersal/01.jpg" alt="">
-            </div>
-          </div>
-        </section>
+    <div class="slide-head">
+      <div class="slide-title">репетиция</div>
+      <button class="slide-txt" id="txtBtn" type="button">txt</button>
+    </div>
 
-<!-- SLIDE 2 (big-left + 3 copies right) -->
+    <div class="single-wrap">
+      <img class="media" src="rehersal/01.jpg" alt="">
+    </div>
+
+  </div>
+</section>
+
+<!-- SLIDE 2 -->
 <section class="slide slide--duo3" data-slide>
   <div class="slide-inner">
     <div class="duo3">
-      <div class="left">
-        <img class="media" src="rehersal/06.jpg" alt="">
+      <div class="duo3-leftbox">
+        <img class="media duo3-left" src="rehersal/06.jpg" alt="">
       </div>
 
-      <div class="right">
-        <div class="triples">
-          <img class="media" src="rehersal/07.jpg" alt="">
-          <img class="media" src="rehersal/07.jpg" alt="">
-          <img class="media" src="rehersal/07.jpg" alt="">
+      <div class="duo3-right">
+        <div class="duo3-cell">
+          <img class="media duo3-r" src="rehersal/07.jpg" alt="">
+        </div>
+        <div class="duo3-cell">
+          <img class="media duo3-r" src="rehersal/07.jpg" alt="">
+        </div>
+        <div class="duo3-cell">
+          <img class="media duo3-r" src="rehersal/07.jpg" alt="">
         </div>
       </div>
     </div>
@@ -751,24 +557,14 @@ body{
   const slides = Array.from(document.querySelectorAll('[data-slide]'));
   let index = 0;
 
+  // ---------- helpers ----------
   function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
 
-  function setActive(i){
-    index = clamp(i, 0, slides.length - 1);
-    slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
-    hydrateSlide(slides[index]);
-    // reset edge buffers whenever we change slides
-    edgeTopHits = 0;
-    edgeBottomHits = 0;
-    wheelAcc = 0;
-  }
-
-  // ---- Blur until loaded (per image) ----
-  function setLoading(img, on){
-    img.classList.toggle('is-loading', on);
-  }
+  // ---------- blur-on-load ----------
+  function setLoading(img, on){ img.classList.toggle('is-loading', on); }
 
   function hydrateSlide(slideEl){
+    if (!slideEl) return;
     const imgs = Array.from(slideEl.querySelectorAll('img'));
     imgs.forEach(img => {
       if (img.dataset.bound === '1') return;
@@ -776,63 +572,120 @@ body{
 
       setLoading(img, !img.complete);
 
-      img.addEventListener('load', () => setLoading(img, false), { passive: true });
+      img.addEventListener('load', () => setLoading(img, false), { passive:true });
       img.addEventListener('error', () => {
         console.warn('Missing image:', img.getAttribute('src'));
         img.style.display = 'none';
-      }, { passive: true });
+      }, { passive:true });
     });
   }
 
-  // hydrate first slide immediately
-  if (slides[0]) hydrateSlide(slides[0]);
+  // ---------- Slide 2 fitter (5:3 HEIGHTS, big gap = 3x small gap, no frames) ----------
+  function fitSlide2IfActive(){
+    const slide = slides[index];
+    if (!slide || !slide.classList.contains('slide--duo3')) return;
+
+    const frame = slide.querySelector('.slide-inner');
+    const wrap  = slide.querySelector('.duo3');
+    const left  = slide.querySelector('.duo3-left');
+    const rights = Array.from(slide.querySelectorAll('.duo3-r'));
+
+    if (!frame || !wrap || !left || rights.length !== 3) return;
+
+    // Need image intrinsic sizes
+    if (!left.naturalWidth || !left.naturalHeight || !rights[0].naturalWidth || !rights[0].naturalHeight) return;
+
+    const availW = frame.clientWidth;
+    const availH = frame.clientHeight;
+
+    // gaps: big = 3x small
+    const gapSmall = 18;
+    const gapBig = gapSmall * 3;
+
+    const leftAR = left.naturalWidth / left.naturalHeight;
+    const rightAR = rights[0].naturalWidth / rights[0].naturalHeight;
+
+    // height unit u:
+    // leftH = 5u
+    // rightH = 3u
+    // totalW = leftAR*(5u) + gapBig + 3*(rightAR*(3u)) + 2*gapSmall
+    const uByHeight = availH / 5;
+    const uByWidth  = (availW - gapBig - 2*gapSmall) / (leftAR*5 + rightAR*9);
+    const u = Math.max(0, Math.min(uByHeight, uByWidth));
+
+    const leftH = 5*u;
+    const rightH = 3*u;
+
+    const leftW  = leftAR * leftH;
+    const rightW = rightAR * rightH;
+
+    // Anchor to left/bottom to remove bottom/side frames
+    const baseX = 0;
+    const baseY = availH - leftH;
+
+    // left
+    left.style.height = `${leftH}px`;
+    left.style.left = `${baseX}px`;
+    left.style.top  = `${baseY}px`;
+
+    // right trio (vertically centered vs left)
+    const rightY = baseY + (leftH - rightH)/2;
+    const rightX0 = baseX + leftW + gapBig;
+
+    rights.forEach((img, i) => {
+      img.style.height = `${rightH}px`;
+      img.style.left = `${rightX0 + i*(rightW + gapSmall)}px`;
+      img.style.top  = `${rightY}px`;
+    });
+  }
+
+  // ---------- slide switching ----------
+  function setActive(i){
+    index = clamp(i, 0, slides.length - 1);
+    slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
+    hydrateSlide(slides[index]);
+
+    // layout fixes after images load/layout
+    requestAnimationFrame(() => {
+      fitSlide2IfActive();
+    });
+
+    // reset wheel state + buffers
+    wheelAcc = 0;
+    wheelLocked = false;
+    edgeTopHits = 0;
+    edgeBottomHits = 0;
+  }
 
   function next(){ setActive(index + 1); }
   function prev(){ setActive(index - 1); }
 
-  // =========================
-  // Piece-wise navigation (one gesture => one slide)
-  // + Special scroll-slide gating (Slide 6)
-  // =========================
+  // ---------- piece-wise wheel nav + slide6 gating ----------
   let wheelAcc = 0;
   let wheelUnlockTimer = null;
   let wheelLocked = false;
 
-  // For the special scrollable slide:
-  // 1 stroke at edge does nothing, 2nd stroke changes slide
   let edgeTopHits = 0;
   let edgeBottomHits = 0;
 
-  function getActiveSlide(){
-    return slides[index];
-  }
-
-  function getScrollPaneIfAny(slideEl){
-    return slideEl?.querySelector('.scrollpane') || null;
-  }
-
+  function getActiveSlide(){ return slides[index]; }
+  function getScrollPaneIfAny(slideEl){ return slideEl?.querySelector('.scrollpane') || null; }
   function atTop(pane){ return pane.scrollTop <= 0; }
-  function atBottom(pane){
-    return pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1;
-  }
+  function atBottom(pane){ return pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1; }
 
   window.addEventListener('wheel', (e) => {
-    // We fully control the interaction; prevent native scrolling
     e.preventDefault();
 
     const slide = getActiveSlide();
     if (!slide) return;
 
-    // dominant axis: vertical OR horizontal (trackpad left/right)
     const dy = e.deltaY;
     const dx = e.deltaX;
     const dominant = (Math.abs(dy) >= Math.abs(dx)) ? dy : dx;
-
-    // direction: + => next, - => prev
     const dir = dominant > 0 ? 1 : (dominant < 0 ? -1 : 0);
     if (!dir) return;
 
-    // ----- Special slide: internally scrollable + edge "buffer stroke" -----
+    // Slide 6 special: internal scroll + 2-stroke edge gate
     const isScrollSlide = slide.hasAttribute('data-scroll-slide');
     const pane = isScrollSlide ? getScrollPaneIfAny(slide) : null;
 
@@ -841,33 +694,28 @@ body{
       const wantPrev = dir < 0;
 
       const canScrollDown = !atBottom(pane);
-      const canScrollUp = !atTop(pane);
+      const canScrollUp   = !atTop(pane);
 
-      // If we can scroll inside in the travel direction: do it and reset buffers
       if ((wantNext && canScrollDown) || (wantPrev && canScrollUp)){
         edgeTopHits = 0;
         edgeBottomHits = 0;
-
-        // make internal scroll feel natural
         pane.scrollTop += dominant;
         return;
       }
 
-      // At top edge trying to go previous
       if (wantPrev && atTop(pane)){
         edgeTopHits += 1;
         edgeBottomHits = 0;
-        if (edgeTopHits < 2) return;  // first stroke: buffer
+        if (edgeTopHits < 2) return;
         edgeTopHits = 0;
         prev();
         return;
       }
 
-      // At bottom edge trying to go next
       if (wantNext && atBottom(pane)){
         edgeBottomHits += 1;
         edgeTopHits = 0;
-        if (edgeBottomHits < 2) return; // first stroke: buffer
+        if (edgeBottomHits < 2) return;
         edgeBottomHits = 0;
         next();
         return;
@@ -876,43 +724,36 @@ body{
       return;
     }
 
-    // ----- Normal slides: one gesture => one slide -----
+    // Normal slides: one gesture => one slide
     if (wheelLocked) return;
 
     wheelAcc += dominant;
-
-    // threshold: when exceeded, advance exactly once
     if (Math.abs(wheelAcc) >= 60){
       wheelLocked = true;
       wheelAcc = 0;
-
-      if (dir > 0) next();
-      else prev();
+      if (dir > 0) next(); else prev();
     }
 
-    // unlock when gesture ends (wheel quiets down)
     clearTimeout(wheelUnlockTimer);
     wheelUnlockTimer = setTimeout(() => {
       wheelLocked = false;
       wheelAcc = 0;
     }, 180);
+  }, { passive:false });
 
-  }, { passive: false });
-
-  // Optional: keyboard arrows
+  // keyboard
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next();
     if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') prev();
   });
 
-  // Optional: touch swipe (mobile) — one swipe => one slide
+  // touch swipe (mobile)
   let sx = 0, sy = 0;
   window.addEventListener('touchstart', (e) => {
     const t = e.touches && e.touches[0];
     if (!t) return;
-    sx = t.clientX;
-    sy = t.clientY;
-  }, { passive: true });
+    sx = t.clientX; sy = t.clientY;
+  }, { passive:true });
 
   window.addEventListener('touchend', (e) => {
     const t = e.changedTouches && e.changedTouches[0];
@@ -921,7 +762,6 @@ body{
     const dx = sx - t.clientX;
     const dy = sy - t.clientY;
 
-    // swipe up OR swipe left => next; swipe down OR swipe right => prev
     if (Math.abs(dx) > Math.abs(dy)) {
       if (dx > 40) next();
       else if (dx < -40) prev();
@@ -931,10 +771,21 @@ body{
     }
 
     sx = 0; sy = 0;
-  }, { passive: true });
+  }, { passive:true });
 
-  // Ensure we start on slide 0
+  // resize: refit slide 2 if active
+  window.addEventListener('resize', () => {
+    requestAnimationFrame(() => fitSlide2IfActive());
+  }, { passive:true });
+
+  // init
+  hydrateSlide(slides[0]);
   setActive(0);
+
+  // If slide2 images load after init, refit once they load
+  document.querySelectorAll('.slide--duo3 img').forEach(img => {
+    img.addEventListener('load', () => requestAnimationFrame(() => fitSlide2IfActive()), { passive:true });
+  });
 })();
 </script>
 </body>
