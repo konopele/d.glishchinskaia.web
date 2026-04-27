@@ -247,6 +247,223 @@ body{
 body.pattern-mode .topbar{
   background: transparent;
 }
+
+/* SLIDE 5: computed absolute positions, frame stays */
+.slide--s5 .slide-inner{
+  /* keep frame (your global padding applies) */
+  overflow: hidden;
+}
+
+/* if portraitish, script will add .hscroll to slide-inner */
+.slide--s5 .slide-inner.hscroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.slide--s5 .slide-inner.hscroll::-webkit-scrollbar{ display:none; }
+
+.slide--s5 .s5{
+  position: relative;
+  height: 100%;
+  overflow: hidden; /* inside gets widened in JS when needed */
+}
+
+.slide--s5 .s5-left,
+.slide--s5 .s5-r{
+  position: absolute;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  object-fit: contain; /* ✅ no crop */
+  display: block;
+}
+
+/* =========================
+   SLIDE 6 (exact reference layout)
+   - internal scroll via .scrollpane (keeps your gating logic)
+   - no cropping anywhere
+   ========================= */
+
+.slide--s6 .slide-inner{ padding: 0; } /* scrollpane owns padding */
+
+.slide--s6 .s6-pane{
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  padding: var(--pad-y) var(--pad-x);
+  box-sizing: border-box;
+}
+
+/* Tunable composition sizes */
+.slide--s6{
+  --gap: clamp(18px, 2.2vw, 34px);
+
+  /* slot widths (stable layout) */
+  --w-left:  clamp(200px, 18vw, 280px);
+  --w-mid:   clamp(260px, 24vw, 360px);
+  --w-right: clamp(200px, 18vw, 280px);
+
+  /* big center image width */
+  --w-big:   clamp(360px, 34vw, 520px);
+}
+
+/* Main grid: 3 columns like the reference */
+.slide--s6 .s6-grid{
+  width: calc(var(--w-left) + var(--w-mid) + var(--w-right) + var(--gap) * 2);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: var(--w-left) var(--w-mid) var(--w-right);
+  column-gap: var(--gap);
+  row-gap: var(--gap);
+
+  align-items: start;
+}
+
+/* Ensure all images never crop */
+.slide--s6 .media{
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* LEFT: 4 stacked identical */
+.slide--s6 .s6-left{
+  grid-column: 1;
+  grid-row: 1 / span 3; /* spans top and big image area */
+  display: grid;
+  gap: var(--gap);
+}
+
+/* Make left-stack cards have consistent width */
+.slide--s6 .s6-left .media{
+  width: 100%;
+  height: auto;
+}
+
+/* TOP CENTER + TOP RIGHT */
+.slide--s6 .s6-top-center{
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+}
+.slide--s6 .s6-top-right{
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+
+/* BIG CENTER (middle column, below top center) */
+.slide--s6 .s6-center{
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  justify-self: center;
+}
+.slide--s6 .s6-center .media{
+  width: var(--w-big);
+  max-width: 100%;
+}
+
+/* BOTTOM ROW */
+.slide--s6 .s6-bottom-left{
+  grid-column: 1;
+  grid-row: 4;
+}
+.slide--s6 .s6-bottom-center{
+  grid-column: 2;
+  grid-row: 4;
+  justify-self: center;
+}
+.slide--s6 .s6-bottom-right{
+  grid-column: 3;
+  grid-row: 4;
+  justify-self: end;
+}
+
+/* Slightly reduce the bottom-center + bottom-right widths to match reference feel */
+.slide--s6 .s6-bottom-center .media{
+  width: clamp(240px, 22vw, 330px);
+  max-width: 100%;
+}
+.slide--s6 .s6-bottom-right .media{
+  width: clamp(240px, 22vw, 340px);
+  max-width: 100%;
+}
+
+/* breathing room at bottom like your reference */
+.slide--s6 .s6-spacer{
+  height: clamp(40px, 10vh, 140px);
+}
+
+/* Mobile / narrow: keep no-crop, but stack logically */
+@media (max-width: 980px){
+  .slide--s6 .s6-grid{
+    width: 100%;
+    grid-template-columns: 1fr;
+    row-gap: 18px;
+    column-gap: 0;
+  }
+
+  .slide--s6 .s6-left{
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: center;
+    width: min(320px, 92vw);
+  }
+
+  .slide--s6 .s6-top-center,
+  .slide--s6 .s6-top-right,
+  .slide--s6 .s6-center,
+  .slide--s6 .s6-bottom-left,
+  .slide--s6 .s6-bottom-center,
+  .slide--s6 .s6-bottom-right{
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: center;
+    width: min(520px, 92vw);
+  }
+
+  .slide--s6 .s6-center .media,
+  .slide--s6 .s6-bottom-center .media,
+  .slide--s6 .s6-bottom-right .media{
+    width: 100%;
+  }
+}
+
+/* SLIDE 7: like slide 5 (frame stays, can hscroll when needed) */
+.slide--s7 .slide-inner{
+  overflow: hidden;
+}
+
+.slide--s7 .slide-inner.hscroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.slide--s7 .slide-inner.hscroll::-webkit-scrollbar{ display:none; }
+
+.slide--s7 .s7{
+  position: relative;
+  height: 100%;
+  overflow: hidden; /* we widen via JS when hscroll */
+}
+
+.slide--s7 .s7-a,
+.slide--s7 .s7-b{
+  position: absolute;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  object-fit: contain; /* no crop */
+  display: block;
+}
 </style>
 </head>
 
@@ -321,85 +538,78 @@ body.pattern-mode .topbar{
   </div>
 </section>
 
-<!-- SLIDE 5: left single + right triple -->
-<section class="slide slide--left1right3" data-slide>
+<!-- SLIDE 5 (computed layout, 1:1 heights) -->
+<section class="slide slide--s5" data-slide>
   <div class="slide-inner">
-    <div class="lr13">
-      <div class="lr13-left">
-        <img class="media" src="rehersal/03.jpg" alt="">
-      </div>
-      <div class="lr13-right">
-        <div class="lr13-right-grid">
-          <img class="media" src="rehersal/02.jpg" alt="">
-          <img class="media" src="rehersal/02.jpg" alt="">
-          <img class="media" src="rehersal/02.jpg" alt="">
-        </div>
-      </div>
+    <div class="s5">
+      <img class="media s5-left" src="rehersal/03.jpg" alt="">
+      <img class="media s5-r" src="rehersal/02.jpg" alt="">
+      <img class="media s5-r" src="rehersal/02.jpg" alt="">
+      <img class="media s5-r" src="rehersal/02.jpg" alt="">
     </div>
   </div>
 </section>
 
-<!-- SLIDE 6 (scrollable) -->
-<section class="slide slide--scroll" data-slide data-scroll-slide>
+<!-- SLIDE 6 (scrollable, exact layout) -->
+<section class="slide slide--scroll slide--s6" data-slide data-scroll-slide>
   <div class="slide-inner">
-    <div class="scrollpane">
-      <div class="slide6-grid">
+    <div class="scrollpane s6-pane">
+      <div class="s6-grid">
 
         <!-- left stack (x4) -->
-        <div class="slide6-left">
-          <img class="media" src="rehersal/11.jpg" alt="">
-          <img class="media" src="rehersal/11.jpg" alt="">
-          <img class="media" src="rehersal/11.jpg" alt="">
-          <img class="media" src="rehersal/11.jpg" alt="">
+        <div class="s6-left">
+          <img class="media" src="rehersal/11.jpeg" alt="">
+          <img class="media" src="rehersal/11.jpeg" alt="">
+          <img class="media" src="rehersal/11.jpeg" alt="">
+          <img class="media" src="rehersal/11.jpeg" alt="">
         </div>
 
         <!-- top center -->
-        <div class="slide6-top-center">
+        <div class="s6-top-center">
           <img class="media" src="rehersal/12.jpg" alt="">
         </div>
 
         <!-- top right -->
-        <div class="slide6-top-right">
+        <div class="s6-top-right">
           <img class="media" src="rehersal/13.jpg" alt="">
         </div>
 
         <!-- big center -->
-        <div class="slide6-center-big">
+        <div class="s6-center">
           <img class="media" src="rehersal/16.jpg" alt="">
         </div>
 
-        <!-- bottom row -->
-        <div class="slide6-bottom-left">
+        <!-- bottom left -->
+        <div class="s6-bottom-left">
           <img class="media" src="rehersal/17.jpg" alt="">
         </div>
 
-        <div class="slide6-bottom-center">
+        <!-- bottom center -->
+        <div class="s6-bottom-center">
           <img class="media" src="rehersal/10.jpg" alt="">
         </div>
 
-        <div class="slide6-bottom-right">
+        <!-- bottom right -->
+        <div class="s6-bottom-right">
           <img class="media" src="rehersal/03.jpg" alt="">
         </div>
 
       </div>
 
-      <!-- extra space so it feels like a “page” you scroll through -->
-      <div class="slide6-spacer" aria-hidden="true"></div>
+      <!-- breathing room like the reference -->
+      <div class="s6-spacer" aria-hidden="true"></div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 7: three same + one on the right -->
-<section class="slide slide--fixed7" data-slide>
+<!-- SLIDE 7 (computed like slide 5) -->
+<section class="slide slide--s7" data-slide>
   <div class="slide-inner">
-    <div class="fixed-canvas" data-fixed-canvas>
-      <!-- 3 same images -->
-      <img class="media a1" src="rehersal/15.jpg" alt="">
-      <img class="media a2" src="rehersal/15.jpg" alt="">
-      <img class="media a3" src="rehersal/15.jpg" alt="">
-
-      <!-- 4th image (right) -->
-      <img class="media b1" src="rehersal/14.jpg" alt="">
+    <div class="s7">
+      <img class="media s7-a" src="rehersal/15.jpg" alt="">
+      <img class="media s7-a" src="rehersal/15.jpg" alt="">
+      <img class="media s7-a" src="rehersal/15.jpg" alt="">
+      <img class="media s7-b" src="rehersal/14.jpg" alt="">
     </div>
   </div>
 </section>
@@ -539,9 +749,74 @@ body.pattern-mode .topbar{
     });
   }
 
-  function layoutActive(){
+function layoutSlide7IfActive(){
+  const slide = slides[index];
+  if (!slide || !slide.classList.contains('slide--s7')) return;
+
+  const inner = slide.querySelector('.slide-inner');
+  const wrap  = slide.querySelector('.s7');
+  const aImgs = Array.from(slide.querySelectorAll('.s7-a'));
+  const bImg  = slide.querySelector('.s7-b');
+  if (!inner || !wrap || aImgs.length !== 3 || !bImg) return;
+
+  const portraitish = (window.innerHeight / window.innerWidth) > 1.15;
+  inner.classList.toggle('hscroll', portraitish);
+
+  if (!aImgs[0].naturalWidth || !aImgs[0].naturalHeight || !bImg.naturalWidth || !bImg.naturalHeight) return;
+
+  const availW = inner.clientWidth;
+  const availH = inner.clientHeight;
+
+  const gapSmall = 18;
+  const gapBig   = gapSmall * 3;
+
+  const aAR = aImgs[0].naturalWidth / aImgs[0].naturalHeight;
+  const bAR = bImg.naturalWidth / bImg.naturalHeight;
+
+  // Size strategy:
+  // Make the 3 repeats the “main row”. The 4th (b) is slightly smaller.
+  const k = 0.92; // b height relative to a height (tune later)
+
+  // Choose aHeight:
+  // landscape: fit width & height
+  // portrait: fit height, allow overflow-x
+  //
+  // groupW = 3*(aAR*aH) + 2*gapSmall + gapBig + (bAR*(k*aH))
+  const denomW = (aAR * 3 + bAR * k);
+  const aH_byHeight = Math.max(1, availH * 0.56);
+  const aH_byWidth  = (availW - gapBig - 2*gapSmall) / denomW;
+
+  const aH = portraitish ? aH_byHeight : Math.min(aH_byHeight, aH_byWidth);
+  const bH = aH * k;
+
+  const aW = aAR * aH;
+  const bW = bAR * bH;
+
+  const groupW = (aW * 3) + (gapSmall * 2) + gapBig + bW;
+  wrap.style.width = `${Math.ceil(groupW)}px`;
+  wrap.style.height = '100%';
+
+  // Positions: top row like your reference
+  const yTop = Math.max(0, availH * 0.14);
+
+  // 3 repeats on left
+  aImgs.forEach((img, i) => {
+    img.style.height = `${aH}px`;
+    img.style.left   = `${i * (aW + gapSmall)}px`;
+    img.style.top    = `${yTop}px`;
+  });
+
+  // 4th image on the right, after a big gap
+  bImg.style.height = `${bH}px`;
+  bImg.style.left   = `${(aW * 3) + (gapSmall * 2) + gapBig}px`;
+  bImg.style.top    = `${yTop + (aH - bH) / 2}px`; // vertically centered to row
+}
+
+function layoutActive(){
     layoutSlide1IfActive();
     layoutSlide2IfActive();
+    layoutSlide5IfActive();
+    layoutSlide7IfActive();
   }
 
   // ===== Slide switching =====
