@@ -6,39 +6,14 @@
   <title>репетиция — Дарья Глищинская</title>
 
 <style>
-@font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap;}
 
 :root{
   --bg:#fff;
   --fg:#000;
-
   --topbar-h:56px;
 
   --dot-size:5px;
@@ -51,67 +26,48 @@
   --blur: 18px;
 }
 
-html, body{ height:100%; }
+html, body{height:100%;}
 body{
   margin:0;
-  background: var(--bg);
-  color: var(--fg);
-  overflow:hidden; /* JS controls scroll */
-  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--fg);
+  overflow:hidden;
+  font-family:"Montserrat", Arial, Helvetica, sans-serif;
 }
 
 /* top stripe */
 .topbar{
-  position:fixed;
-  top:0; left:0; right:0;
-  height: var(--topbar-h);
-  background: var(--bg);
+  position:fixed; top:0; left:0; right:0;
+  height:var(--topbar-h);
+  background:var(--bg);
   z-index:20;
 }
 
 /* menu dots */
 .menu-link{
-  position: fixed;
+  position:fixed;
   top: calc(var(--topbar-h) / 2);
-  left: 98%;
+  left:98%;
   transform: translate(-50%, -50%) translateX(var(--dot-shift));
-  z-index: 30;
-  padding: 8px 12px;
-  text-decoration: none;
+  z-index:30;
+  padding:8px 12px;
+  text-decoration:none;
   filter: blur(3.25px);
   -webkit-tap-highlight-color: transparent;
 }
-.dots{ display:flex; gap: var(--dot-gap); }
-.dot{
-  width: var(--dot-size);
-  height: var(--dot-size);
-  border-radius: 50%;
-  background: var(--fg);
-  opacity: 0.9;
-}
-.menu-link:focus-visible{
-  outline: 2px solid var(--fg);
-  outline-offset: 4px;
-}
-.dots::before,.dots::after,
-.menu-link::before,.menu-link::after{
-  content:none !important;
-  display:none !important;
-}
+.dots{display:flex; gap:var(--dot-gap);}
+.dot{width:var(--dot-size); height:var(--dot-size); border-radius:50%; background:var(--fg); opacity:0.9;}
+.menu-link:focus-visible{outline:2px solid var(--fg); outline-offset:4px;}
+.dots::before,.dots::after,.menu-link::before,.menu-link::after{content:none!important; display:none!important;}
 
 /* stage */
-.stage{ position:fixed; inset:0; background:var(--bg); overflow:hidden; }
-.viewport{
-  position:absolute;
-  top: var(--topbar-h);
-  left:0; right:0; bottom:0;
-  overflow:hidden;
-}
+.stage{position:fixed; inset:0; background:var(--bg); overflow:hidden;}
+.viewport{position:absolute; top:var(--topbar-h); left:0; right:0; bottom:0; overflow:hidden;}
 
 /* slides */
-.slides{ position:absolute; inset:0; background:var(--bg); }
-.slide{ position:absolute; inset:0; display:none; background:var(--bg); }
-.slide.is-active{ display:block; }
+.slides{position:absolute; inset:0; background:var(--bg);}
+.slide{position:absolute; inset:0; display:none; background:var(--bg);}
+.slide.is-active{display:block;}
 
 .slide-inner{
   width:100%;
@@ -121,104 +77,87 @@ body{
   overflow:hidden;
 }
 
-/* images */
-.media{
-  display:block;
-  max-width:100%;
-  max-height:100%;
-  object-fit: contain; /* never crop */
-}
-.media.is-loading{
-  filter: blur(var(--blur));
-  transform: translateZ(0);
-}
+/* media */
+.media{display:block; max-width:100%; max-height:100%; object-fit:contain;}
+.media.is-loading{filter: blur(var(--blur)); transform:translateZ(0);}
 
-/* ---------- SLIDE 1 ---------- */
-.slide--single .slide-inner{
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0;           /* no side white frames */
-  overflow: hidden;
-  background: var(--bg);
+/* =========================================================
+   HORIZONTAL SCROLL MODE (used on slides 1 & 2 when portrait)
+   ========================================================= */
+.hscroll{
+  width:100%;
+  height:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;          /* Firefox */
 }
+.hscroll::-webkit-scrollbar{display:none;} /* WebKit */
 
-/* top white area with the text positioned like in the reference */
+/* =========================================================
+   SLIDE 1 (fit to width in normal; in portrait, allow hscroll)
+   ========================================================= */
+.slide--single .slide-inner{position:relative; padding:0; overflow:hidden;}
 .slide--single .slide-head{
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 170px;        /* white area above the image */
-  margin: 0;
-  z-index: 2;
-  pointer-events: none; /* so only txt button remains clickable */
+  position:absolute; left:0; right:0; top:0;
+  height:170px;
+  z-index:2;
+  pointer-events:none;
 }
-
 .slide--single .slide-title{
-  position: absolute;
-  top: 58px;
-  left: 39%;
-  transform: translateX(-50%);
-  margin: 0;
-  font-size: 18px;
-  letter-spacing: 0.04em;
-  font-weight: 400;
-  font-style: italic;
-  opacity: 0.8;
-  line-height: 1;
-  white-space: nowrap;
-  text-align: center;
+  position:absolute;
+  top:58px;
+  left:39%;
+  transform:translateX(-50%);
+  margin:0;
+  font-size:18px;
+  letter-spacing:0.04em;
+  font-weight:400;
+  font-style:italic;
+  opacity:.8;
+  white-space:nowrap;
 }
-
 .slide--single .slide-txt{
-  position: absolute;
-  top: 95px;
-  left: 58.5%;
-  transform: translateX(-50%);
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--fg);
-  font-family: inherit;
-  font-size: 18px;
-  font-weight: 400;
-  font-style: italic;
-  opacity: 0.65;
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  pointer-events: auto; /* clickable */
+  position:absolute;
+  top:95px;
+  left:58.5%;
+  transform:translateX(-50%);
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--fg);
+  font:inherit;
+  font-size:18px;
+  font-style:italic;
+  opacity:.65;
+  cursor:pointer;
+  pointer-events:auto;
+  white-space:nowrap;
 }
 
-/* image block */
 .slide--single .single-wrap{
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 170px;   /* starts right after the white header area */
-  bottom: 0;
-  overflow: hidden;
-  display: block;
-}
-
-/* fit to WIDTH */
-.slide--single .single-wrap .media{
-  display: block;
-  width: 100%;
-  height: auto;
-  max-width: none;
-  max-height: none;
-  object-fit: contain;
-}
-
-/* ---------- Slide 2 (layout computed in JS; no side/bottom frames) ---------- */
-.slide--duo3 .slide-inner{
-  padding: 0;            /* remove frames */
+  position:absolute;
+  left:0; right:0;
+  top:170px; bottom:0;
   overflow:hidden;
 }
+
+/* default (landscape-ish): fit image to width */
+.slide--single .single-img{
+  width:100%;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  object-fit:contain;
+}
+
+/* =========================================================
+   SLIDE 2 (JS positions absolute; in portrait, allow hscroll)
+   ========================================================= */
+.slide--duo3 .slide-inner{padding:0; overflow:hidden;}
 .duo3{
   position:relative;
-  width:100%;
   height:100%;
   overflow:hidden;
 }
@@ -229,167 +168,120 @@ body{
   height:auto;
   max-width:none;
   max-height:none;
-  object-fit: contain; /* never crop */
+  object-fit:contain;
 }
 
-/* ---------- Slide 3 ---------- */
-.solo-tr{
-  position:relative;
-  width:100%;
-  height:100%;
-}
+/* =========================================================
+   SLIDE 3+ (keep your existing rules minimal)
+   ========================================================= */
+.solo-tr{position:relative; width:100%; height:100%;}
 .solo-tr .media{
   position:absolute;
   top: clamp(10px, 2vh, 30px);
   right: clamp(10px, 2vw, 40px);
   width: min(360px, 35vw);
   height:auto;
-  max-height: 70vh;
+  max-height:70vh;
 }
 
-/* ---------- Slide 4 ---------- */
-.pattern{
-  position:relative;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-}
-.pattern-bg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit: cover; /* background fills */
-}
+.pattern{position:relative; width:100%; height:100%; overflow:hidden;}
+.pattern-bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
 .pattern-overlay{
   position:absolute;
-  top:50%;
-  left:70%;
-  transform: translate(-50%, -50%);
-  width: min(340px, 28vw);
-  max-height: 75vh;
+  top:50%; left:70%;
+  transform:translate(-50%,-50%);
+  width:min(340px, 28vw);
+  max-height:75vh;
   height:auto;
-  object-fit: contain;
-  border: 2px solid rgba(0,0,0,0.35);
-  background: rgba(255,255,255,0.01);
+  object-fit:contain;
+  border:2px solid rgba(0,0,0,.35);
+  background:rgba(255,255,255,.01);
 }
 
-/* ---------- Slide 5 ---------- */
-.lr13{
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: clamp(18px, 4vw, 54px);
-  align-items:center;
-}
-.lr13-left, .lr13-right{
-  height:100%;
-  display:grid;
-  align-items:center;
-  overflow:hidden;
-}
-.lr13-left .media{
-  width:100%;
-  height:100%;
-}
-.lr13-right-grid{
-  width:100%;
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 2.2vw, 26px);
-  align-items:center;
-}
-.lr13-right-grid .media{
-  width:100%;
-  height: min(58vh, 520px);
-}
+.lr13{width:100%; height:100%; display:grid; grid-template-columns:.9fr 1.1fr; gap:clamp(18px,4vw,54px); align-items:center;}
+.lr13-left,.lr13-right{height:100%; display:grid; align-items:center; overflow:hidden;}
+.lr13-left .media{width:100%; height:100%;}
+.lr13-right-grid{width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(12px,2.2vw,26px); align-items:center;}
+.lr13-right-grid .media{width:100%; height:min(58vh,520px);}
 
-/* ---------- Slide 6 (scrollable) ---------- */
-.slide--scroll .slide-inner{ padding:0; }
+.slide--scroll .slide-inner{padding:0;}
 .scrollpane{
-  width:100%;
-  height:100%;
+  width:100%; height:100%;
   overflow:auto;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling:touch;
   padding: var(--pad-y) var(--pad-x);
   box-sizing:border-box;
 }
 .slide6-grid{
-  width:100%;
-  max-width: 1400px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns: 0.72fr 1fr 0.72fr;
-  gap: clamp(14px, 2.2vw, 28px);
+  width:100%; max-width:1400px; margin:0 auto;
+  display:grid; grid-template-columns:.72fr 1fr .72fr;
+  gap:clamp(14px,2.2vw,28px);
   align-items:start;
 }
-.slide6-left{
-  display:grid;
-  gap: clamp(10px, 1.6vw, 18px);
-}
-.slide6-top-center{ align-self:start; }
-.slide6-top-right{ align-self:start; justify-self:end; }
-.slide6-center-big{ grid-column: 2 / 3; justify-self:center; }
-.slide6-bottom-left{ grid-column: 1 / 2; }
-.slide6-bottom-center{ grid-column: 2 / 3; justify-self:center; }
-.slide6-bottom-right{ grid-column: 3 / 4; justify-self:end; }
+.slide6-left{display:grid; gap:clamp(10px,1.6vw,18px);}
+.slide6-top-right{justify-self:end;}
+.slide6-center-big{grid-column:2/3; justify-self:center;}
+.slide6-bottom-center{grid-column:2/3; justify-self:center;}
+.slide6-bottom-right{grid-column:3/4; justify-self:end;}
+.slide6-grid .media{width:100%; height:auto;}
+.slide6-spacer{height:clamp(40px,10vh,140px);}
 
-.slide6-grid .media{ width:100%; height:auto; }
-.slide6-left .media{ max-width: 340px; }
-.slide6-top-center .media{ max-width: 420px; }
-.slide6-top-right .media{ max-width: 320px; }
-.slide6-center-big .media{ max-width: 560px; }
-.slide6-bottom-left .media{ max-width: 420px; }
-.slide6-bottom-center .media{ max-width: 320px; }
-.slide6-bottom-right .media{ max-width: 340px; }
-.slide6-spacer{ height: clamp(40px, 10vh, 140px); }
+.tpo{width:100%; height:100%; display:grid; grid-template-columns:1fr 1fr 1fr 1.05fr; gap:clamp(14px,2.4vw,28px); align-items:start;}
+.tpo .sq{width:100%; height:min(42vh,360px); object-fit:contain;}
+.tpo .right{width:100%; height:min(48vh,420px); object-fit:contain; justify-self:end;}
 
-/* ---------- Slide 7 ---------- */
-.tpo{
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-columns: 1fr 1fr 1fr 1.05fr;
-  gap: clamp(14px, 2.4vw, 28px);
-  align-items:start;
-}
-.tpo .sq{
-  width:100%;
-  height: min(42vh, 360px);
-  object-fit: contain;
-}
-.tpo .right{
-  width:100%;
-  height: min(48vh, 420px);
-  object-fit: contain;
-  justify-self:end;
-}
-
-/* responsive */
 @media (max-width: 980px){
-  .lr13{ grid-template-columns: 1fr; gap: 18px; }
-  .lr13-right-grid{ grid-template-columns: 1fr; }
-  .lr13-right-grid .media{ height:auto; }
+  .lr13{grid-template-columns:1fr; gap:18px;}
+  .lr13-right-grid{grid-template-columns:1fr;}
+  .lr13-right-grid .media{height:auto;}
 
-  .slide6-grid{ grid-template-columns: 1fr; }
-  .slide6-left, .slide6-top-center, .slide6-top-right,
-  .slide6-center-big, .slide6-bottom-left, .slide6-bottom-center, .slide6-bottom-right{
-    grid-column: 1 / -1;
-    justify-self: center;
-  }
-  .slide6-left .media,
-  .slide6-top-center .media,
-  .slide6-top-right .media,
-  .slide6-center-big .media,
-  .slide6-bottom-left .media,
-  .slide6-bottom-center .media,
-  .slide6-bottom-right .media{
-    max-width: min(560px, 92vw);
-  }
+  .slide6-grid{grid-template-columns:1fr;}
+  .tpo{grid-template-columns:1fr;}
+  .tpo .sq, .tpo .right{height:auto;}
+}
+/* ===== Slide 4 full-bleed ===== */
+.slide--pattern .slide-inner{
+  padding: 0;
+  overflow: hidden;
+}
 
-  .tpo{ grid-template-columns: 1fr; }
-  .tpo .sq, .tpo .right{ height:auto; }
+/* only make it fixed when active so it doesn't cover other slides */
+.slide--pattern.is-active .pattern{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);   /* ✅ white fallback, not black */
+  z-index: 10;             /* below menu dots (30) and below topbar (20 when not transparent) */
+}
+
+.slide--pattern .pattern-bg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.slide--pattern .pattern-overlay{
+  position: absolute;
+  left: 69%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 320px;            /* fixed size */
+  height: auto;
+  max-height: 520px;
+  object-fit: contain;
+  border: 2px solid rgba(0,0,0,0.35);
+  background: rgba(255,255,255,0.01);
+  box-sizing: border-box;
+}
+
+/* ===== When slide 4 is active, make topbar transparent so the pattern fills it ===== */
+body.pattern-mode .topbar{
+  background: transparent;
 }
 </style>
 </head>
@@ -459,7 +351,7 @@ body{
 <section class="slide slide--pattern" data-slide>
   <div class="slide-inner">
     <div class="pattern">
-      <img class="media pattern-bg" src="rehersal/08.png" alt="">
+<img class="media pattern-bg" src="rehersal/08.png" alt="">
       <img class="media pattern-overlay" src="rehersal/09.jpg" alt="">
     </div>
   </div>
@@ -557,10 +449,7 @@ body{
   const slides = Array.from(document.querySelectorAll('[data-slide]'));
   let index = 0;
 
-  // ---------- helpers ----------
-  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
-
-  // ---------- blur-on-load ----------
+  // ===== Blur-on-load =====
   function setLoading(img, on){ img.classList.toggle('is-loading', on); }
 
   function hydrateSlide(slideEl){
@@ -569,7 +458,6 @@ body{
     imgs.forEach(img => {
       if (img.dataset.bound === '1') return;
       img.dataset.bound = '1';
-
       setLoading(img, !img.complete);
 
       img.addEventListener('load', () => setLoading(img, false), { passive:true });
@@ -580,106 +468,121 @@ body{
     });
   }
 
-  // ---------- Slide 2 fitter (5:3 HEIGHTS, big gap = 3x small gap, no frames) ----------
-function fitSlide2IfActive(){
-  const slide = slides[index];
-  if (!slide || !slide.classList.contains('slide--duo3')) return;
-
-  const frame = slide.querySelector('.slide-inner');
-  const left  = slide.querySelector('.duo3-left');
-  const rights = Array.from(slide.querySelectorAll('.duo3-r'));
-  if (!frame || !left || rights.length !== 3) return;
-
-  // Need intrinsic sizes
-  if (!left.naturalWidth || !left.naturalHeight || !rights[0].naturalWidth || !rights[0].naturalHeight) return;
-
-  const availW = frame.clientWidth;
-  const availH = frame.clientHeight;
-
-  // gaps: big = 3x small
-  const gapSmall = 18;
-  const gapBig = gapSmall * 3;
-
-  const leftAR  = left.naturalWidth / left.naturalHeight;
-  const rightAR = rights[0].naturalWidth / rights[0].naturalHeight;
-
-  // height unit u:
-  // leftH = 5u, rightH = 3u
-  // totalW = leftAR*(5u) + gapBig + 3*(rightAR*(3u)) + 2*gapSmall
-  const denomW = (leftAR * 5 + rightAR * 9);
-  const uByHeight = (availH) / 5;
-  const uByWidth  = (availW - gapBig - 2*gapSmall) / denomW;
-
-  // First pass
-  let u = Math.max(0, Math.min(uByHeight, uByWidth));
-
-  // Compute sizes
-  let leftH = 5*u;
-  let rightH = 3*u;
-  let leftW  = leftAR * leftH;
-  let rightW = rightAR * rightH;
-
-  // Group bounds
-  let groupW = leftW + gapBig + (rightW * 3) + (gapSmall * 2);
-  let groupH = leftH;
-
-  // Safety: if anything would overflow (floating point / rounding), scale down again
-  // (prevents negative top/left that causes “cropping”)
-  const safeW = availW;
-  const safeH = availH;
-
-  if (groupW > safeW || groupH > safeH){
-    const s = Math.min(safeW / groupW, safeH / groupH);
-    u *= s;
-    leftH = 5*u;
-    rightH = 3*u;
-    leftW  = leftAR * leftH;
-    rightW = rightAR * rightH;
-    groupW = leftW + gapBig + (rightW * 3) + (gapSmall * 2);
-    groupH = leftH;
+  // ===== Mode detection =====
+  function isPortraitish(){
+    // tune this: 1.15 means “noticeably taller than wide”
+    return (window.innerHeight / window.innerWidth) > 1.15;
   }
 
-  // Anchor LEFT and BOTTOM, but never go negative
-  const baseX = 0;
-  const baseY = Math.max(0, safeH - groupH);
+  // ===== Slide 1 layout: fit-to-width normally; hscroll in portrait =====
+  function layoutSlide1IfActive(){
+    const slide = slides[index];
+    if (!slide || !slide.classList.contains('slide--single')) return;
 
-  // Left image (top-left of its box)
-  left.style.height = `${leftH}px`;
-  left.style.left = `${baseX}px`;
-  left.style.top  = `${baseY}px`;
+    const wrap = slide.querySelector('.single-wrap');
+    const img  = slide.querySelector('.single-img');
+    if (!wrap || !img) return;
 
-  // Right trio: centered vertically relative to left image
-  const rightY = baseY + (leftH - rightH) / 2;
-  const rightX0 = baseX + leftW + gapBig;
+    // Ensure wrap is an hscroll container in portrait
+    if (isPortraitish()){
+      if (!wrap.classList.contains('hscroll')) wrap.classList.add('hscroll');
+      // make image height-driven (so it stays big) and allow overflow-x
+      img.style.width = 'auto';
+      img.style.height = '100%';
+      img.style.maxWidth = 'none';
+      img.style.maxHeight = 'none';
+    } else {
+      wrap.classList.remove('hscroll');
+      // normal: fit to width
+      img.style.width = '100%';
+      img.style.height = 'auto';
+      img.style.maxWidth = 'none';
+      img.style.maxHeight = 'none';
+    }
+  }
 
-  rights.forEach((img, i) => {
-    img.style.height = `${rightH}px`;
-    img.style.left = `${rightX0 + i*(rightW + gapSmall)}px`;
-    img.style.top  = `${rightY}px`;
-  });
-}
-  // ---------- slide switching ----------
-  function setActive(i){
-    index = clamp(i, 0, slides.length - 1);
-    slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
-    hydrateSlide(slides[index]);
+  // ===== Slide 2 layout: 5:3 HEIGHTS; in portrait allow overflow-x =====
+  function layoutSlide2IfActive(){
+    const slide = slides[index];
+    if (!slide || !slide.classList.contains('slide--duo3')) return;
 
-    // layout fixes after images load/layout
-    requestAnimationFrame(() => {
-      fitSlide2IfActive();
+    const inner = slide.querySelector('.slide-inner');
+    const duo3  = slide.querySelector('.duo3');
+    const left  = slide.querySelector('.duo3-left');
+    const rights = Array.from(slide.querySelectorAll('.duo3-r'));
+    if (!inner || !duo3 || !left || rights.length !== 3) return;
+
+    // Make inner horizontally scrollable in portrait
+    if (isPortraitish()){
+      if (!inner.classList.contains('hscroll')) inner.classList.add('hscroll');
+      inner.style.overflowY = 'hidden';
+    } else {
+      inner.classList.remove('hscroll');
+      inner.style.overflowY = 'hidden';
+    }
+
+    if (!left.naturalWidth || !rights[0].naturalWidth) return;
+
+    const availW = inner.clientWidth;
+    const availH = inner.clientHeight;
+
+    const gapSmall = 18;
+    const gapBig = gapSmall * 3;
+
+    const leftAR  = left.naturalWidth / left.naturalHeight;
+    const rightAR = rights[0].naturalWidth / rights[0].naturalHeight;
+
+    // We ALWAYS respect height ratio 5:3.
+    // In landscape: fit both width+height.
+    // In portrait: fit height first, let width overflow (hscroll).
+    const uByHeight = availH / 5;
+
+    // width-constrained u (for landscape fitting)
+    const uByWidth =
+      (availW - gapBig - 2*gapSmall) /
+      (leftAR * 5 + rightAR * 9);
+
+    const u = isPortraitish() ? uByHeight : Math.min(uByHeight, uByWidth);
+
+    const leftH  = 5*u;
+    const rightH = 3*u;
+
+    const leftW  = leftAR * leftH;
+    const rightW = rightAR * rightH;
+
+    const groupW = leftW + gapBig + 3*rightW + 2*gapSmall;
+    const groupH = leftH;
+
+    // Set duo3 width to composition width (so it can scroll)
+    duo3.style.width = `${Math.ceil(groupW)}px`;
+    duo3.style.height = `100%`;
+
+    // Anchor left/bottom (no cropping)
+    const baseX = 0;
+    const baseY = Math.max(0, availH - groupH);
+
+    left.style.height = `${leftH}px`;
+    left.style.left = `${baseX}px`;
+    left.style.top  = `${baseY}px`;
+
+    const rightY = baseY + (leftH - rightH)/2;
+    const rightX0 = baseX + leftW + gapBig;
+
+    rights.forEach((img, i) => {
+      img.style.height = `${rightH}px`;
+      img.style.left = `${rightX0 + i*(rightW + gapSmall)}px`;
+      img.style.top  = `${rightY}px`;
     });
-
-    // reset wheel state + buffers
-    wheelAcc = 0;
-    wheelLocked = false;
-    edgeTopHits = 0;
-    edgeBottomHits = 0;
   }
 
-  function next(){ setActive(index + 1); }
-  function prev(){ setActive(index - 1); }
+  function layoutActive(){
+    layoutSlide1IfActive();
+    layoutSlide2IfActive();
+  }
 
-  // ---------- piece-wise wheel nav + slide6 gating ----------
+  // ===== Slide switching =====
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
   let wheelAcc = 0;
   let wheelUnlockTimer = null;
   let wheelLocked = false;
@@ -687,28 +590,63 @@ function fitSlide2IfActive(){
   let edgeTopHits = 0;
   let edgeBottomHits = 0;
 
+  function setActive(i){
+    index = clamp(i, 0, slides.length - 1);
+    slides.forEach((s,k) => s.classList.toggle('is-active', k === index));
+    hydrateSlide(slides[index]);
+
+    requestAnimationFrame(() => layoutActive());
+
+    wheelAcc = 0;
+    wheelLocked = false;
+    edgeTopHits = 0;
+    edgeBottomHits = 0;
+  }
+
+  document.body.classList.toggle('pattern-mode', slides[index].classList.contains('slide--pattern'));
+
+  function next(){ setActive(index + 1); }
+  function prev(){ setActive(index - 1); }
+
   function getActiveSlide(){ return slides[index]; }
   function getScrollPaneIfAny(slideEl){ return slideEl?.querySelector('.scrollpane') || null; }
   function atTop(pane){ return pane.scrollTop <= 0; }
   function atBottom(pane){ return pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1; }
 
+  // ===== Wheel handler:
+  // - If horizontal gesture and active slide has horizontal overflow => scroll inside
+  // - Else: piece-wise slide changes
+  // - Slide 6 special internal vertical scroll with 2-stroke gate
   window.addEventListener('wheel', (e) => {
-    e.preventDefault();
-
     const slide = getActiveSlide();
     if (!slide) return;
 
     const dy = e.deltaY;
     const dx = e.deltaX;
-    const dominant = (Math.abs(dy) >= Math.abs(dx)) ? dy : dx;
-    const dir = dominant > 0 ? 1 : (dominant < 0 ? -1 : 0);
-    if (!dir) return;
+    const horizontal = Math.abs(dx) > Math.abs(dy);
 
-    // Slide 6 special: internal scroll + 2-stroke edge gate
+    // 1) Horizontal scrolling inside slide (portrait use-case)
+    // If the active slide has an .hscroll container that can scroll, consume horizontal gestures
+    const hscrollEl =
+      slide.querySelector('.hscroll');
+
+    if (hscrollEl && hscrollEl.scrollWidth > hscrollEl.clientWidth && horizontal){
+      e.preventDefault();
+      hscrollEl.scrollLeft += dx; // natural trackpad horizontal
+      return;
+    }
+
+    // 2) Slide 6 special: allow vertical scroll inside, gate transitions at edges
     const isScrollSlide = slide.hasAttribute('data-scroll-slide');
     const pane = isScrollSlide ? getScrollPaneIfAny(slide) : null;
 
     if (pane){
+      e.preventDefault();
+      const dominant = dy; // slide6 uses vertical only
+
+      const dir = dominant > 0 ? 1 : (dominant < 0 ? -1 : 0);
+      if (!dir) return;
+
       const wantNext = dir > 0;
       const wantPrev = dir < 0;
 
@@ -743,7 +681,13 @@ function fitSlide2IfActive(){
       return;
     }
 
-    // Normal slides: one gesture => one slide
+    // 3) Normal slides: piece-wise (one gesture => one slide)
+    e.preventDefault();
+
+    const dominant = (Math.abs(dy) >= Math.abs(dx)) ? dy : dx;
+    const dir = dominant > 0 ? 1 : (dominant < 0 ? -1 : 0);
+    if (!dir) return;
+
     if (wheelLocked) return;
 
     wheelAcc += dominant;
@@ -758,6 +702,7 @@ function fitSlide2IfActive(){
       wheelLocked = false;
       wheelAcc = 0;
     }, 180);
+
   }, { passive:false });
 
   // keyboard
@@ -767,7 +712,7 @@ function fitSlide2IfActive(){
   });
 
   // touch swipe (mobile)
-  let sx = 0, sy = 0;
+  let sx=0, sy=0;
   window.addEventListener('touchstart', (e) => {
     const t = e.touches && e.touches[0];
     if (!t) return;
@@ -781,7 +726,7 @@ function fitSlide2IfActive(){
     const dx = sx - t.clientX;
     const dy = sy - t.clientY;
 
-    if (Math.abs(dx) > Math.abs(dy)) {
+    if (Math.abs(dx) > Math.abs(dy)){
       if (dx > 40) next();
       else if (dx < -40) prev();
     } else {
@@ -789,21 +734,19 @@ function fitSlide2IfActive(){
       else if (dy < -40) prev();
     }
 
-    sx = 0; sy = 0;
+    sx=0; sy=0;
   }, { passive:true });
 
-  // resize: refit slide 2 if active
-  window.addEventListener('resize', () => {
-    requestAnimationFrame(() => fitSlide2IfActive());
-  }, { passive:true });
+  // resize -> relayout
+  window.addEventListener('resize', () => requestAnimationFrame(layoutActive), { passive:true });
 
   // init
   hydrateSlide(slides[0]);
   setActive(0);
 
-  // If slide2 images load after init, refit once they load
-  document.querySelectorAll('.slide--duo3 img').forEach(img => {
-    img.addEventListener('load', () => requestAnimationFrame(() => fitSlide2IfActive()), { passive:true });
+  // if slide1/2 images load later, relayout
+  document.querySelectorAll('.slide--single img, .slide--duo3 img').forEach(img => {
+    img.addEventListener('load', () => requestAnimationFrame(layoutActive), { passive:true });
   });
 })();
 </script>
