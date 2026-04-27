@@ -171,73 +171,37 @@ body{
   object-fit:contain;
 }
 
-/* =========================================================
-   SLIDE 3+ (keep your existing rules minimal)
-   ========================================================= */
-.solo-tr{position:relative; width:100%; height:100%;}
-.solo-tr .media{
-  position:absolute;
-  top: clamp(10px, 2vh, 30px);
-  right: clamp(10px, 2vw, 40px);
-  width: min(360px, 35vw);
-  height:auto;
-  max-height:70vh;
+/* SLIDE 3: top-right, % position + % size with minimums */
+.slide--solo-tr .slide-inner{
+  padding: 0;
+  overflow: hidden;
 }
 
-.pattern{position:relative; width:100%; height:100%; overflow:hidden;}
-.pattern-bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
-.pattern-overlay{
-  position:absolute;
-  top:50%; left:70%;
-  transform:translate(-50%,-50%);
-  width:min(340px, 28vw);
-  max-height:75vh;
-  height:auto;
-  object-fit:contain;
-  border:2px solid rgba(0,0,0,.35);
-  background:rgba(255,255,255,.01);
+.slide--solo-tr .solo-tr{
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-.lr13{width:100%; height:100%; display:grid; grid-template-columns:.9fr 1.1fr; gap:clamp(18px,4vw,54px); align-items:center;}
-.lr13-left,.lr13-right{height:100%; display:grid; align-items:center; overflow:hidden;}
-.lr13-left .media{width:100%; height:100%;}
-.lr13-right-grid{width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(12px,2.2vw,26px); align-items:center;}
-.lr13-right-grid .media{width:100%; height:min(58vh,520px);}
-
-.slide--scroll .slide-inner{padding:0;}
-.scrollpane{
-  width:100%; height:100%;
-  overflow:auto;
-  -webkit-overflow-scrolling:touch;
-  padding: var(--pad-y) var(--pad-x);
-  box-sizing:border-box;
+/* Tune these 4 variables */
+.slide--solo-tr{
+  --tr-top: 14%;           /* % from top of viewport area */
+  --tr-right: 10%;         /* % from right */
+  --w: 20vw;               /* size based on viewport */
+  --min-w: 240px;          /* minimal size */
+  --max-w: 360px;          /* optional cap */
 }
-.slide6-grid{
-  width:100%; max-width:1400px; margin:0 auto;
-  display:grid; grid-template-columns:.72fr 1fr .72fr;
-  gap:clamp(14px,2.2vw,28px);
-  align-items:start;
-}
-.slide6-left{display:grid; gap:clamp(10px,1.6vw,18px);}
-.slide6-top-right{justify-self:end;}
-.slide6-center-big{grid-column:2/3; justify-self:center;}
-.slide6-bottom-center{grid-column:2/3; justify-self:center;}
-.slide6-bottom-right{grid-column:3/4; justify-self:end;}
-.slide6-grid .media{width:100%; height:auto;}
-.slide6-spacer{height:clamp(40px,10vh,140px);}
 
-.tpo{width:100%; height:100%; display:grid; grid-template-columns:1fr 1fr 1fr 1.05fr; gap:clamp(14px,2.4vw,28px); align-items:start;}
-.tpo .sq{width:100%; height:min(42vh,360px); object-fit:contain;}
-.tpo .right{width:100%; height:min(48vh,420px); object-fit:contain; justify-self:end;}
+.slide--solo-tr .solo-tr .media{
+  position: absolute;
+  top: var(--tr-top);
+  right: var(--tr-right);
 
-@media (max-width: 980px){
-  .lr13{grid-template-columns:1fr; gap:18px;}
-  .lr13-right-grid{grid-template-columns:1fr;}
-  .lr13-right-grid .media{height:auto;}
+  width: clamp(var(--min-w), var(--w), var(--max-w));
+  height: auto;
 
-  .slide6-grid{grid-template-columns:1fr;}
-  .tpo{grid-template-columns:1fr;}
-  .tpo .sq, .tpo .right{height:auto;}
+  max-height: min(70vh, 640px); /* keeps it from becoming too tall */
+  object-fit: contain;          /* no crop */
 }
 /* ===== Slide 4 full-bleed ===== */
 .slide--pattern .slide-inner{
@@ -342,7 +306,7 @@ body.pattern-mode .topbar{
 <section class="slide slide--solo-tr" data-slide>
   <div class="slide-inner">
     <div class="solo-tr">
-      <img class="media" src="rehersal/04.jpg" alt="">
+      <img class="media" src="rehersal/05.jpg" alt="">
     </div>
   </div>
 </section>
