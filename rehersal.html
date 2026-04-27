@@ -581,64 +581,83 @@ body{
   }
 
   // ---------- Slide 2 fitter (5:3 HEIGHTS, big gap = 3x small gap, no frames) ----------
-  function fitSlide2IfActive(){
-    const slide = slides[index];
-    if (!slide || !slide.classList.contains('slide--duo3')) return;
+function fitSlide2IfActive(){
+  const slide = slides[index];
+  if (!slide || !slide.classList.contains('slide--duo3')) return;
 
-    const frame = slide.querySelector('.slide-inner');
-    const wrap  = slide.querySelector('.duo3');
-    const left  = slide.querySelector('.duo3-left');
-    const rights = Array.from(slide.querySelectorAll('.duo3-r'));
+  const frame = slide.querySelector('.slide-inner');
+  const left  = slide.querySelector('.duo3-left');
+  const rights = Array.from(slide.querySelectorAll('.duo3-r'));
+  if (!frame || !left || rights.length !== 3) return;
 
-    if (!frame || !wrap || !left || rights.length !== 3) return;
+  // Need intrinsic sizes
+  if (!left.naturalWidth || !left.naturalHeight || !rights[0].naturalWidth || !rights[0].naturalHeight) return;
 
-    // Need image intrinsic sizes
-    if (!left.naturalWidth || !left.naturalHeight || !rights[0].naturalWidth || !rights[0].naturalHeight) return;
+  const availW = frame.clientWidth;
+  const availH = frame.clientHeight;
 
-    const availW = frame.clientWidth;
-    const availH = frame.clientHeight;
+  // gaps: big = 3x small
+  const gapSmall = 18;
+  const gapBig = gapSmall * 3;
 
-    // gaps: big = 3x small
-    const gapSmall = 18;
-    const gapBig = gapSmall * 3;
+  const leftAR  = left.naturalWidth / left.naturalHeight;
+  const rightAR = rights[0].naturalWidth / rights[0].naturalHeight;
 
-    const leftAR = left.naturalWidth / left.naturalHeight;
-    const rightAR = rights[0].naturalWidth / rights[0].naturalHeight;
+  // height unit u:
+  // leftH = 5u, rightH = 3u
+  // totalW = leftAR*(5u) + gapBig + 3*(rightAR*(3u)) + 2*gapSmall
+  const denomW = (leftAR * 5 + rightAR * 9);
+  const uByHeight = (availH) / 5;
+  const uByWidth  = (availW - gapBig - 2*gapSmall) / denomW;
 
-    // height unit u:
-    // leftH = 5u
-    // rightH = 3u
-    // totalW = leftAR*(5u) + gapBig + 3*(rightAR*(3u)) + 2*gapSmall
-    const uByHeight = availH / 5;
-    const uByWidth  = (availW - gapBig - 2*gapSmall) / (leftAR*5 + rightAR*9);
-    const u = Math.max(0, Math.min(uByHeight, uByWidth));
+  // First pass
+  let u = Math.max(0, Math.min(uByHeight, uByWidth));
 
-    const leftH = 5*u;
-    const rightH = 3*u;
+  // Compute sizes
+  let leftH = 5*u;
+  let rightH = 3*u;
+  let leftW  = leftAR * leftH;
+  let rightW = rightAR * rightH;
 
-    const leftW  = leftAR * leftH;
-    const rightW = rightAR * rightH;
+  // Group bounds
+  let groupW = leftW + gapBig + (rightW * 3) + (gapSmall * 2);
+  let groupH = leftH;
 
-    // Anchor to left/bottom to remove bottom/side frames
-    const baseX = 0;
-    const baseY = availH - leftH;
+  // Safety: if anything would overflow (floating point / rounding), scale down again
+  // (prevents negative top/left that causes “cropping”)
+  const safeW = availW;
+  const safeH = availH;
 
-    // left
-    left.style.height = `${leftH}px`;
-    left.style.left = `${baseX}px`;
-    left.style.top  = `${baseY}px`;
-
-    // right trio (vertically centered vs left)
-    const rightY = baseY + (leftH - rightH)/2;
-    const rightX0 = baseX + leftW + gapBig;
-
-    rights.forEach((img, i) => {
-      img.style.height = `${rightH}px`;
-      img.style.left = `${rightX0 + i*(rightW + gapSmall)}px`;
-      img.style.top  = `${rightY}px`;
-    });
+  if (groupW > safeW || groupH > safeH){
+    const s = Math.min(safeW / groupW, safeH / groupH);
+    u *= s;
+    leftH = 5*u;
+    rightH = 3*u;
+    leftW  = leftAR * leftH;
+    rightW = rightAR * rightH;
+    groupW = leftW + gapBig + (rightW * 3) + (gapSmall * 2);
+    groupH = leftH;
   }
 
+  // Anchor LEFT and BOTTOM, but never go negative
+  const baseX = 0;
+  const baseY = Math.max(0, safeH - groupH);
+
+  // Left image (top-left of its box)
+  left.style.height = `${leftH}px`;
+  left.style.left = `${baseX}px`;
+  left.style.top  = `${baseY}px`;
+
+  // Right trio: centered vertically relative to left image
+  const rightY = baseY + (leftH - rightH) / 2;
+  const rightX0 = baseX + leftW + gapBig;
+
+  rights.forEach((img, i) => {
+    img.style.height = `${rightH}px`;
+    img.style.left = `${rightX0 + i*(rightW + gapSmall)}px`;
+    img.style.top  = `${rightY}px`;
+  });
+}
   // ---------- slide switching ----------
   function setActive(i){
     index = clamp(i, 0, slides.length - 1);
