@@ -171,7 +171,7 @@ body{
   object-fit:contain;
 }
 
-<<<<<<< HEAD
+/*<<<<<<< HEAD
 /* ---------- Slide 3 ---------- */
 .solo-tr{
   position:relative;
@@ -184,13 +184,12 @@ body{
   right: clamp(10px, 16vw, 230px);
   width: min(290px, 20vw);
   height:auto;
-  max-height: 70vh;
-=======
+  max-height: 70vh;}
+/*=======
 /* SLIDE 3: top-right, % position + % size with minimums */
 .slide--solo-tr .slide-inner{
   padding: 0;
   overflow: hidden;
->>>>>>> fbfdd81db48171eead45c788f10b074ec8b54902
 }
 
 .slide--solo-tr .solo-tr{
@@ -539,11 +538,7 @@ body.pattern-mode .topbar{
 <section class="slide slide--solo-tr" data-slide>
   <div class="slide-inner">
     <div class="solo-tr">
-<<<<<<< HEAD
       <img class="media" src="rehersal/05.JPG" alt="">
-=======
-      <img class="media" src="rehersal/05.jpg" alt="">
->>>>>>> fbfdd81db48171eead45c788f10b074ec8b54902
     </div>
   </div>
 </section>
@@ -768,6 +763,56 @@ body.pattern-mode .topbar{
       img.style.top  = `${rightY}px`;
     });
   }
+
+function layoutSlide5IfActive(){
+  const slide = slides[index];
+  if (!slide || !slide.classList.contains('slide--s5')) return;
+
+  const inner   = slide.querySelector('.slide-inner');
+  const wrap    = slide.querySelector('.s5');
+  const leftImg = slide.querySelector('.s5-left');
+  const rImgs   = Array.from(slide.querySelectorAll('.s5-r'));
+  if (!inner || !wrap || !leftImg || rImgs.length !== 3) return;
+
+  const portraitish = isPortraitish();
+  inner.classList.toggle('hscroll', portraitish);
+
+  if (!leftImg.naturalWidth || !leftImg.naturalHeight ||
+      !rImgs[0].naturalWidth || !rImgs[0].naturalHeight) return;
+
+  const availW = inner.clientWidth;
+  const availH = inner.clientHeight;
+
+  const gapSmall = 18;
+  const gapBig   = gapSmall * 3;
+
+  const leftAR  = leftImg.naturalWidth  / leftImg.naturalHeight;
+  const rightAR = rImgs[0].naturalWidth / rImgs[0].naturalHeight;
+
+  // 1:1 heights — constrain by both width and height
+  const hByHeight = availH;
+  const hByWidth  = (availW - gapBig - 2 * gapSmall) / (leftAR + rightAR * 3);
+  const h = portraitish ? hByHeight : Math.min(hByHeight, hByWidth);
+
+  const leftW  = leftAR  * h;
+  const rightW = rightAR * h;
+  const groupW = leftW + gapBig + 3 * rightW + 2 * gapSmall;
+
+  wrap.style.width  = `${Math.ceil(groupW)}px`;
+  wrap.style.height = '100%';
+
+  const baseY = Math.max(0, (availH - h) / 2);
+
+  leftImg.style.height = `${h}px`;
+  leftImg.style.left   = '0px';
+  leftImg.style.top    = `${baseY}px`;
+
+  rImgs.forEach((img, i) => {
+    img.style.height = `${h}px`;
+    img.style.left   = `${leftW + gapBig + i * (rightW + gapSmall)}px`;
+    img.style.top    = `${baseY}px`;
+  });
+}
 
 function layoutSlide7IfActive(){
   const slide = slides[index];
@@ -1004,7 +1049,7 @@ function layoutActive(){
   setActive(0);
 
   // if slide1/2 images load later, relayout
-  document.querySelectorAll('.slide--single img, .slide--duo3 img').forEach(img => {
+  document.querySelectorAll('.slide--single img, .slide--duo3 img, .slide--s5 img, .slide--s7 img').forEach(img => {
     img.addEventListener('load', () => requestAnimationFrame(layoutActive), { passive:true });
   });
 })();
