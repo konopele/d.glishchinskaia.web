@@ -801,23 +801,25 @@ function layoutSlide5IfActive(){
   const hByWidth  = (availW - gapBig - 2 * gapSmall) / (leftAR + rightAR * 3);
   const h = (portraitish ? hByHeight : Math.min(hByHeight, hByWidth)) * 0.8;
 
-  const leftW  = leftAR  * h;
+  const hLeft  = h * 1.15;
+  const leftW  = leftAR  * hLeft;
   const rightW = rightAR * h;
-  const groupW = leftW + gapBig + 3 * rightW + 2 * gapSmall;
+  const rightStartX = (leftW + gapBig) * 1.25;
+  const groupW = rightStartX + 3 * rightW + 2 * gapSmall;
 
   wrap.style.width  = `${Math.ceil(groupW)}px`;
   wrap.style.height = '100%';
 
-  const topLeft  = Math.min(availH * 0.21, availH - h);
+  const topLeft  = Math.min(availH * 0.21, availH - hLeft);
   const topRight = Math.min(availH * 0.11, availH - h);
 
-  leftImg.style.height = `${h}px`;
+  leftImg.style.height = `${hLeft}px`;
   leftImg.style.left   = '0px';
   leftImg.style.top    = `${topLeft}px`;
 
   rImgs.forEach((img, i) => {
     img.style.height = `${h}px`;
-    img.style.left   = `${leftW + gapBig + i * (rightW + gapSmall)}px`;
+    img.style.left   = `${rightStartX + i * (rightW + gapSmall)}px`;
     img.style.top    = `${topRight}px`;
   });
 }
