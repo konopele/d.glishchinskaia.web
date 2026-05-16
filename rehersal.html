@@ -697,78 +697,86 @@ body.pattern-mode .topbar{
     }
   }
 
-  // ===== Slide 2 layout: 5:3 HEIGHTS; in portrait allow overflow-x =====
+  // ===== Slide 2 layout =====
+  // Landscape: 06.jpg fills full height, flush against top/left/bottom frame borders.
+  //            Right images fill the remaining width, centered vertically.
+  // Portrait:  height-constrained with hscroll.
   function layoutSlide2IfActive(){
     const slide = slides[index];
     if (!slide || !slide.classList.contains('slide--duo3')) return;
 
-    const inner = slide.querySelector('.slide-inner');
-    const duo3  = slide.querySelector('.duo3');
-    const left  = slide.querySelector('.duo3-left');
+    const inner  = slide.querySelector('.slide-inner');
+    const duo3   = slide.querySelector('.duo3');
+    const left   = slide.querySelector('.duo3-left');
     const rights = Array.from(slide.querySelectorAll('.duo3-r'));
     if (!inner || !duo3 || !left || rights.length !== 3) return;
 
-    // Make inner horizontally scrollable in portrait
-    if (isPortraitish()){
+    const portrait = isPortraitish();
+    if (portrait){
       if (!inner.classList.contains('hscroll')) inner.classList.add('hscroll');
-      inner.style.overflowY = 'hidden';
     } else {
       inner.classList.remove('hscroll');
-      inner.style.overflowY = 'hidden';
     }
+    inner.style.overflowY = 'hidden';
 
     if (!left.naturalWidth || !rights[0].naturalWidth) return;
 
-    const availW = inner.clientWidth;
-    const availH = inner.clientHeight;
-
+    const availW  = inner.clientWidth;
+    const availH  = inner.clientHeight;
     const gapSmall = 18;
-    const gapBig = gapSmall * 3;
+    const gapBig   = gapSmall * 3;
+    const leftAR   = left.naturalWidth  / left.naturalHeight;
+    const rightAR  = rights[0].naturalWidth / rights[0].naturalHeight;
 
-    const leftAR  = left.naturalWidth / left.naturalHeight;
-    const rightAR = rights[0].naturalWidth / rights[0].naturalHeight;
+    if (portrait){
+      // Height-constrained, hscroll
+      const u      = availH / 5;
+      const leftH  = 5 * u;
+      const rightH = 3 * u;
+      const leftW  = leftAR  * leftH;
+      const rightW = rightAR * rightH;
+      const groupW = leftW + gapBig + 3 * rightW + 2 * gapSmall;
 
-    // We ALWAYS respect height ratio 5:3.
-    // In landscape: fit both width+height.
-    // In portrait: fit height first, let width overflow (hscroll).
-    const uByHeight = availH / 5;
+      duo3.style.width  = `${Math.ceil(groupW)}px`;
+      duo3.style.height = '100%';
 
-    // width-constrained u (for landscape fitting)
-    const uByWidth =
-      (availW - gapBig - 2*gapSmall) /
-      (leftAR * 5 + rightAR * 9);
+      const baseY = Math.max(0, availH - leftH);
+      left.style.height = `${leftH}px`;
+      left.style.left   = '0px';
+      left.style.top    = `${baseY}px`;
 
-    const u = isPortraitish() ? uByHeight : Math.min(uByHeight, uByWidth);
+      const rightY  = baseY + (leftH - rightH) / 2;
+      const rightX0 = leftW + gapBig;
+      rights.forEach((img, i) => {
+        img.style.height = `${rightH}px`;
+        img.style.left   = `${rightX0 + i * (rightW + gapSmall)}px`;
+        img.style.top    = `${rightY}px`;
+      });
+    } else {
+      // Landscape: 06.jpg fills full frame height, touches top/left/bottom borders.
+      // Right images scale to fill remaining width.
+      const leftH   = availH;
+      const leftW   = leftAR * leftH;
+      const remainW = Math.max(0, availW - leftW - gapBig);
+      const rightW  = Math.max(1, (remainW - 2 * gapSmall) / 3);
+      const rightH  = rightW / rightAR;
+      const groupW  = leftW + gapBig + 3 * rightW + 2 * gapSmall;
 
-    const leftH  = 5*u;
-    const rightH = 3*u;
+      duo3.style.width  = `${Math.ceil(groupW)}px`;
+      duo3.style.height = '100%';
 
-    const leftW  = leftAR * leftH;
-    const rightW = rightAR * rightH;
+      left.style.height = `${leftH}px`;
+      left.style.left   = '0px';
+      left.style.top    = '0px';
 
-    const groupW = leftW + gapBig + 3*rightW + 2*gapSmall;
-    const groupH = leftH;
-
-    // Set duo3 width to composition width (so it can scroll)
-    duo3.style.width = `${Math.ceil(groupW)}px`;
-    duo3.style.height = `100%`;
-
-    // Anchor left/bottom (no cropping)
-    const baseX = 0;
-    const baseY = Math.max(0, availH - groupH);
-
-    left.style.height = `${leftH}px`;
-    left.style.left = `${baseX}px`;
-    left.style.top  = `${baseY}px`;
-
-    const rightY = baseY + (leftH - rightH)/2;
-    const rightX0 = baseX + leftW + gapBig;
-
-    rights.forEach((img, i) => {
-      img.style.height = `${rightH}px`;
-      img.style.left = `${rightX0 + i*(rightW + gapSmall)}px`;
-      img.style.top  = `${rightY}px`;
-    });
+      const rightY  = Math.max(0, (availH - rightH) / 2);
+      const rightX0 = leftW + gapBig;
+      rights.forEach((img, i) => {
+        img.style.height = `${rightH}px`;
+        img.style.left   = `${rightX0 + i * (rightW + gapSmall)}px`;
+        img.style.top    = `${rightY}px`;
+      });
+    }
   }
 
 function layoutSlide5IfActive(){
