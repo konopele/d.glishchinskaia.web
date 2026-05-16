@@ -804,8 +804,12 @@ function layoutSlide5IfActive(){
   const hLeft  = h * 1.15 * 1.10;
   const leftW  = leftAR  * hLeft;
   const rightW = rightAR * h;
+  const padX = parseFloat(getComputedStyle(inner).paddingLeft);
+  const contentW = inner.clientWidth - 2 * padX;
   const leftOffsetX = availW * 0.05;
-  const rightStartX = (leftW + gapBig) * 1.25 * 1.20 - availW * 0.03;
+  const rightStartX = portraitish
+    ? (leftW + gapBig) * 1.25 * 1.20 - availW * 0.03
+    : contentW - 3 * rightW - 2 * gapSmall;
   const groupW = rightStartX + 3 * rightW + 2 * gapSmall;
 
   wrap.style.width  = `${Math.ceil(groupW)}px`;
