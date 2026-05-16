@@ -805,7 +805,7 @@ function layoutSlide5IfActive(){
   const leftW  = leftAR  * hLeft;
   const rightW = rightAR * h;
   const leftOffsetX = availW * 0.05;
-  const rightStartX = (leftW + gapBig) * 1.25 * 1.20;
+  const rightStartX = (leftW + gapBig) * 1.25 * 1.20 - availW * 0.03;
   const groupW = rightStartX + 3 * rightW + 2 * gapSmall;
 
   wrap.style.width  = `${Math.ceil(groupW)}px`;
