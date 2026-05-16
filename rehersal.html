@@ -799,7 +799,7 @@ function layoutSlide5IfActive(){
   // 1:1 heights — constrain by both width and height
   const hByHeight = availH;
   const hByWidth  = (availW - gapBig - 2 * gapSmall) / (leftAR + rightAR * 3);
-  const h = portraitish ? hByHeight : Math.min(hByHeight, hByWidth);
+  const h = (portraitish ? hByHeight : Math.min(hByHeight, hByWidth)) * 0.8;
 
   const leftW  = leftAR  * h;
   const rightW = rightAR * h;
