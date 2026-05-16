@@ -66,8 +66,15 @@ body{
 
 /* slides */
 .slides{position:absolute; inset:0; background:var(--bg);}
-.slide{position:absolute; inset:0; display:none; background:var(--bg);}
-.slide.is-active{display:block;}
+.slide{
+  position:absolute; inset:0;
+  display:block;
+  background:var(--bg);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.32s ease;
+}
+.slide.is-active{opacity:1; pointer-events:auto;}
 
 .slide-inner{
   width:100%;
@@ -900,15 +907,14 @@ function layoutActive(){
     slides.forEach((s,k) => s.classList.toggle('is-active', k === index));
     hydrateSlide(slides[index]);
 
+    document.body.classList.toggle('pattern-mode', slides[index].classList.contains('slide--pattern'));
+
     requestAnimationFrame(() => layoutActive());
 
     wheelAcc = 0;
-    wheelLocked = false;
     edgeTopHits = 0;
     edgeBottomHits = 0;
   }
-
-  document.body.classList.toggle('pattern-mode', slides[index].classList.contains('slide--pattern'));
 
   function next(){ setActive(index + 1); }
   function prev(){ setActive(index - 1); }
@@ -1000,13 +1006,18 @@ function layoutActive(){
       wheelLocked = true;
       wheelAcc = 0;
       if (dir > 0) next(); else prev();
+      clearTimeout(wheelUnlockTimer);
+      wheelUnlockTimer = setTimeout(() => {
+        wheelLocked = false;
+        wheelAcc = 0;
+      }, 380);
+      return;
     }
 
     clearTimeout(wheelUnlockTimer);
     wheelUnlockTimer = setTimeout(() => {
-      wheelLocked = false;
       wheelAcc = 0;
-    }, 180);
+    }, 200);
 
   }, { passive:false });
 
