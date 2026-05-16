@@ -804,7 +804,8 @@ function layoutSlide5IfActive(){
   const hLeft  = h * 1.15;
   const leftW  = leftAR  * hLeft;
   const rightW = rightAR * h;
-  const rightStartX = (leftW + gapBig) * 1.25;
+  const leftOffsetX = availW * 0.10;
+  const rightStartX = (leftW + gapBig) * 1.25 * 1.20;
   const groupW = rightStartX + 3 * rightW + 2 * gapSmall;
 
   wrap.style.width  = `${Math.ceil(groupW)}px`;
@@ -814,7 +815,7 @@ function layoutSlide5IfActive(){
   const topRight = Math.min(availH * 0.11, availH - h);
 
   leftImg.style.height = `${hLeft}px`;
-  leftImg.style.left   = '0px';
+  leftImg.style.left   = `${leftOffsetX}px`;
   leftImg.style.top    = `${topLeft}px`;
 
   rImgs.forEach((img, i) => {
