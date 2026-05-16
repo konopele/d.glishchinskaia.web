@@ -787,45 +787,49 @@ function layoutSlide5IfActive(){
   if (!leftImg.naturalWidth || !leftImg.naturalHeight ||
       !rImgs[0].naturalWidth || !rImgs[0].naturalHeight) return;
 
-  const availW = inner.clientWidth;
-  const availH = inner.clientHeight;
-
-  const gapSmall = 18;
-  const gapBig   = gapSmall * 3;
+  const padX     = parseFloat(getComputedStyle(inner).paddingLeft);
+  const contentW = inner.clientWidth - 2 * padX;
+  const availH   = inner.clientHeight;
 
   const leftAR  = leftImg.naturalWidth  / leftImg.naturalHeight;
   const rightAR = rImgs[0].naturalWidth / rImgs[0].naturalHeight;
 
-  // 1:1 heights — constrain by both width and height
-  const hByHeight = availH;
-  const hByWidth  = (availW - gapBig - 2 * gapSmall) / (leftAR + rightAR * 3);
-  const h = (portraitish ? hByHeight : Math.min(hByHeight, hByWidth)) * 0.8;
+  // 03.jpg is 26.5% taller than 02.jpg; starts 5% in from the left border
+  const leftScale = 1.265;
+  const leftFrac  = 0.05;
 
-  const hLeft  = h * 1.15 * 1.10;
+  // Gaps scale with content width
+  const gapSmall = Math.max(8, contentW * 0.018);
+  const gapBig   = gapSmall * 3;
+
+  // Solve h so the full row exactly fills contentW (landscape):
+  // leftFrac*contentW + leftAR*h*leftScale + gapBig + 3*rightAR*h + 2*gapSmall = contentW
+  const hByWidth  = (contentW * (1 - leftFrac) - gapBig - 2 * gapSmall) /
+                    (leftAR * leftScale + 3 * rightAR);
+  // Constrain so left image doesn't overflow vertically
+  const hByHeight = (availH * 0.88) / leftScale;
+
+  const h = portraitish ? hByHeight : Math.min(hByHeight, hByWidth);
+
+  const hLeft  = h * leftScale;
   const leftW  = leftAR  * hLeft;
   const rightW = rightAR * h;
-  const padX = parseFloat(getComputedStyle(inner).paddingLeft);
-  const contentW = inner.clientWidth - 2 * padX;
-  const leftOffsetX = availW * 0.05;
-  const rightStartX = portraitish
-    ? (leftW + gapBig) * 1.25 * 1.20 - availW * 0.03
-    : contentW - 3 * rightW - 2 * gapSmall;
-  const groupW = rightStartX + 3 * rightW + 2 * gapSmall;
+
+  const leftOffsetX = contentW * leftFrac;
+  const rightStartX = contentW - 3 * rightW - 2 * gapSmall;
+  const groupW      = Math.max(leftOffsetX + leftW, rightStartX + 3 * rightW + 2 * gapSmall);
 
   wrap.style.width  = `${Math.ceil(groupW)}px`;
   wrap.style.height = '100%';
 
-  const topLeft  = Math.min(availH * 0.21, availH - hLeft);
-  const topRight = Math.min(availH * 0.11, availH - h);
-
   leftImg.style.height = `${hLeft}px`;
   leftImg.style.left   = `${leftOffsetX}px`;
-  leftImg.style.top    = `${topLeft}px`;
+  leftImg.style.top    = `${Math.min(availH * 0.21, availH - hLeft)}px`;
 
   rImgs.forEach((img, i) => {
     img.style.height = `${h}px`;
     img.style.left   = `${rightStartX + i * (rightW + gapSmall)}px`;
-    img.style.top    = `${topRight}px`;
+    img.style.top    = `${Math.min(availH * 0.11, availH - h)}px`;
   });
 }
 
