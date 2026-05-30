@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <!-- meta viewport: включает “адаптивность” на мобильных.
+       width=device-width — ширина в CSS-пикселях равна ширине экрана устройства
+       initial-scale=1 — стартовый масштаб 100% -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>фронтир — Дарья Глищинская</title>
+
+  <style>
+    /* =========================
+       ПОДКЛЮЧЕНИЕ ШРИФТОВ
+       ========================= */
+
+    @font-face{
+      /* font-family: имя семейства, которым ты потом пользуешься в font-family */
+      font-family: "Montserrat";
+
+      /* src: где лежит файл шрифта и какой формат
+         url(...) — путь к файлу (относительный или абсолютный)
+         format("truetype") — подсказка браузеру о формате (truetype/woff/woff2/otf и т.д.) */
+      src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
+
+      /* font-weight: какой “вес” соответствует этому файлу.
+         Возможные значения:
+         - числа 100..900 (шаг 100) чаще всего: 100 thin, 300 light, 400 regular, 500 medium, 700 bold, 900 black
+         - ключевые слова (устар./редко): normal (=400), bold (=700) */
+      font-weight: 300;
+
+      /* font-style: стиль начертания:
+         normal | italic | oblique (oblique — “наклонный”, часто как italic) */
+      font-style: normal;
+
+      /* font-display: стратегия отображения до загрузки шрифта:
+         auto | block | swap | fallback | optional
+         swap — сначала системный шрифт, потом заменит на Montserrat (обычно лучший UX) */
+      font-display: swap;
+    }
+
+    @font-face{
+      font-family: "Montserrat";
+      src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+      font-weight: 400; /* Regular */
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face{
+      font-family: "Montserrat";
+      src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
+      font-weight: 500; /* Medium */
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face{
+      font-family: "Montserrat";
+      src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+      font-weight: 400; /* Italic обычно идёт отдельно, но вес всё равно указываем */
+      font-style: italic; /* именно italic (не normal) */
+      font-display: swap;
+    }
+
+    /* =========================
+       CSS ПЕРЕМЕННЫЕ (CUSTOM PROPERTIES)
+       ========================= */
+
+    :root{
+      /* :root — корневой элемент (html). Удобно хранить “тему” и параметры.
+         Все переменные вида --name потом используются через var(--name). */
+
+      --bg:#fff; /* цвет фона. Форматы: #RGB/#RRGGBB, rgb(), hsl(), named colors */
+      --fg:#000; /* цвет текста/элементов */
+
+      --top-gap:46px;     /* отступ сверху под “точки” (панель) */
+      --dot-size:5px;     /* размер каждой точки */
+      --dot-gap:6px;      /* расстояние между точками */
+      --dot-shift:-10px;  /* смещение точки-меню: отрицательное = влево, положительное = вправо */
+
+      --edge-zone:80px;   /* “зона” по краям для автоскролла (сейчас в JS не используется) */
+      --max-speed:18;     /* максимум скорости (сейчас в JS не используется) */
+      --page-pad:0px;     /* общий паддинг (оставлен 0 для “вплотную”) */
+    }
+
+    body{
+      /* background: фон элемента.
+         Возможные значения: цвет, градиенты (linear-gradient), изображения (url), несколько слоёв */
+      background: var(--bg);
+
+      /* color: цвет текста (и наследуемых элементов по умолчанию) */
+      color: var(--fg);
+
+      /* overflow: что делать, если контент не помещается.
+         visible | hidden | scroll | auto
+         hidden — обрезать без полос прокрутки (у тебя прокрутка реализована JS-ом) */
+      overflow: hidden;
+
+      /* font-family: список шрифтов по приоритету.
+         "Montserrat" — кастомный, дальше фолбэки.
+         serif/sans-serif/monospace — “родовые” семейства. */
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    }
+
+    /* ⚠️ ВАЖНО: у тебя :root объявлен ДВА РАЗА. Это не ошибка, но второй блок “перезапишет”
+       одноимённые переменные (bg/fg/top-gap и т.д.). Я оставляю как есть, но комментирую. */
+    :root{
+      --bg:#fff;
+      --fg:#000;
+
+      --top-gap:46px;
+
+      --dot-size:5px;
+      --dot-gap:6px;
+      --dot-shift:-10px;
+
+      --page-pad-top:0px; /* отдельный отступ сверху/снизу для .stage */
+
+      /* “рамки” (white frames) вокруг сцены */
+      --left-frame: 30vw; /* vw = % ширины окна: 30vw = 30% ширины экрана */
+      --right-frame: 0px; /* 0px = нет рамки справа */
+      --end-gap: 24px;    /* белый зазор в конце (справа), когда доскроллишь до упора */
+
+      --page-pad:0px;
+
+      /* размеры intro-панели (в твоём CSS часть не используется напрямую, но оставлено) */
+      --intro-w: 24vw;     /* ширина в vw */
+      --intro-min: 220px;  /* минимум */
+      --intro-max: 360px;  /* максимум */
+
+      /* clamp(min, preferred, max) — адаптивное значение:
+         берёт preferred, но ограничивает минимумом/максимумом */
+      --intro-left: clamp(28px, 3vw, 56px); /* X позиция текста */
+      --intro-top:  clamp(70px, 10vh, 120px); /* Y позиция заголовка; vh = % высоты окна */
+      --intro-gap:  clamp(50px, 10vh, 110px); /* расстояние title->txt (сейчас не применяется) */
+    }
+
+    /* =========================
+       СТРУКТУРА СЦЕНЫ
+       ========================= */
+
+    .stage{
+      /* top/bottom/left/right работают ТОЛЬКО если задан position (absolute/fixed/relative/sticky).
+         У тебя position НЕ задан, значит эти свойства в текущем виде эффекта не имеют.
+         (Если хочешь, чтобы stage реально ограничивался рамками — добавь position: fixed/absolute.) */
+      top: var(--page-pad-top);
+      bottom: var(--page-pad-top);
+      left: var(--left-frame);
+      right: var(--right-frame);
+
+      background: var(--bg);
+
+      /* overflow: hidden — всё, что выходит за границы stage, режется */
+      overflow: hidden;
+    }
+
+    .intro-panel{
+      /* flex: shorthand для flex-grow flex-shrink flex-basis
+         flex: 0 0 600px означает:
+         grow=0 — не растягиваться
+         shrink=0 — не сжиматься
+         basis=600px — базовая ширина 600px */
+      flex: 0 0 600px;
+
+      /* height: 100% — высота равна высоте родителя (если у родителя есть определённая высота) */
+      height: 100%;
+
+      background: var(--bg);
+
+      /* position: relative — делает элемент “контейнером” для абсолютного позиционирования детей */
+      position: relative;
+
+      /* box-sizing: как считать width/height:
+         content-box (по умолчанию) — width без padding/border
+         border-box — width включает padding+border (удобнее для вёрстки) */
+      box-sizing: border-box;
+    }
+
+    .intro-title{ /* стили заголовка “фронтир” */
+      /* position: absolute — вынимает элемент из потока, позиционируется относительно ближайшего position:relative/absolute/fixed родителя */
+      position: absolute;
+
+      /* top/left: отступы от верхнего/левого края контейнера */
+      top: var(--intro-top);
+      left: var(--intro-left);
+
+      /* margin: внешние отступы. 0 — убрать дефолтные отступы у заголовков/текста */
+      margin: 0;
+
+      /* font-size: размер шрифта. Обычно px/rem/em.
+         px — фиксировано; rem — относительно корневого размера (обычно 16px) */
+      font-size: 32px;
+
+      /* letter-spacing: межбуквенный интервал.
+         Возможные значения: normal | <length> (px/em/rem) */
+      letter-spacing: 0.08em; /* em = относительно размера шрифта */
+
+      /* font-weight: “толщина” (100..900 или normal/bold) */
+      font-weight: 400;
+
+      /* opacity: прозрачность 0..1
+         0 = полностью прозрачно, 1 = полностью непрозрачно */
+      opacity: 0.75;
+
+      /* font-style: normal | italic | oblique */
+      font-style: italic;
+    }
+
+    .intro-txt{ /* стили кнопки “txt” */
+      position: absolute;
+
+      /* top/left здесь заданы в процентах от размеров контейнера intro-panel */
+      top: 40%;
+      left: 60%;
+
+      /* appearance: управление нативным видом элементов формы (кнопки/инпуты).
+         Возможные значения:
+         none | auto | (иногда vendor-specific)
+         none — отключает “системный” вид, чтобы стилизовать вручную */
+      appearance: none;
+
+      /* border: рамка. 0 = нет рамки.
+         Возможные значения: <width> <style> <color>, например: 1px solid #000 */
+      border: 0;
+
+      /* background: фон. transparent = полностью прозрачный */
+      background: transparent;
+
+      /* color: цвет текста кнопки */
+      color: var(--fg);
+
+      /* padding: внутренние отступы (top right bottom left).
+         0 — убрать дефолтные отступы у кнопок */
+      padding: 0;
+
+      /* font-family: inherit — наследовать шрифт от родителя (body) */
+      font-family: inherit;
+
+      /* font-size / letter-spacing / font-weight / opacity — аналогично заголовку */
+      font-size: 32px;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+      opacity: 0.55;
+
+      /* cursor: вид курсора.
+         pointer — “рука”, показывая, что кликабельно.
+         Другие: default, text, move, not-allowed и т.д. */
+      cursor: pointer;
+
+      font-style: italic;
+    }
+
+    /* =========================
+       МЕНЮ-ТОЧКИ
+       ========================= */
+
+    .menu-link{
+      /* position: fixed — фиксируется относительно окна, не двигается при прокрутке */
+      position: fixed;
+
+      /* top/left — позиция фиксированного элемента */
+      top: 12px;  /* вертикальная позиция */
+      left: 98%;  /* горизонтальная позиция (% от ширины окна) */
+
+      /* transform: трансформация.
+         translateX(-50%) — сдвиг влево на половину ширины элемента (чтобы центрировать по left)
+         translateX(var(--dot-shift)) — дополнительный сдвиг (в px) */
+      transform: translateX(-50%) translateX(var(--dot-shift));
+
+      /* z-index: порядок наложения (работает при position != static).
+         Чем больше — тем “выше” над другими элементами */
+      z-index: 10;
+
+      /* padding: внутренние отступы кликабельной зоны, чтобы удобнее нажимать */
+      padding: 8px 12px;
+
+      /* text-decoration: оформление текста ссылки.
+         none — убрать подчёркивание.
+         Другие: underline, line-through, overline и комбинации */
+      text-decoration: none;
+
+      /* filter: визуальные фильтры.
+         blur(3.25px) — размытие.
+         Возможные функции: blur(), brightness(), contrast(), grayscale(), hue-rotate(), saturate(), drop-shadow() */
+      filter: blur(3.25px);
+
+      /* -webkit-tap-highlight-color: цвет подсветки при тапе на iOS/Android WebKit.
+         transparent — убрать подсветку */
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* :focus-visible — псевдокласс для доступности: показывает фокус (обычно при навигации клавиатурой) */
+    .menu-link:focus-visible{
+      /* outline: внешняя обводка (не влияет на размеры, в отличие от border).
+         Формат: <width> <style> <color> */
+      outline: 2px solid #000;
+
+      /* outline-offset: отступ обводки от элемента (может быть отрицательным/положительным) */
+      outline-offset: 6px;
+    }
+
+    /* Псевдоэлементы ::before/::after — виртуальные элементы до/после контента.
+       Здесь ты их отключаешь на всякий случай. */
+    .dots::before,
+    .dots::after{
+      /* content: содержимое псевдоэлемента.
+         none — псевдоэлемент фактически не создаётся (в отличие от "" — пустая строка, но элемент существует). */
+      content: none !important;
+
+      /* display: способ отображения.
+         none — элемент не участвует в раскладке.
+         Другие: block, inline, flex, grid, inline-block, ... */
+      display: none !important;
+    }
+
+    .menu-link::before,
+    .menu-link::after{
+      content: none !important;
+      display: none !important;
+    }
+
+    .dots{
+      /* display:flex — включает flex-контейнер */
+      display:flex;
+
+      /* gap: расстояние между flex-элементами.
+         Можно: gap: <row-gap> <column-gap>; */
+      gap: var(--dot-gap);
+    }
+
+    .dot{
+      /* width/height: размеры */
+      width: var(--dot-size);
+      height: var(--dot-size);
+
+      /* border-radius: скругление углов.
+         50% на квадрате делает круг */
+      border-radius: 50%;
+
+      /* background: фон точки */
+      background: var(--fg);
+
+      opacity: 0.9;
+    }
+
+    .menu-link:focus-visible{
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+    /* =========================
+       VIEWPORT / STRIP (ГОРИЗОНТАЛЬНАЯ ЛЕНТА)
+       ========================= */
+
+    .viewport{
+      /* position:absolute — абсолютное позиционирование.
+         inset: 0 — shorthand для top/right/bottom/left = 0 (при position absolute/fixed) */
+      position:absolute;
+      inset: 0;
+
+      /* padding-top: отступ сверху, чтобы оставить место под меню/точки */
+      padding-top: var(--top-gap);
+
+      /* box-sizing: border-box — чтобы padding не “раздувал” размеры */
+      box-sizing: border-box;
+
+      overflow: hidden;
+    }
+
+    .strip{
+      /* height: 100% — высота равна viewport */
+      height: 100%;
+
+      /* display:flex + flex-direction:row — элементы в ряд */
+      display: flex;
+      flex-direction: row;
+
+      /* flex-wrap: перенос строк.
+         nowrap — запрещаем перенос, получаем “ленту” */
+      flex-wrap: nowrap;
+
+      /* gap: 0 — без промежутков между элементами */
+      gap: 0;
+
+      /* will-change: подсказка браузеру, что свойство скоро будет часто меняться.
+         Тут transform часто меняется при скролле => помогает производительности (иногда). */
+      will-change: transform;
+
+      /* transform: translate3d(...) — перемещение с использованием 3D (часто включает GPU-ускорение) */
+      transform: translate3d(0,0,0);
+    }
+
+    .start-spacer,
+    .end-spacer{
+      /* flex: 0 0 var(--end-gap) — фиксированный “пустой блок” шириной end-gap */
+      flex: 0 0 var(--end-gap);
+      height: 100%;
+    }
+
+    .strip img{
+      /* display:block — убрать “inline” поведение (и нижний зазор из-за baseline) */
+      display: block;
+
+      /* height: 100% — растянуть картинку по высоте ленты */
+      height: 100%;
+
+      /* width:auto — ширина сохраняет пропорции */
+      width: auto;
+
+      /* object-fit: как вписывать содержимое, если заданы width/height.
+         cover — заполнить область, обрезая лишнее
+         contain — вписать целиком, могут быть пустые поля
+         fill — растянуть без сохранения пропорций
+         none — без масштабирования
+         scale-down — contain или none, что меньше */
+      object-fit: cover;
+
+      /* user-select: можно ли выделять (текст/элемент) мышью.
+         none — запрет выделения */
+      user-select: none;
+
+      /* -webkit-user-drag: запрет перетаскивания картинки (особенно в Safari) */
+      -webkit-user-drag: none;
+
+      /* pointer-events: реагирует ли элемент на клики/hover.
+         none — события “проходят сквозь” (картинки не мешают скроллу/клику) */
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Ссылка-меню: кликаешь по точкам -> menu.html -->
+  <a class="menu-link" href="menu.html" aria-label="Open menu">
+    <!-- aria-hidden="true": скрыть декоративные точки от скринридеров -->
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="stage" id="stage">
+    <div class="viewport">
+      <div class="strip" id="strip">
+        <!-- “пустышка” слева/справа для белого поля -->
+        <span class="start-spacer" aria-hidden="true"></span>
+
+        <div class="intro-panel">
+          <div class="intro-title">фронтир</div>
+          <button class="intro-txt" id="txtBtn" type="button">txt</button>
+        </div>
+
+        <img src="front/01.jpg" alt="">
+        <img src="front/02.jpg" alt="">
+        <img src="front/03.jpg" alt="">
+        <img src="front/04.jpg" alt="">
+        <img src="front/05.jpg" alt="">
+        <img src="front/06.jpg" alt="">
+        <img src="front/07.jpg" alt="">
+        <img src="front/08.jpg" alt="">
+
+        <span class="end-spacer" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const strip = document.getElementById('strip');
+    const stage = document.getElementById('stage');
+
+    let x = 0;
+
+    /* clamp(v, min, max): ограничение значения v в диапазоне [min, max] */
+    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+    /* bounds(): вычисляем границы смещения.
+       stageW — видимая ширина “сцены”
+       stripW — полная ширина ленты (включая все изображения и spacer'ы)
+       minX — самое левое смещение (когда правый край ленты совпал с правым краем сцены)
+       maxX — самое правое (0 = лента “впритык” слева) */
+    function bounds(){
+      const stageW = stage.clientWidth;
+      const stripW = strip.scrollWidth;
+      const minX = Math.min(0, stageW - stripW);
+      const maxX = 0;
+      return { minX, maxX };
+    }
+
+    /* apply(): применить transform после ограничения */
+    function apply(){
+      const { minX, maxX } = bounds();
+      x = clamp(x, minX, maxX);
+      strip.style.transform = `translate3d(${x}px,0,0)`;
+    }
+
+    /* wheel: перехват колеса мыши/трекпада.
+       deltaY — вертикальная прокрутка (мышь)
+       deltaX — горизонтальная (трекпад)
+       speed — множитель скорости */
+    window.addEventListener('wheel', (e) => {
+      const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
+      const speed = 1.2;
+      x -= delta * speed;
+
+      apply();
+      e.preventDefault(); // запрещаем нативную прокрутку страницы
+    }, { passive: false });
+
+    window.addEventListener('resize', apply);
+    window.addEventListener('load', () => { x = 0; apply(); });
+
+    // -------------------------
+    // keep your modal code below (UNCHANGED)
+    // -------------------------
+
+    const txtBtn = document.getElementById('txtBtn');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalClose = document.getElementById('modalClose');
+
+    function openModal(open){
+      modalBackdrop.classList.toggle('open', open);
+      modalBackdrop.setAttribute('aria-hidden', String(!open));
+    }
+
+    txtBtn.addEventListener('click', () => openModal(true));
+    modalClose.addEventListener('click', () => openModal(false));
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) openModal(false);
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') openModal(false);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>фронтир — Дарья Глищинская</title>
+
+  <style>
+    /* Baseline responsive safety */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; overflow-x: hidden; }
+img, video, svg { max-width: 100%; height: auto; }
+
+/* Prevent common overflow from long strings */
+p, h1, h2, h3, h4, h5, h6, a, li, span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Forms/buttons tap comfort */
+button, input, select, textarea { font: inherit; }
+button, a { touch-action: manipulation; }
+
+    @font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face{
+  font-family: "Montserrat";
+  src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+    :root{
+      --bg:#fff;
+      --fg:#000;
+
+      --top-gap:46px;     /* space above photos for dots */
+      --dot-size:5px;
+      --dot-gap:6px;
+      --dot-shift:-10px;  /* negative = shift left */
+
+      --edge-zone:80px;   /* px near left/right edges that triggers scrolling */
+      --max-speed:18;     /* px per frame */
+      --page-pad:0px;     /* keep 0 for flush look */
+    }
+
+body{
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+:root{
+  --bg:#fff;
+  --fg:#000;
+
+  /* ✅ top white stripe height */
+  --topbar-h:56px;
+
+  /* keep using this as the reserved height above photos */
+  --top-gap: var(--topbar-h);
+
+  --dot-size:5px;
+  --dot-gap:6px;
+  --dot-shift:-10px;
+
+  /* ✅ remove frames so content touches sides */
+  --left-frame: 0px;
+  --right-frame: 0px;
+
+  --end-gap: 24px;
+  --page-pad-top:0px;
+  --page-pad:0px;
+}
+
+/* ✅ fixed top stripe, opaque, no border/frame */
+.topbar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-h);
+  background: var(--bg);
+  z-index: 20;
+}
+
+/* ✅ stage must be positioned, and touch edges */
+.stage{
+  position: fixed;      /* IMPORTANT: your top/left/right/bottom now apply */
+  inset: 0;             /* touch all sides */
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* photos start under the stripe */
+.viewport{
+  position: absolute;
+  inset: 0;
+  padding-top: var(--top-gap);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ✅ menu-link anchored inside the stripe */
+.menu-link{
+  position: fixed;
+  top: calc(var(--topbar-h) / 2);
+  left: 98%;
+  transform: translate(-50%, -50%) translateX(var(--dot-shift));
+  z-index: 30; /* above stripe */
+  padding: 8px 12px;
+  text-decoration: none;
+  filter: blur(3.25px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.intro-panel{
+  flex: 0 0 500px;
+  height: 100%;
+  background: var(--bg);
+  position: relative;   /* ✅ for absolute-positioned text */
+  box-sizing: border-box;
+}
+
+.intro-title{ /* здесь ты стайлишь надпись фронтир */
+  /* MOVE TITLE HERE */
+  position: absolute;
+  top: var(--intro-top);
+  left: 45%;
+  top: 25%;
+  
+  /* CHANGE TITLE FONT STYLING HERE */
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.intro-txt{ /* здесь ты стайлишь надпись txt */
+  /* MOVE txt HERE */
+  position: absolute;
+  top: 50%;
+  left: 30%;
+
+  /* CHANGE txt FONT STYLING HERE */
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  padding: 0;
+  font-family: inherit;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  opacity: 0.55;
+  cursor: pointer;
+  font-style: italic;
+}
+
+
+/* kill the default dotted focus outline that can look like tiny blinking dots */
+.menu-link:focus-visible{
+  outline: 2px solid #000;
+  outline-offset: 6px;
+}
+
+/* Remove the stray pseudo-element that creates the tiny extra dots */
+.dots::before,
+.dots::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* (Optional) also prevent pseudo-elements on the link itself */
+.menu-link::before,
+.menu-link::after{
+  content: none !important;
+  display: none !important;
+}
+
+
+
+    .dots{ display:flex; gap: var(--dot-gap); }
+    .dot{
+      width: var(--dot-size);
+      height: var(--dot-size);
+      border-radius: 50%;
+      background: var(--fg); /* black dots */
+      opacity: 0.9;
+    }
+    .menu-link:focus-visible{
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+
+
+    /* Scrolling strip */
+.strip{
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0;
+  will-change: transform;
+  transform: translate3d(0,0,0);
+}
+
+.start-spacer,
+.end-spacer{
+  flex: 0 0 var(--end-gap);
+  height: 100%;
+}
+
+    .strip img{
+      display: block;
+      height: 100%;
+      width: auto;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar" aria-hidden="true"></div>
+  <!-- Dots link to menu.html -->
+  <a class="menu-link" href="menu.html" aria-label="Open menu">
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="stage" id="stage">
+    <div class="viewport">
+<div class="strip" id="strip">
+  <!-- small left white gap only visible at the far-right limit -->
+  <span class="start-spacer" aria-hidden="true"></span>
+
+  <!-- ✅ new moving “white picture” -->
+  <div class="intro-panel">
+    <div class="intro-title">фронтир</div>
+    <button class="intro-txt" id="txtBtn" type="button">txt</button>
+  </div>
+
+  <img src="front/01.jpg" alt="">
+  <img src="front/02.jpg" alt="">
+  <img src="front/03.jpg" alt="">
+  <img src="front/04.jpg" alt="">
+  <img src="front/05.jpg" alt="">
+  <img src="front/06.jpg" alt="">
+  <img src="front/07.jpg" alt="">
+  <img src="front/08.jpg" alt="">
+
+  <span class="end-spacer" aria-hidden="true"></span>
+</div>
+
+
+</div>
+
+    </div>
+  </div>
+
+<script>
+  const strip = document.getElementById('strip');
+  const stage = document.getElementById('stage');
+
+  let x = 0;
+
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+  // ✅ bounds based on the visible stage, not the full window
+  function bounds(){
+    const stageW = stage.clientWidth;
+    const stripW = strip.scrollWidth; // includes padding-right end-gap
+    const minX = Math.min(0, stageW - stripW); // farthest left you can go
+    const maxX = 0;                             // flush left, never any left gap
+    return { minX, maxX };
+  }
+
+  function apply(){
+    const { minX, maxX } = bounds();
+    x = clamp(x, minX, maxX);
+    strip.style.transform = `translate3d(${x}px,0,0)`;
+  }
+
+  // ✅ wheel-only scroll
+  window.addEventListener('wheel', (e) => {
+    // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
+    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
+
+    const speed = 1.2; // tune
+    x -= delta * speed;
+
+    apply();
+    e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('resize', apply);
+  window.addEventListener('load', () => { x = 0; apply(); });
+
+  // -------------------------
+  // keep your modal code below (UNCHANGED)
+  // -------------------------
+
+  const txtBtn = document.getElementById('txtBtn');
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal(open){
+    modalBackdrop.classList.toggle('open', open);
+    modalBackdrop.setAttribute('aria-hidden', String(!open));
+  }
+
+  txtBtn.addEventListener('click', () => openModal(true));
+  modalClose.addEventListener('click', () => openModal(false));
+  modalBackdrop.addEventListener('click', (e) => {
+    if (e.target === modalBackdrop) openModal(false);
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') openModal(false);
+  });
+</script>
+
+</body>
+</html>

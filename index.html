@@ -4,8 +4,29 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Daria Glishchinskaia</title>
+<link rel="stylesheet" href="/css/style.css">
 
   <style>
+    /* Baseline responsive safety */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; overflow-x: hidden; }
+img, video, svg { max-width: 100%; height: auto; }
+
+/* Prevent common overflow from long strings */
+p, h1, h2, h3, h4, h5, h6, a, li, span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Forms/buttons tap comfort */
+button, input, select, textarea { font: inherit; }
+button, a { touch-action: manipulation; }
+
+    html, body {
+  font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
     :root{
       --bg:#000;
       --fg:#fff;
@@ -273,6 +294,24 @@
     }
     /* Debug zones */
     /* .zone{ outline:1px solid rgba(255,255,255,0.18); } */
+    /* --- Mobile: enable normal scrolling --- */
+@media (max-width: 768px) {
+  html, body {
+    height: auto !important;
+    min-height: 100%;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* If you have a global wrapper that’s 100vh/fixed */
+  .page, .wrapper, .main, .container, .content {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+}
   </style>
 </head>
 
@@ -370,7 +409,7 @@
      * (Practical approach: browser language + optional IP country lookup)
      ***********************/
     const NAME_EN = "Daria Glishchinskaia";
-    const NAME_RU = "Дарья Глишинская";
+    const NAME_RU = "Дарья Глищинская";
 
     function setNameByHint(isRu) {
       nameEl.textContent = isRu ? NAME_RU : NAME_EN;

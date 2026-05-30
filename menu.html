@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Menu</title>
+
+  <style>
+    /* Baseline responsive safety */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; overflow-x: hidden; }
+img, video, svg { max-width: 100%; height: auto; }
+
+/* Prevent common overflow from long strings */
+p, h1, h2, h3, h4, h5, h6, a, li, span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Forms/buttons tap comfort */
+button, input, select, textarea { font: inherit; }
+button, a { touch-action: manipulation; }
+
+    /* --- Montserrat (local) --- */
+    @font-face{
+      font-family: "Montserrat";
+      src: url("/fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face{
+      font-family: "Montserrat";
+      src: url("/fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    :root{
+      /* colors */
+      --bg:#000;
+      --text:#858585;
+      --hover:#b5b5b5;
+      --line:#656565;
+
+      /* typography */
+      --font: 16px;
+      --lh: 28px;
+
+      /* stage placement */
+      --pad-x: 56px;
+      --pad-y: 40px;
+
+      /* SINGLE SOURCES OF TRUTH for trunk placement */
+      --trunk-abs-x: 56px;    /* trunk X in viewport coords */
+      --art-top: 150px;       /* trunk Y for "худ.практика" header line */
+      --com-top: 390px;       /* trunk Y for "можно заказать съёмку" header line */
+
+      /* trunk segment sizes */
+      --trunk-art-h: 198px; /*top vertical line length*/
+      --trunk-com-h: 86px; /*bottom vertical line length*/
+
+      /* line lengths */
+      --hHead: 26px;          /* solid header line length */
+      --hDash: 44px;          /* dashed item line length */
+      --hSolidSmall: 18px;    /* short solid lines for CV/Contacts */
+
+      /* spacing */
+      --text-gap: 12px;       /* gap between line and text */
+      --gap-after-art: 30px;
+      --gap-after-commercial: 26px;
+
+      /* dash pattern */
+      --dash: 8px;
+      --dash-gap: 7px;
+
+      /* signature */
+      --sig-w: 420px;
+      --sig-x: 56px;
+      --sig-y: 40px;
+
+      /* menu column X bound to trunk */
+      --menu-left: calc(var(--trunk-abs-x) + var(--hHead) + var(--text-gap));
+      /* text baselines bound to trunk Y */
+      --art-menu-top: calc(var(--art-top) - (var(--lh) / 2));
+      --com-menu-top: calc(var(--com-top) - (var(--lh) / 2));
+    }
+
+    html, body{
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;       /* stops scroll */
+      overscroll-behavior: none;
+      overflow-y: hidden;
+      overflow-x: auto;   /* allow horizontal scroll */
+      overscroll-behavior: none;
+      touch-action: none;     /* prevents swipe scroll on mobile */
+    }
+
+    body{
+      background: var(--bg);
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: var(--font);
+      line-height: var(--lh);
+      letter-spacing: 0.02em;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    a, a:visited, a:hover, a:active{
+      color: inherit;
+      text-decoration: none !important;
+    }
+    a:hover{ color: var(--hover); }
+
+    .stage{
+      position: relative;
+      height: 100%;
+      box-sizing: border-box;
+      width: max-content; /* page grows to content width */
+      min-width: 100vw;   /* but never smaller than viewport */
+    }
+
+    /* Signature (top-left angle area) */
+.signature{
+  position: absolute;
+  top: var(--sig-y);     /* keep your top offset */
+  left: 50%;             /* center point */
+  transform: translateX(-50%);
+  width: var(--sig-w);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+    /* Trunk segments (X + Y are controlled by variables) */
+    .trunk{
+      position: absolute;
+      left: var(--trunk-abs-x);
+      width: 1px;
+      background: var(--line);
+      opacity: 0.65;
+    }
+    .trunk.art{ top: var(--art-top); height: var(--trunk-art-h); }
+    .trunk.com{ top: var(--com-top); height: var(--trunk-com-h); }
+
+    /* Header solid lines (start at trunk X, Y bound to trunk Y) */
+    .head-line{
+      position: absolute;
+      left: var(--trunk-abs-x);
+      height: 1px;
+      width: var(--hHead);
+      background: var(--line);
+      opacity: 0.65;
+    }
+    .head-line.art{ top: var(--art-top); }
+    .head-line.com{ top: var(--com-top); }
+
+    /* Menu blocks: left bound to trunk X, top bound to trunk Y */
+    .menu{
+      position: absolute;
+      left: var(--menu-left);
+      width: 1200px;
+    }
+    .menu.art{
+        top: var(--art-menu-top);
+        position: absolute;
+        left: 57px;
+    }
+    .menu.com{
+        top: var(--com-menu-top);
+        position: absolute;
+        left: 57px;
+    }
+
+    .row{
+      display: flex;
+      align-items: center;
+      gap: 0;      
+    }
+
+    .line{
+      flex: 0 0 auto;
+      height: 1px;
+      background: var(--line);
+      opacity: 0.65;
+    }
+    .line.dashed{
+      width: var(--hDash);
+      background: repeating-linear-gradient(
+        to right,
+        var(--line) 0 var(--dash),
+        transparent var(--dash) calc(var(--dash) + var(--dash-gap))
+      );
+    }
+    .line.solid.tiny{ width: var(--hSolidSmall);
+    position: relative;
+    left: -10px;}
+
+    .title-row{ margin-bottom: 2px;
+    position: relative;
+    left: 30px;}
+    .spacer{ height: var(--gap-after-art); }
+    .spacer2{ height: var(--gap-after-commercial); }
+
+    .singles{ margin-top: 2px; }
+    .singles .row{ margin-left: 12px; }
+
+.hover-preview{
+  position: absolute;
+  right: 10%;
+  left: auto;
+  top: 35%;
+  width: 260px;
+  height: 320px;
+  display: none;
+  pointer-events: none;
+  z-index: 5;
+  transform: none;
+}
+
+.hover-preview.is-cv{
+  left: 30%;
+  right: auto;
+  top: 50%;
+  bottom: auto;
+  width: 100px;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+
+.hover-preview__img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.hover-preview.is-cv .hover-preview__img{
+  height: auto;
+}
+
+.hover-preview.is-on{
+  display: block;
+}
+
+.hover-preview.is-on .hover-preview__img{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* visible state */
+.hover-preview.is-on{ display: block; }
+.hover-preview.is-on .hover-preview__img{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+  </style>
+</head>
+
+
+<body>
+  <div class="stage">
+    
+    <!-- Signature -->
+    <img class="signature" src="img/signature.png" alt="Daria Glishchinskaia" aria-hidden="true">
+
+    <!-- Trunks -->
+    <div class="trunk art" aria-hidden="true"></div>
+    <div class="trunk com" aria-hidden="true"></div>
+
+    <!-- Header solid lines -->
+    <div class="head-line art" aria-hidden="true"></div>
+    <div class="head-line com" aria-hidden="true"></div>
+
+    <!-- ART MENU (top bound to --art-top) -->
+    <div class="menu art">
+      <div class="row title-row"><div class="label">худ.практика</div></div>
+
+      <div class="row"><div class="line dashed"></div><a href="rehersal.html" data-img="previews/rehersal.png">РЕПЕТИЦИЯ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="sport.html" data-img="previews/sport.png">СПОРТКЛУБ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="shadows.html" data-img="previews/shadows.png">ТЕНИ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="collection.html" data-img="previews/collection.png">КОЛЛЕКЦИЯ ХРУПКИХ И НЕПРИКОСНОВЕННЫХ ОБЪЕКТОВ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="frontir.html" data-img="previews/frontir.png">ФРОНТИР</a></div>
+      <div class="row"><div class="line dashed"></div><a href="bram.html" data-img="previews/bram.png">B.R.A.M</a></div>
+      <div class="row"><div class="line dashed"></div><a href="shots.html">КАДРЫ</a></div>
+    </div>
+
+    <div class="hover-preview" aria-hidden="true">
+  <img class="hover-preview__img" src="" alt="">
+</div>
+
+    <!-- COMMERCIAL MENU (top bound to --com-top) -->
+    <div class="menu com">
+      <div class="row title-row"><div class="label">можно заказать съёмку</div></div>
+
+      <div class="row"><div class="line dashed"></div><a href="reportage.html">РЕПОРТАЖИ / ДОК</a></div>
+      <div class="row"><div class="line dashed"></div><a href="brands.html">ДЛЯ БРЕНДОВ</a></div>
+      <div class="row"><div class="line dashed"></div><a href="portraits.html">ПЕРСОНЫ</a></div>
+
+      <div class="spacer2"></div>
+
+      <div class="singles">
+        <div class="row"><div class="line solid tiny"></div><a href="cv-bio.html" data-img="previews/part_smile.png" data-type="center">CV / BIO</a></div>
+        <div class="row"><div class="line solid tiny"></div><a href="contacts.html" data-img="previews/part_smile.png" data-type="center">КОНТАКТЫ</a></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  (function () {
+    const preview = document.querySelector('.hover-preview');
+    const img = document.querySelector('.hover-preview__img');
+    if (!preview || !img) return;
+
+    // all menu links that have preview images
+    const links = document.querySelectorAll('a[data-img]');
+
+function show(src, el){
+  img.src = src;
+
+  if (el.dataset.type === 'center') {
+    preview.classList.add('is-cv');
+  } else {
+    preview.classList.remove('is-cv');
+  }
+
+  preview.classList.add('is-on');
+}
+
+function hide(){
+  preview.classList.remove('is-on');
+  preview.classList.remove('is-cv'); /* prevent sticking */
+}
+
+links.forEach(a => {
+  a.addEventListener('mouseenter', () => show(a.dataset.img, a));
+  a.addEventListener('focus', () => show(a.dataset.img, a));
+  a.addEventListener('mouseleave', hide);
+  a.addEventListener('blur', hide);
+});
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>репетиция — Дарья Глищинская</title>
+
+<style>
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap;}
+
+:root{
+  --bg:#fff;
+  --fg:#000;
+  --topbar-h:56px;
+
+  --dot-size:5px;
+  --dot-gap:6px;
+  --dot-shift:-10px;
+
+  --pad-x: clamp(18px, 4vw, 60px);
+  --pad-y: clamp(18px, 3vh, 36px);
+
+  --blur: 18px;
+}
+
+html, body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  overflow:hidden;
+  font-family:"Montserrat", Arial, Helvetica, sans-serif;
+}
+
+/* top stripe */
+.topbar{
+  position:fixed; top:0; left:0; right:0;
+  height:var(--topbar-h);
+  background:var(--bg);
+  z-index:20;
+}
+
+/* menu dots */
+.menu-link{
+  position:fixed;
+  top: calc(var(--topbar-h) / 2);
+  left:98%;
+  transform: translate(-50%, -50%) translateX(var(--dot-shift));
+  z-index:30;
+  padding:8px 12px;
+  text-decoration:none;
+  filter: blur(3.25px);
+  -webkit-tap-highlight-color: transparent;
+}
+.dots{display:flex; gap:var(--dot-gap);}
+.dot{width:var(--dot-size); height:var(--dot-size); border-radius:50%; background:var(--fg); opacity:0.9;}
+.menu-link:focus-visible{outline:2px solid var(--fg); outline-offset:4px;}
+.dots::before,.dots::after,.menu-link::before,.menu-link::after{content:none!important; display:none!important;}
+
+/* stage */
+.stage{position:fixed; inset:0; background:var(--bg); overflow:hidden;}
+.viewport{position:absolute; top:var(--topbar-h); left:0; right:0; bottom:0; overflow:hidden;}
+
+/* slides */
+.slides{position:absolute; inset:0; background:var(--bg);}
+.slide{
+  position:absolute; inset:0;
+  display:block;
+  background:var(--bg);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.32s ease;
+}
+.slide.is-active{opacity:1; pointer-events:auto;}
+
+.slide-inner{
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  padding: var(--pad-y) var(--pad-x);
+  overflow:hidden;
+}
+
+/* media */
+.media{display:block; max-width:100%; max-height:100%; object-fit:contain;}
+.media.is-loading{filter: blur(var(--blur)); transform:translateZ(0);}
+
+/* =========================================================
+   HORIZONTAL SCROLL MODE (used on slides 1 & 2 when portrait)
+   ========================================================= */
+.hscroll{
+  width:100%;
+  height:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;          /* Firefox */
+}
+.hscroll::-webkit-scrollbar{display:none;} /* WebKit */
+
+/* =========================================================
+   SLIDE 1 (fit to width in normal; in portrait, allow hscroll)
+   ========================================================= */
+.slide--single .slide-inner{position:relative; padding:0; overflow:hidden;}
+.slide--single .slide-head{
+  position:absolute; left:0; right:0; top:0;
+  height:170px;
+  z-index:2;
+  pointer-events:none;
+}
+.slide--single .slide-title{
+  position:absolute;
+  top:58px;
+  left:39%;
+  transform:translateX(-50%);
+  margin:0;
+  font-size:18px;
+  letter-spacing:0.04em;
+  font-weight:400;
+  font-style:italic;
+  opacity:.8;
+  white-space:nowrap;
+}
+.slide--single .slide-txt{
+  position:absolute;
+  top:95px;
+  left:58.5%;
+  transform:translateX(-50%);
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--fg);
+  font:inherit;
+  font-size:18px;
+  font-style:italic;
+  opacity:.65;
+  cursor:pointer;
+  pointer-events:auto;
+  white-space:nowrap;
+}
+
+.slide--single .single-wrap{
+  position:absolute;
+  left:0; right:0;
+  top:170px; bottom:0;
+  overflow:hidden;
+}
+
+/* default (landscape-ish): fit image to width */
+.slide--single .single-img{
+  width:100%;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  object-fit:contain;
+}
+
+/* =========================================================
+   SLIDE 2 (JS positions absolute; in portrait, allow hscroll)
+   ========================================================= */
+.slide--duo3 .slide-inner{padding:0; overflow:hidden;}
+.duo3{
+  position:relative;
+  height:100%;
+  overflow:hidden;
+}
+.duo3 .duo3-left,
+.duo3 .duo3-r{
+  position:absolute;
+  width:auto;
+  height:auto;
+  max-width:none;
+  max-height:none;
+  object-fit:contain;
+}
+
+/*<<<<<<< HEAD
+/* ---------- Slide 3 ---------- */
+.solo-tr{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+.solo-tr .media{
+  position:absolute;
+  top: clamp(10px, 18vh, 140px);
+  right: clamp(10px, 16vw, 230px);
+  width: min(290px, 20vw);
+  height:auto;
+  max-height: 70vh;}
+/*=======
+/* SLIDE 3: top-right, % position + % size with minimums */
+.slide--solo-tr .slide-inner{
+  padding: 0;
+  overflow: hidden;
+}
+
+.slide--solo-tr .solo-tr{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Tune these 4 variables */
+.slide--solo-tr{
+  --tr-top: 14%;           /* % from top of viewport area */
+  --tr-right: 10%;         /* % from right */
+  --w: 20vw;               /* size based on viewport */
+  --min-w: 240px;          /* minimal size */
+  --max-w: 360px;          /* optional cap */
+}
+
+.slide--solo-tr .solo-tr .media{
+  position: absolute;
+  top: var(--tr-top);
+  right: var(--tr-right);
+
+  width: clamp(var(--min-w), var(--w), var(--max-w));
+  height: auto;
+
+  max-height: min(70vh, 640px); /* keeps it from becoming too tall */
+  object-fit: contain;          /* no crop */
+}
+/* ===== Slide 4 full-bleed ===== */
+.slide--pattern .slide-inner{
+  padding: 0;
+  overflow: hidden;
+}
+
+/* only make it fixed when active so it doesn't cover other slides */
+.slide--pattern.is-active .pattern{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);   /* ✅ white fallback, not black */
+  z-index: 10;             /* below menu dots (30) and below topbar (20 when not transparent) */
+}
+
+.slide--pattern .pattern-bg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.slide--pattern .pattern-overlay{
+  position: absolute;
+  left: 69%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 320px;            /* fixed size */
+  height: auto;
+  max-height: 520px;
+  object-fit: contain;
+  border: 2px solid rgba(0,0,0,0.35);
+  background: rgba(255,255,255,0.01);
+  box-sizing: border-box;
+}
+
+/* ===== When slide 4 is active, make topbar transparent so the pattern fills it ===== */
+body.pattern-mode .topbar{
+  background: transparent;
+}
+
+/* SLIDE 5: computed absolute positions, frame stays */
+.slide--s5 .slide-inner{
+  /* keep frame (your global padding applies) */
+  overflow: hidden;
+}
+
+/* if portraitish, script will add .hscroll to slide-inner */
+.slide--s5 .slide-inner.hscroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.slide--s5 .slide-inner.hscroll::-webkit-scrollbar{ display:none; }
+
+.slide--s5 .s5{
+  position: relative;
+  height: 100%;
+  overflow: hidden; /* inside gets widened in JS when needed */
+}
+
+.slide--s5 .s5-left,
+.slide--s5 .s5-r{
+  position: absolute;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  object-fit: contain; /* ✅ no crop */
+  display: block;
+}
+
+/* =========================
+   SLIDE 6 (exact reference layout)
+   - internal scroll via .scrollpane (keeps your gating logic)
+   - no cropping anywhere
+   ========================= */
+
+.slide--s6 .slide-inner{ padding: 0; } /* scrollpane owns padding */
+
+.slide--s6 .s6-pane{
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  padding: var(--pad-y) var(--pad-x);
+  box-sizing: border-box;
+}
+
+/* Tunable composition sizes */
+.slide--s6{
+  --gap: clamp(18px, 2.2vw, 34px);
+
+  /* slot widths (stable layout) */
+  --w-left:  clamp(200px, 18vw, 280px);
+  --w-mid:   clamp(260px, 24vw, 360px);
+  --w-right: clamp(200px, 18vw, 280px);
+
+  /* big center image width */
+  --w-big:   clamp(360px, 34vw, 520px);
+}
+
+/* Main grid: 3 columns like the reference */
+.slide--s6 .s6-grid{
+  width: calc(var(--w-left) + var(--w-mid) + var(--w-right) + var(--gap) * 2);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: var(--w-left) var(--w-mid) var(--w-right);
+  column-gap: var(--gap);
+  row-gap: var(--gap);
+
+  align-items: start;
+}
+
+/* Ensure all images never crop */
+.slide--s6 .media{
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* LEFT: 4 stacked identical */
+.slide--s6 .s6-left{
+  grid-column: 1;
+  grid-row: 1 / span 3; /* spans top and big image area */
+  display: grid;
+  gap: var(--gap);
+}
+
+/* Make left-stack cards have consistent width */
+.slide--s6 .s6-left .media{
+  width: 100%;
+  height: auto;
+}
+
+/* TOP CENTER + TOP RIGHT */
+.slide--s6 .s6-top-center{
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+}
+.slide--s6 .s6-top-right{
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+
+/* BIG CENTER (middle column, below top center) */
+.slide--s6 .s6-center{
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  justify-self: center;
+}
+.slide--s6 .s6-center .media{
+  width: var(--w-big);
+  max-width: 100%;
+}
+
+/* BOTTOM ROW */
+.slide--s6 .s6-bottom-left{
+  grid-column: 1;
+  grid-row: 4;
+}
+.slide--s6 .s6-bottom-center{
+  grid-column: 2;
+  grid-row: 4;
+  justify-self: center;
+}
+.slide--s6 .s6-bottom-right{
+  grid-column: 3;
+  grid-row: 4;
+  justify-self: end;
+}
+
+/* Slightly reduce the bottom-center + bottom-right widths to match reference feel */
+.slide--s6 .s6-bottom-center .media{
+  width: clamp(240px, 22vw, 330px);
+  max-width: 100%;
+}
+.slide--s6 .s6-bottom-right .media{
+  width: clamp(240px, 22vw, 340px);
+  max-width: 100%;
+}
+
+/* breathing room at bottom like your reference */
+.slide--s6 .s6-spacer{
+  height: clamp(40px, 10vh, 140px);
+}
+
+/* Mobile / narrow: keep no-crop, but stack logically */
+@media (max-width: 980px){
+  .slide--s6 .s6-grid{
+    width: 100%;
+    grid-template-columns: 1fr;
+    row-gap: 18px;
+    column-gap: 0;
+  }
+
+  .slide--s6 .s6-left{
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: center;
+    width: min(320px, 92vw);
+  }
+
+  .slide--s6 .s6-top-center,
+  .slide--s6 .s6-top-right,
+  .slide--s6 .s6-center,
+  .slide--s6 .s6-bottom-left,
+  .slide--s6 .s6-bottom-center,
+  .slide--s6 .s6-bottom-right{
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: center;
+    width: min(520px, 92vw);
+  }
+
+  .slide--s6 .s6-center .media,
+  .slide--s6 .s6-bottom-center .media,
+  .slide--s6 .s6-bottom-right .media{
+    width: 100%;
+  }
+}
+
+/* SLIDE 7: like slide 5 (frame stays, can hscroll when needed) */
+.slide--s7 .slide-inner{
+  overflow: hidden;
+}
+
+.slide--s7 .slide-inner.hscroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.slide--s7 .slide-inner.hscroll::-webkit-scrollbar{ display:none; }
+
+.slide--s7 .s7{
+  position: relative;
+  height: 100%;
+  overflow: hidden; /* we widen via JS when hscroll */
+}
+
+.slide--s7 .s7-a,
+.slide--s7 .s7-b{
+  position: absolute;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  object-fit: contain; /* no crop */
+  display: block;
+}
+</style>
+</head>
+
+<body>
+  <div class="topbar" aria-hidden="true"></div>
+
+  <a class="menu-link" href="menu.html" aria-label="Open menu">
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="stage">
+    <div class="viewport">
+      <div class="slides" id="slides">
+
+<!-- SLIDE 1 -->
+<section class="slide slide--single is-active" data-slide>
+  <div class="slide-inner">
+
+    <div class="slide-head">
+      <div class="slide-title">репетиция</div>
+      <button class="slide-txt" id="txtBtn" type="button">txt</button>
+    </div>
+
+    <div class="single-wrap">
+      <img class="media" src="rehersal/01.jpg" alt="">
+    </div>
+
+  </div>
+</section>
+
+<!-- SLIDE 2 -->
+<section class="slide slide--duo3" data-slide>
+  <div class="slide-inner">
+    <div class="duo3">
+      <div class="duo3-leftbox">
+        <img class="media duo3-left" src="rehersal/06.jpg" alt="">
+      </div>
+
+      <div class="duo3-right">
+        <div class="duo3-cell">
+          <img class="media duo3-r" src="rehersal/07.jpg" alt="">
+        </div>
+        <div class="duo3-cell">
+          <img class="media duo3-r" src="rehersal/07.jpg" alt="">
+        </div>
+        <div class="duo3-cell">
+          <img class="media duo3-r" src="rehersal/07.jpg" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: one photo top-right -->
+<section class="slide slide--solo-tr" data-slide>
+  <div class="slide-inner">
+    <div class="solo-tr">
+      <img class="media" src="rehersal/05.JPG" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: tiled background + overlay -->
+<section class="slide slide--pattern" data-slide>
+  <div class="slide-inner">
+    <div class="pattern">
+<img class="media pattern-bg" src="rehersal/08.png" alt="">
+      <img class="media pattern-overlay" src="rehersal/09.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 (computed layout, 1:1 heights) -->
+<section class="slide slide--s5" data-slide>
+  <div class="slide-inner">
+    <div class="s5">
+      <img class="media s5-left" src="rehersal/03.jpg" alt="">
+      <img class="media s5-r" src="rehersal/02.jpg" alt="">
+      <img class="media s5-r" src="rehersal/02.jpg" alt="">
+      <img class="media s5-r" src="rehersal/02.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6 (scrollable, exact layout) -->
+<section class="slide slide--scroll slide--s6" data-slide data-scroll-slide>
+  <div class="slide-inner">
+    <div class="scrollpane s6-pane">
+      <div class="s6-grid">
+
+        <!-- left stack (x4) -->
+        <div class="s6-left">
+          <img class="media" src="rehersal/11.jpeg" alt="">
+          <img class="media" src="rehersal/11.jpeg" alt="">
+          <img class="media" src="rehersal/11.jpeg" alt="">
+          <img class="media" src="rehersal/11.jpeg" alt="">
+        </div>
+
+        <!-- top center -->
+        <div class="s6-top-center">
+          <img class="media" src="rehersal/12.jpg" alt="">
+        </div>
+
+        <!-- top right -->
+        <div class="s6-top-right">
+          <img class="media" src="rehersal/13.jpg" alt="">
+        </div>
+
+        <!-- big center -->
+        <div class="s6-center">
+          <img class="media" src="rehersal/16.jpg" alt="">
+        </div>
+
+        <!-- bottom left -->
+        <div class="s6-bottom-left">
+          <img class="media" src="rehersal/17.jpg" alt="">
+        </div>
+
+        <!-- bottom center -->
+        <div class="s6-bottom-center">
+          <img class="media" src="rehersal/10.jpg" alt="">
+        </div>
+
+        <!-- bottom right -->
+        <div class="s6-bottom-right">
+          <img class="media" src="rehersal/03.jpg" alt="">
+        </div>
+
+      </div>
+
+      <!-- breathing room like the reference -->
+      <div class="s6-spacer" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7 (computed like slide 5) -->
+<section class="slide slide--s7" data-slide>
+  <div class="slide-inner">
+    <div class="s7">
+      <img class="media s7-a" src="rehersal/15.jpg" alt="">
+      <img class="media s7-a" src="rehersal/15.jpg" alt="">
+      <img class="media s7-a" src="rehersal/15.jpg" alt="">
+      <img class="media s7-b" src="rehersal/14.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const slides = Array.from(document.querySelectorAll('[data-slide]'));
+  let index = 0;
+
+  // ===== Blur-on-load =====
+  function setLoading(img, on){ img.classList.toggle('is-loading', on); }
+
+  function hydrateSlide(slideEl){
+    if (!slideEl) return;
+    const imgs = Array.from(slideEl.querySelectorAll('img'));
+    imgs.forEach(img => {
+      if (img.dataset.bound === '1') return;
+      img.dataset.bound = '1';
+      setLoading(img, !img.complete);
+
+      img.addEventListener('load', () => setLoading(img, false), { passive:true });
+      img.addEventListener('error', () => {
+        console.warn('Missing image:', img.getAttribute('src'));
+        img.style.display = 'none';
+      }, { passive:true });
+    });
+  }
+
+  // ===== Mode detection =====
+  function isPortraitish(){
+    // tune this: 1.15 means “noticeably taller than wide”
+    return (window.innerHeight / window.innerWidth) > 1.15;
+  }
+
+  // ===== Slide 1 layout: fit-to-width normally; hscroll in portrait =====
+  function layoutSlide1IfActive(){
+    const slide = slides[index];
+    if (!slide || !slide.classList.contains('slide--single')) return;
+
+    const wrap = slide.querySelector('.single-wrap');
+    const img  = slide.querySelector('.single-img');
+    if (!wrap || !img) return;
+
+    // Ensure wrap is an hscroll container in portrait
+    if (isPortraitish()){
+      if (!wrap.classList.contains('hscroll')) wrap.classList.add('hscroll');
+      // make image height-driven (so it stays big) and allow overflow-x
+      img.style.width = 'auto';
+      img.style.height = '100%';
+      img.style.maxWidth = 'none';
+      img.style.maxHeight = 'none';
+    } else {
+      wrap.classList.remove('hscroll');
+      // normal: fit to width
+      img.style.width = '100%';
+      img.style.height = 'auto';
+      img.style.maxWidth = 'none';
+      img.style.maxHeight = 'none';
+    }
+  }
+
+  // ===== Slide 2 layout =====
+  // Landscape: 06.jpg fills full height, flush against top/left/bottom frame borders.
+  //            Right images fill the remaining width, centered vertically.
+  // Portrait:  height-constrained with hscroll.
+  function layoutSlide2IfActive(){
+    const slide = slides[index];
+    if (!slide || !slide.classList.contains('slide--duo3')) return;
+
+    const inner  = slide.querySelector('.slide-inner');
+    const duo3   = slide.querySelector('.duo3');
+    const left   = slide.querySelector('.duo3-left');
+    const rights = Array.from(slide.querySelectorAll('.duo3-r'));
+    if (!inner || !duo3 || !left || rights.length !== 3) return;
+
+    const portrait = isPortraitish();
+    if (portrait){
+      if (!inner.classList.contains('hscroll')) inner.classList.add('hscroll');
+    } else {
+      inner.classList.remove('hscroll');
+    }
+    inner.style.overflowY = 'hidden';
+
+    if (!left.naturalWidth || !rights[0].naturalWidth) return;
+
+    const availW  = inner.clientWidth;
+    const availH  = inner.clientHeight;
+    const gapSmall = 18;
+    const gapBig   = gapSmall * 3;
+    const leftAR   = left.naturalWidth  / left.naturalHeight;
+    const rightAR  = rights[0].naturalWidth / rights[0].naturalHeight;
+
+    if (portrait){
+      // Height-constrained, hscroll
+      const u      = availH / 5;
+      const leftH  = 5 * u;
+      const rightH = 3 * u;
+      const leftW  = leftAR  * leftH;
+      const rightW = rightAR * rightH;
+      const groupW = leftW + gapBig + 3 * rightW + 2 * gapSmall;
+
+      duo3.style.width  = `${Math.ceil(groupW)}px`;
+      duo3.style.height = '100%';
+
+      const baseY = Math.max(0, availH - leftH);
+      left.style.height = `${leftH}px`;
+      left.style.left   = '0px';
+      left.style.top    = `${baseY}px`;
+
+      const rightY  = baseY + (leftH - rightH) / 2;
+      const rightX0 = leftW + gapBig;
+      rights.forEach((img, i) => {
+        img.style.height = `${rightH}px`;
+        img.style.left   = `${rightX0 + i * (rightW + gapSmall)}px`;
+        img.style.top    = `${rightY}px`;
+      });
+    } else {
+      // Landscape: 06.jpg fills full frame height, touches top/left/bottom borders.
+      // Right images scale to fill remaining width.
+      const leftH   = availH;
+      const leftW   = leftAR * leftH;
+      const remainW = Math.max(0, availW - leftW - gapBig);
+      const rightW  = Math.max(1, (remainW - 2 * gapSmall) / 3);
+      const rightH  = rightW / rightAR;
+      const groupW  = leftW + gapBig + 3 * rightW + 2 * gapSmall;
+
+      duo3.style.width  = `${Math.ceil(groupW)}px`;
+      duo3.style.height = '100%';
+
+      left.style.height = `${leftH}px`;
+      left.style.left   = '0px';
+      left.style.top    = '0px';
+
+      const rightY  = Math.max(0, (availH - rightH) / 2);
+      const rightX0 = leftW + gapBig;
+      rights.forEach((img, i) => {
+        img.style.height = `${rightH}px`;
+        img.style.left   = `${rightX0 + i * (rightW + gapSmall)}px`;
+        img.style.top    = `${rightY}px`;
+      });
+    }
+  }
+
+function layoutSlide5IfActive(){
+  const slide = slides[index];
+  if (!slide || !slide.classList.contains('slide--s5')) return;
+
+  const inner   = slide.querySelector('.slide-inner');
+  const wrap    = slide.querySelector('.s5');
+  const leftImg = slide.querySelector('.s5-left');
+  const rImgs   = Array.from(slide.querySelectorAll('.s5-r'));
+  if (!inner || !wrap || !leftImg || rImgs.length !== 3) return;
+
+  const portraitish = isPortraitish();
+  inner.classList.toggle('hscroll', portraitish);
+
+  if (!leftImg.naturalWidth || !leftImg.naturalHeight ||
+      !rImgs[0].naturalWidth || !rImgs[0].naturalHeight) return;
+
+  const padX     = parseFloat(getComputedStyle(inner).paddingLeft);
+  const contentW = inner.clientWidth - 2 * padX;
+  const availH   = inner.clientHeight;
+
+  const leftAR  = leftImg.naturalWidth  / leftImg.naturalHeight;
+  const rightAR = rImgs[0].naturalWidth / rImgs[0].naturalHeight;
+
+  // 03.jpg is 26.5% taller than 02.jpg; starts 5% in from the left border
+  const leftScale = 1.265;
+  const leftFrac  = 0.05;
+
+  // Gaps scale with content width
+  const gapSmall = Math.max(8, contentW * 0.018);
+  const gapBig   = gapSmall * 3;
+
+  // Solve h so the full row exactly fills contentW (landscape):
+  // leftFrac*contentW + leftAR*h*leftScale + gapBig + 3*rightAR*h + 2*gapSmall = contentW
+  const hByWidth  = (contentW * (1 - leftFrac) - gapBig - 2 * gapSmall) /
+                    (leftAR * leftScale + 3 * rightAR);
+  // Constrain so left image doesn't overflow vertically
+  const hByHeight = (availH * 0.88) / leftScale;
+
+  const h = portraitish ? hByHeight : Math.min(hByHeight, hByWidth);
+
+  const hLeft  = h * leftScale;
+  const leftW  = leftAR  * hLeft;
+  const rightW = rightAR * h;
+
+  const leftOffsetX = contentW * leftFrac;
+  const rightStartX = contentW - 3 * rightW - 2 * gapSmall;
+  const groupW      = Math.max(leftOffsetX + leftW, rightStartX + 3 * rightW + 2 * gapSmall);
+
+  wrap.style.width  = `${Math.ceil(groupW)}px`;
+  wrap.style.height = '100%';
+
+  leftImg.style.height = `${hLeft}px`;
+  leftImg.style.left   = `${leftOffsetX}px`;
+  leftImg.style.top    = `${Math.min(availH * 0.21, availH - hLeft)}px`;
+
+  rImgs.forEach((img, i) => {
+    img.style.height = `${h}px`;
+    img.style.left   = `${rightStartX + i * (rightW + gapSmall)}px`;
+    img.style.top    = `${Math.min(availH * 0.11, availH - h)}px`;
+  });
+}
+
+function layoutSlide7IfActive(){
+  const slide = slides[index];
+  if (!slide || !slide.classList.contains('slide--s7')) return;
+
+  const inner = slide.querySelector('.slide-inner');
+  const wrap  = slide.querySelector('.s7');
+  const aImgs = Array.from(slide.querySelectorAll('.s7-a'));
+  const bImg  = slide.querySelector('.s7-b');
+  if (!inner || !wrap || aImgs.length !== 3 || !bImg) return;
+
+  const portraitish = (window.innerHeight / window.innerWidth) > 1.15;
+  inner.classList.toggle('hscroll', portraitish);
+
+  if (!aImgs[0].naturalWidth || !aImgs[0].naturalHeight || !bImg.naturalWidth || !bImg.naturalHeight) return;
+
+  const availW = inner.clientWidth;
+  const availH = inner.clientHeight;
+
+  const gapSmall = 18;
+  const gapBig   = gapSmall * 3;
+
+  const aAR = aImgs[0].naturalWidth / aImgs[0].naturalHeight;
+  const bAR = bImg.naturalWidth / bImg.naturalHeight;
+
+  // Size strategy:
+  // Make the 3 repeats the “main row”. The 4th (b) is slightly smaller.
+  const k = 0.92; // b height relative to a height (tune later)
+
+  // Choose aHeight:
+  // landscape: fit width & height
+  // portrait: fit height, allow overflow-x
+  //
+  // groupW = 3*(aAR*aH) + 2*gapSmall + gapBig + (bAR*(k*aH))
+  const denomW = (aAR * 3 + bAR * k);
+  const aH_byHeight = Math.max(1, availH * 0.56);
+  const aH_byWidth  = (availW - gapBig - 2*gapSmall) / denomW;
+
+  const aH = portraitish ? aH_byHeight : Math.min(aH_byHeight, aH_byWidth);
+  const bH = aH * k;
+
+  const aW = aAR * aH;
+  const bW = bAR * bH;
+
+  const groupW = (aW * 3) + (gapSmall * 2) + gapBig + bW;
+  wrap.style.width = `${Math.ceil(groupW)}px`;
+  wrap.style.height = '100%';
+
+  // Positions: top row like your reference
+  const yTop = Math.max(0, availH * 0.14);
+
+  // 3 repeats on left
+  aImgs.forEach((img, i) => {
+    img.style.height = `${aH}px`;
+    img.style.left   = `${i * (aW + gapSmall)}px`;
+    img.style.top    = `${yTop}px`;
+  });
+
+  // 4th image on the right, after a big gap
+  bImg.style.height = `${bH}px`;
+  bImg.style.left   = `${(aW * 3) + (gapSmall * 2) + gapBig}px`;
+  bImg.style.top    = `${yTop + (aH - bH) / 2}px`; // vertically centered to row
+}
+
+function layoutActive(){
+    layoutSlide1IfActive();
+    layoutSlide2IfActive();
+    layoutSlide5IfActive();
+    layoutSlide7IfActive();
+  }
+
+  // ===== Slide switching =====
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+  let wheelAcc = 0;
+  let wheelUnlockTimer = null;
+  let wheelLocked = false;
+
+  let edgeTopHits = 0;
+  let edgeBottomHits = 0;
+
+  function setActive(i){
+    index = clamp(i, 0, slides.length - 1);
+    slides.forEach((s,k) => s.classList.toggle('is-active', k === index));
+    hydrateSlide(slides[index]);
+
+    document.body.classList.toggle('pattern-mode', slides[index].classList.contains('slide--pattern'));
+
+    requestAnimationFrame(() => layoutActive());
+
+    wheelAcc = 0;
+    edgeTopHits = 0;
+    edgeBottomHits = 0;
+  }
+
+  function next(){ setActive(index + 1); }
+  function prev(){ setActive(index - 1); }
+
+  function getActiveSlide(){ return slides[index]; }
+  function getScrollPaneIfAny(slideEl){ return slideEl?.querySelector('.scrollpane') || null; }
+  function atTop(pane){ return pane.scrollTop <= 0; }
+  function atBottom(pane){ return pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 1; }
+
+  // ===== Wheel handler:
+  // - If horizontal gesture and active slide has horizontal overflow => scroll inside
+  // - Else: piece-wise slide changes
+  // - Slide 6 special internal vertical scroll with 2-stroke gate
+  window.addEventListener('wheel', (e) => {
+    const slide = getActiveSlide();
+    if (!slide) return;
+
+    const dy = e.deltaY;
+    const dx = e.deltaX;
+    const horizontal = Math.abs(dx) > Math.abs(dy);
+
+    // 1) Horizontal scrolling inside slide (portrait use-case)
+    // If the active slide has an .hscroll container that can scroll, consume horizontal gestures
+    const hscrollEl =
+      slide.querySelector('.hscroll');
+
+    if (hscrollEl && hscrollEl.scrollWidth > hscrollEl.clientWidth && horizontal){
+      e.preventDefault();
+      hscrollEl.scrollLeft += dx; // natural trackpad horizontal
+      return;
+    }
+
+    // 2) Slide 6 special: allow vertical scroll inside, gate transitions at edges
+    const isScrollSlide = slide.hasAttribute('data-scroll-slide');
+    const pane = isScrollSlide ? getScrollPaneIfAny(slide) : null;
+
+    if (pane){
+      e.preventDefault();
+      const dominant = dy; // slide6 uses vertical only
+
+      const dir = dominant > 0 ? 1 : (dominant < 0 ? -1 : 0);
+      if (!dir) return;
+
+      const wantNext = dir > 0;
+      const wantPrev = dir < 0;
+
+      const canScrollDown = !atBottom(pane);
+      const canScrollUp   = !atTop(pane);
+
+      if ((wantNext && canScrollDown) || (wantPrev && canScrollUp)){
+        edgeTopHits = 0;
+        edgeBottomHits = 0;
+        pane.scrollTop += dominant;
+        return;
+      }
+
+      if (wantPrev && atTop(pane)){
+        edgeTopHits += 1;
+        edgeBottomHits = 0;
+        if (edgeTopHits < 2) return;
+        edgeTopHits = 0;
+        prev();
+        return;
+      }
+
+      if (wantNext && atBottom(pane)){
+        edgeBottomHits += 1;
+        edgeTopHits = 0;
+        if (edgeBottomHits < 2) return;
+        edgeBottomHits = 0;
+        next();
+        return;
+      }
+
+      return;
+    }
+
+    // 3) Normal slides: piece-wise (one gesture => one slide)
+    e.preventDefault();
+
+    const dominant = (Math.abs(dy) >= Math.abs(dx)) ? dy : dx;
+    const dir = dominant > 0 ? 1 : (dominant < 0 ? -1 : 0);
+    if (!dir) return;
+
+    if (wheelLocked) return;
+
+    wheelAcc += dominant;
+    if (Math.abs(wheelAcc) >= 60){
+      wheelLocked = true;
+      wheelAcc = 0;
+      if (dir > 0) next(); else prev();
+      clearTimeout(wheelUnlockTimer);
+      wheelUnlockTimer = setTimeout(() => {
+        wheelLocked = false;
+        wheelAcc = 0;
+      }, 380);
+      return;
+    }
+
+    clearTimeout(wheelUnlockTimer);
+    wheelUnlockTimer = setTimeout(() => {
+      wheelAcc = 0;
+    }, 200);
+
+  }, { passive:false });
+
+  // keyboard
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') prev();
+  });
+
+  // touch swipe (mobile)
+  let sx=0, sy=0;
+  window.addEventListener('touchstart', (e) => {
+    const t = e.touches && e.touches[0];
+    if (!t) return;
+    sx = t.clientX; sy = t.clientY;
+  }, { passive:true });
+
+  window.addEventListener('touchend', (e) => {
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+
+    const dx = sx - t.clientX;
+    const dy = sy - t.clientY;
+
+    if (Math.abs(dx) > Math.abs(dy)){
+      if (dx > 40) next();
+      else if (dx < -40) prev();
+    } else {
+      if (dy > 40) next();
+      else if (dy < -40) prev();
+    }
+
+    sx=0; sy=0;
+  }, { passive:true });
+
+  // resize -> relayout
+  window.addEventListener('resize', () => requestAnimationFrame(layoutActive), { passive:true });
+
+  // init
+  hydrateSlide(slides[0]);
+  setActive(0);
+
+  // if slide1/2 images load later, relayout
+  document.querySelectorAll('.slide--single img, .slide--duo3 img, .slide--s5 img, .slide--s7 img').forEach(img => {
+    img.addEventListener('load', () => requestAnimationFrame(layoutActive), { passive:true });
+  });
+})();
+</script>
+</body>
+</html>
