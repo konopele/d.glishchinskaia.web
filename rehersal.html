@@ -265,6 +265,16 @@ body{
   box-sizing: border-box;
 }
 
+/* Slide 4 overlay: keep it on-screen on narrow viewports */
+@media (max-width: 600px) {
+  .slide--pattern .pattern-overlay {
+    left: 50%;
+    top: 50%;
+    width: min(290px, 82vw);
+    max-height: min(450px, 78vh);
+  }
+}
+
 /* ===== When slide 4 is active, make topbar transparent so the pattern fills it ===== */
 body.pattern-mode .topbar{
   background: transparent;
@@ -512,7 +522,7 @@ body.pattern-mode .topbar{
     </div>
 
     <div class="single-wrap">
-      <img class="media" src="rehersal/01.jpg" alt="">
+      <img class="media single-img" src="rehersal/01.jpg" alt="">
     </div>
 
   </div>
@@ -1048,10 +1058,17 @@ function layoutActive(){
 
   // touch swipe (mobile)
   let sx=0, sy=0;
+  let _touchHsel = null; // active hscroll element at touchstart (if any)
+
   window.addEventListener('touchstart', (e) => {
     const t = e.touches && e.touches[0];
     if (!t) return;
     sx = t.clientX; sy = t.clientY;
+
+    // Remember if the current slide has a scrollable hscroll container
+    const slide = getActiveSlide();
+    const hsel = slide && slide.querySelector('.hscroll');
+    _touchHsel = (hsel && hsel.scrollWidth > hsel.clientWidth) ? hsel : null;
   }, { passive:true });
 
   window.addEventListener('touchend', (e) => {
@@ -1060,16 +1077,34 @@ function layoutActive(){
 
     const dx = sx - t.clientX;
     const dy = sy - t.clientY;
+    const slide = getActiveSlide();
 
-    if (Math.abs(dx) > Math.abs(dy)){
-      if (dx > 40) next();
-      else if (dx < -40) prev();
+    if (Math.abs(dx) > Math.abs(dy)) {
+      // Horizontal swipe — let native hscroll handle it; only navigate at edges
+      if (_touchHsel) {
+        const atRight = _touchHsel.scrollLeft + _touchHsel.clientWidth >= _touchHsel.scrollWidth - 2;
+        const atLeft  = _touchHsel.scrollLeft <= 2;
+        if (dx > 40 && atRight) next();
+        else if (dx < -40 && atLeft) prev();
+      } else {
+        if (dx > 40) next();
+        else if (dx < -40) prev();
+      }
     } else {
-      if (dy > 40) next();
-      else if (dy < -40) prev();
+      // Vertical swipe — respect slide 6-style internal scroll panes
+      const isScrollSlide = slide && slide.hasAttribute('data-scroll-slide');
+      const pane = isScrollSlide ? getScrollPaneIfAny(slide) : null;
+      if (pane) {
+        if (dy > 40 && atBottom(pane)) next();
+        else if (dy < -40 && atTop(pane)) prev();
+        // else: native scroll handled by the browser
+      } else {
+        if (dy > 40) next();
+        else if (dy < -40) prev();
+      }
     }
 
-    sx=0; sy=0;
+    sx=0; sy=0; _touchHsel = null;
   }, { passive:true });
 
   // resize -> relayout
