@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>коллекция уязвимых объектов — Дарья Глищинская</title>
+
+  <style>
+    /* Baseline responsive safety */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; overflow: hidden; }
+
+/* Forms/buttons tap comfort */
+button, a { touch-action: manipulation; }
+
+    :root{
+      --bg:#fff;
+      --fg:#000;
+
+      --topbar-h:56px;    /* white stripe above the pictures, holds the dots */
+      --end-gap:24px;
+      --intro-w:500px;
+
+      --dot-size:5px;
+      --dot-gap:6px;
+      --dot-shift:-10px;
+
+      /* the composition is 320 units high: 1u = 1/320 of the height below the stripe */
+      --u: calc((100vh - var(--topbar-h)) / 320);
+    }
+
+    @supports (height: 100dvh){
+      :root{ --u: calc((100dvh - var(--topbar-h)) / 320); }
+    }
+
+    body{
+      background: var(--bg);
+      color: var(--fg);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .menu-link{
+      position: fixed;
+      top: calc(var(--topbar-h) / 2);
+      left: 98%;
+      transform: translate(-50%, -50%) translateX(var(--dot-shift));
+      z-index: 30;
+      padding: 8px 12px;
+      text-decoration: none;
+      filter: blur(3.25px);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .menu-link:focus-visible{
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+    .dots{ display:flex; gap: var(--dot-gap); }
+    .dot{
+      width: var(--dot-size);
+      height: var(--dot-size);
+      border-radius: 50%;
+      background: var(--fg);
+      opacity: 0.9;
+    }
+
+    /* Native horizontal scroll: gives touch inertia for free */
+    .viewport{
+      position: fixed;
+      inset: 0;
+      padding-top: var(--topbar-h);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .viewport::-webkit-scrollbar{ display: none; }
+
+    .strip{
+      display: flex;
+      flex-wrap: nowrap;
+      width: max-content;
+      height: 100%;
+    }
+
+    .start-spacer,
+    .end-spacer{
+      flex: 0 0 var(--end-gap);
+    }
+
+    .intro-panel{
+      flex: 0 0 var(--intro-w);
+      position: relative;
+    }
+
+    .intro-title{
+      position: absolute;
+      left: 45%;
+      top: 25%;
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      font-weight: 400;
+      opacity: 0.75;
+      font-style: italic;
+    }
+
+    .intro-txt{
+      position: absolute;
+      top: 50%;
+      left: 30%;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--fg);
+      padding: 0;
+      font-family: inherit;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+      opacity: 0.55;
+      cursor: pointer;
+      font-style: italic;
+    }
+
+    /* Pictures are placed on the composition in units */
+    .composition{
+      flex: 0 0 auto;
+      position: relative;
+      width: calc(var(--u) * 938);
+      height: calc(var(--u) * 320);
+    }
+
+    .composition img{
+      position: absolute;
+      left: calc(var(--u) * var(--x));
+      top: calc(var(--u) * var(--y));
+      width: calc(var(--u) * var(--w));
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* --- Mobile: shorter intro, so the first picture is close --- */
+    @media (max-width: 768px){
+      :root{ --intro-w: 320px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Dots link to index.html -->
+  <a class="menu-link" href="index.html" aria-label="Open menu">
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="viewport" id="viewport">
+    <div class="strip">
+      <span class="start-spacer" aria-hidden="true"></span>
+
+      <div class="intro-panel">
+        <h1 class="intro-title">коллекция уязвимых объектов</h1>
+        <button class="intro-txt" id="txtBtn" type="button">txt</button>
+      </div>
+
+      <div class="composition">
+        <img src="collection_img/seven.png" width="1058" height="955" alt="" style="--x:0; --y:107; --w:137">
+        <img src="collection_img/four.png" width="915" height="1362" alt="" style="--x:194; --y:96; --w:117">
+        <img src="collection_img/two.png" width="1402" height="1722" alt="" style="--x:340; --y:94; --w:123">
+        <img src="collection_img/one.png" width="1160" height="1928" alt="" style="--x:480; --y:16; --w:94">
+        <img src="collection_img/six.png" width="777" height="1145" alt="" style="--x:626; --y:22; --w:99">
+        <img src="collection_img/five.png" width="2030" height="1008" alt="" style="--x:464; --y:190; --w:261">
+        <img src="collection_img/three.png" width="1265" height="2312" alt="" style="--x:777; --y:12; --w:161">
+      </div>
+
+      <span class="end-spacer" aria-hidden="true"></span>
+    </div>
+  </div>
+
+<script>
+  const viewport = document.getElementById('viewport');
+
+  // mouse wheel scrolls sideways
+  window.addEventListener('wheel', (e) => {
+    // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
+    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
+
+    const speed = 1.2;
+    viewport.scrollLeft += delta * speed;
+
+    e.preventDefault();
+  }, { passive: false });
+</script>
+
+</body>
+</html>
