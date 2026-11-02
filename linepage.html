@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>line</title>
+
+<div class="L">
+  <div class="v"></div>
+  <div class="h"></div>
+</div>
+
+<style>
+  .L{
+    position: relative;
+    width: 200px;   /* horizontal line length area */
+    height: 220px;  /* vertical line length area */
+  }
+
+  .v{
+    position: absolute;
+    left: 105px;
+    top: 110px;
+    width: 1px;
+    height: 200px;     /* vertical length */
+    background: #000;
+  }
+
+  .h{
+    position: absolute;
+    left: 105px;           /* starts exactly at the vertical line */
+    top: 110px;            /* at the TOP point of the vertical line */
+    height: 1px;
+    width: 100px;      /* horizontal length */
+    background: #000;
+  }
+</style>
+

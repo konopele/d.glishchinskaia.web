@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>спорт-клуб</title>
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:#7a7a7a;
+      --bar-h: 150px;      /* bottom strip height */
+      --gap: 22px;         /* white spacing between images */
+      --menu-size: 34px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue";
+    }
+
+    /* Three dots — same spot on every page */
+    .menu-btn{
+      position:fixed;
+      top:18px;
+      right:18px;
+      width:var(--menu-size);
+      height:var(--menu-size);
+      border:0;
+      border-radius:999px;
+      background:transparent;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      z-index:50;
+    }
+    .menu-btn:hover{ background:rgba(0,0,0,.04); }
+    .dots{
+      width:18px; height:18px;
+      display:grid; gap:3px;
+      align-content:center;
+      justify-content:center;
+    }
+    .dots span{
+      width:4px; height:4px; border-radius:999px; background:#222;
+      display:block;
+    }
+
+    /* Layout like your screenshot: left text + right big photo */
+    .page{
+      min-height:100%;
+      padding-bottom: calc(var(--bar-h) + 14px);
+    }
+    .top{
+      display:grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 40px;
+      padding: 40px 40px 10px 40px;
+      align-items:start;
+    }
+
+    .left{
+      padding-top: 80px;  /* pushes “спорт-клуб” down, like the screenshot */
+      padding-left: 70px;
+    }
+    .title{
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: .2px;
+    }
+    .txt-btn{
+      margin-top: 90px;
+      display:inline-block;
+      border:0;
+      background:transparent;
+      color: var(--muted);
+      font-style: italic;
+      cursor:pointer;
+      padding: 6px 10px;
+      border-radius: 10px;
+    }
+    .txt-btn:hover{ background: rgba(0,0,0,.04); }
+
+    .hero{
+      display:flex;
+      justify-content:flex-start;
+      align-items:flex-start;
+    }
+    .hero img{
+      max-width: 520px;
+      width:100%;
+      height:auto;
+      display:block;
+      object-fit:cover;
+    }
+
+    /* Bottom moving strip (frontier-like) */
+    .strip{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      height: var(--bar-h);
+      background: #fff;
+      border-top: 6px solid #222; /* thick dark line like screenshot */
+      overflow:hidden;
+      z-index:40;
+    }
+    .track{
+      height:100%;
+      display:flex;
+      align-items:center;
+      gap: var(--gap);
+      padding: 10px 20px;
+      will-change: transform;
+      user-select:none;
+      cursor: grab;
+    }
+    .track:active{ cursor: grabbing; }
+
+    .thumb{
+      height: calc(var(--bar-h) - 26px);
+      width:auto;
+      display:block;
+      background:#fff;
+      /* mimic “photo floating on white” */
+      outline: 0;
+    }
+
+    /* Simple dropdown menu (wired to the 3 dots) */
+    .menu{
+      position:fixed;
+      top:58px;
+      right:18px;
+      min-width: 190px;
+      background:#fff;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.10);
+      padding: 8px;
+      display:none;
+      z-index:60;
+    }
+    .menu.open{ display:block; }
+    .menu a, .menu button{
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border-radius: 10px;
+      border:0;
+      background:transparent;
+      color:#111;
+      text-decoration:none;
+      cursor:pointer;
+      display:block;
+      font: inherit;
+    }
+    .menu a:hover, .menu button:hover{ background:rgba(0,0,0,.05); }
+
+    /* Modal popup for txt */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.45);
+      display:none;
+      z-index:80;
+    }
+    .modal-backdrop.open{ display:block; }
+    .modal{
+      position:absolute;
+      top:50%; left:50%;
+      transform: translate(-50%,-50%);
+      width:min(560px, calc(100% - 28px));
+      background:#fff;
+      border-radius: 18px;
+      padding: 18px 18px 14px 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .modal h3{
+      margin:0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .modal p{
+      margin:0 0 14px 0;
+      color:#333;
+      line-height:1.4;
+      font-size: 14px;
+    }
+    .modal .actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .btn{
+      border:1px solid rgba(0,0,0,.16);
+      background:#fff;
+      padding:8px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+    }
+    .btn:hover{ background:rgba(0,0,0,.04); }
+
+    @media (max-width: 900px){
+      .top{ grid-template-columns: 1fr; }
+      .left{ padding-left: 20px; padding-top: 40px; }
+      .hero img{ max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- three dots -->
+  <button class="menu-btn" id="menuBtn" aria-label="menu">
+    <div class="dots" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+  </button>
+
+  <nav class="menu" id="menu">
+    <!-- put the same menu items as frontier page -->
+    <a href="frontier.html">frontier</a>
+    <a href="sport-club.html">спорт-клуб</a>
+    <a href="about.html">about</a>
+    <button id="closeMenuBtn">close</button>
+  </nav>
+
+  <main class="page">
+    <section class="top">
+      <div class="left">
+        <div class="title">спорт-клуб</div>
+        <button class="txt-btn" id="txtBtn">txt</button>
+      </div>
+
+      <div class="hero">
+        <!-- your first (left-most) big image -->
+        <img src="img/sport/hero.jpg" alt="">
+      </div>
+    </section>
+  </main>
+
+  <!-- moving strip -->
+  <footer class="strip">
+    <div class="track" id="track" aria-label="photos strip"></div>
+  </footer>
+
+  <!-- modal for txt -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <h3>Информация</h3>
+      <p>
+        Здесь текст для всплывающего окна “txt”.
+        Вставь описание проекта / контекст / кредиты — как на frontier.
+      </p>
+      <div class="actions">
+        <button class="btn" id="modalClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 14 images (replace with your real paths)
+    const images = [
+      "img/sport/01.jpg","img/sport/02.jpg","img/sport/03.jpg","img/sport/04.jpg",
+      "img/sport/05.jpg","img/sport/06.jpg","img/sport/07.jpg","img/sport/08.jpg",
+      "img/sport/09.jpg","img/sport/10.jpg","img/sport/11.jpg","img/sport/12.jpg",
+      "img/sport/13.jpg","img/sport/14.jpg",
+    ];
+
+    // Build an "infinite" strip by duplicating the set
+    const track = document.getElementById("track");
+    const build = () => {
+      track.innerHTML = "";
+      const makeImg = (src) => {
+        const img = document.createElement("img");
+        img.className = "thumb";
+        img.src = src;
+        img.alt = "";
+        img.draggable = false;
+        return img;
+      };
+      images.concat(images).forEach(src => track.appendChild(makeImg(src)));
+    };
+    build();
+
+    // Auto-move like frontier (continuous marquee), with drag override
+    let x = 0;
+    let speed = 0.45; // px per frame (tweak to match frontier)
+    let isDragging = false;
+    let lastClientX = 0;
+
+    const getHalfWidth = () => track.scrollWidth / 2;
+
+    function tick(){
+      if (!isDragging) x -= speed;
+      const half = getHalfWidth();
+
+      // Wrap seamlessly
+      if (Math.abs(x) >= half) x = 0;
+
+      track.style.transform = `translateX(${x}px)`;
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // Drag support (desktop + touch)
+    const onDown = (clientX) => {
+      isDragging = true;
+      lastClientX = clientX;
+    };
+    const onMove = (clientX) => {
+      if (!isDragging) return;
+      const dx = clientX - lastClientX;
+      lastClientX = clientX;
+      x += dx;
+    };
+    const onUp = () => { isDragging = false; };
+
+    track.addEventListener("mousedown", (e) => onDown(e.clientX));
+    window.addEventListener("mousemove", (e) => onMove(e.clientX));
+    window.addEventListener("mouseup", onUp);
+
+    track.addEventListener("touchstart", (e) => onDown(e.touches[0].clientX), {passive:true});
+    track.addEventListener("touchmove", (e) => onMove(e.touches[0].clientX), {passive:true});
+    track.addEventListener("touchend", onUp);
+
+    // Menu (3 dots)
+    const menuBtn = document.getElementById("menuBtn");
+    const menu = document.getElementById("menu");
+    const closeMenuBtn = document.getElementById("closeMenuBtn");
+
+    function toggleMenu(force){
+      const shouldOpen = typeof force === "boolean" ? force : !menu.classList.contains("open");
+      menu.classList.toggle("open", shouldOpen);
+    }
+
+    menuBtn.addEventListener("click", () => toggleMenu());
+    closeMenuBtn.addEventListener("click", () => toggleMenu(false));
+    window.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !menuBtn.contains(e.target)) toggleMenu(false);
+    });
+
+    // "txt" modal
+    const txtBtn = document.getElementById("txtBtn");
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalClose = document.getElementById("modalClose");
+
+    function openModal(open){
+      modalBackdrop.classList.toggle("open", open);
+      modalBackdrop.setAttribute("aria-hidden", String(!open));
+    }
+
+    txtBtn.addEventListener("click", () => openModal(true));
+    modalClose.addEventListener("click", () => openModal(false));
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) openModal(false);
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") openModal(false);
+    });
+  </script>
+</body>
+</html>
