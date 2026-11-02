@@ -123,16 +123,16 @@ button, a { touch-action: manipulation; }
     /* Against the left edge */
     .hover-preview[data-pos="knife"]{ left: 0; top: 28.4vh; width: min(48.8vw, 66.5vh); }
     .hover-preview[data-pos="stone"]{ left: 0; top: 28.4vh; width: min(46.8vw, 64vh); }
-    .hover-preview[data-pos="earth"]{ left: 0; top: 28.4vh; width: min(46.8vw, 62vh); }
     .hover-preview[data-pos="statue"]{ left: 0; bottom: 0; width: min(33.65vh, 60vw); }
+
+    /* Off the left edge */
+    .hover-preview[data-pos="earth"]{ left: 19.5vw; top: 28.2vh; width: min(42.7vw, 58.2vh); }
 
     /* Centered */
     .hover-preview[data-pos="grave"],
-    .hover-preview[data-pos="icon"],
-    .hover-preview[data-pos="shoe"]{ left: 50%; transform: translateX(-50%); }
+    .hover-preview[data-pos="icon"]{ left: 50%; transform: translateX(-50%); }
     .hover-preview[data-pos="grave"]{ top: 38vh; width: min(22.8vw, 30.7vh); }
     .hover-preview[data-pos="icon"]{ top: 20.3vh; width: min(30vw, 40.4vh); }
-    .hover-preview[data-pos="shoe"]{ top: 30vh; width: min(34vw, 46vh); }
 
     /* --- Mobile: logo above the menu, larger tap targets --- */
     @media (max-width: 640px){
@@ -177,7 +177,7 @@ button, a { touch-action: manipulation; }
           <a href="sport.html" data-img="previews/sport.png" data-pos="grave">спорт-клуб</a> |
           <a href="shadows.html" data-img="previews/shadows.png" data-pos="earth">тени</a> |
           <a href="bram.html" data-img="previews/bram.png" data-pos="icon">bram</a> |
-          <a href="collection.html" data-img="previews/collection.png" data-pos="shoe">коллекция уязвимых объектов</a> |
+          <a href="collection.html" data-img="index_img/3a5b418e-0ed2-4b4c-93d7-57aaf6c89d4b.png" data-pos="statue">коллекция уязвимых объектов</a> |
           <a href="frontir.html" data-img="previews/frontir.png" data-pos="stone">фронтир</a>
         </div>
       </div>
@@ -192,7 +192,7 @@ button, a { touch-action: manipulation; }
         </div>
       </div>
 
-      <a class="title" href="cv-bio.html" data-img="index_img/3a5b418e-0ed2-4b4c-93d7-57aaf6c89d4b.png" data-pos="statue">bio, CV</a>
+      <a class="title" href="cv-bio.html">bio, CV</a>
     </nav>
 
     <img class="logo" src="index_img/daria_glishchinskaia_копия.png" alt="Daria Glishchinskaia">
@@ -204,7 +204,7 @@ button, a { touch-action: manipulation; }
 
   <footer class="contacts">
     <a href="mailto:daria.glishchinskaia@gmail.com">daria.glishchinskaia@gmail.com</a>
-    <span>@dqsshq</span>
+    <a href="https://www.instagram.com/dqsshq">@dqsshq</a>
   </footer>
 
 <script>
