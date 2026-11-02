@@ -316,7 +316,49 @@ body{
 
 .item.large{ padding: 14px 20px; } /* less padding = bigger photo */
 .item.small{ padding: 90px 92px; } /* more padding = smaller photo */
-  </style>
+  /* txt pop-up */
+.modal-backdrop{
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+}
+.modal-backdrop.open{ display: grid; }
+
+.modal{
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  padding: 48px 32px;
+  background: #fff;
+  color: #000;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.modal p{ margin: 0; opacity: 0.75; }
+
+.modal-close{
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #000;
+  padding: 6px 12px;
+  font: inherit;
+  font-style: normal;
+  font-size: 20px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
@@ -362,6 +404,13 @@ body{
 
 </div>
 
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
+      <p>the text will appear soon...</p>
     </div>
   </div>
 

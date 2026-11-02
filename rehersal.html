@@ -496,6 +496,48 @@ body.pattern-mode .topbar{
   object-fit: contain; /* no crop */
   display: block;
 }
+/* txt pop-up */
+.modal-backdrop{
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+}
+.modal-backdrop.open{ display: grid; }
+
+.modal{
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  padding: 48px 32px;
+  background: #fff;
+  color: #000;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.modal p{ margin: 0; opacity: 0.75; }
+
+.modal-close{
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #000;
+  padding: 6px 12px;
+  font: inherit;
+  font-style: normal;
+  font-size: 20px;
+  opacity: 0.6;
+  cursor: pointer;
+}
 </style>
 </head>
 
@@ -647,6 +689,13 @@ body.pattern-mode .topbar{
 </section>
 
       </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
+      <p>the text will appear soon...</p>
     </div>
   </div>
 
@@ -1120,5 +1169,25 @@ function layoutActive(){
   });
 })();
 </script>
+<script>
+  (function () {
+    const modalBackdrop = document.getElementById('modalBackdrop');
+
+    function openModal(open){
+      modalBackdrop.classList.toggle('open', open);
+      modalBackdrop.setAttribute('aria-hidden', String(!open));
+    }
+
+    document.getElementById('txtBtn').addEventListener('click', () => openModal(true));
+    document.getElementById('modalClose').addEventListener('click', () => openModal(false));
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) openModal(false);
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') openModal(false);
+    });
+  })();
+</script>
+
 </body>
 </html>
