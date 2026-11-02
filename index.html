@@ -217,6 +217,17 @@ button, a { touch-action: manipulation; }
     const links = document.querySelectorAll('a[data-img]');
     let active = false;
 
+    // download all pictures on opening, so hovering shows them at once
+    // (touch screens have no hover and never show them, so they skip this)
+    const preloaded = [];
+    if (window.matchMedia('(hover: hover)').matches) {
+      links.forEach(a => {
+        const pic = new Image();
+        pic.src = a.dataset.img;
+        preloaded.push(pic);
+      });
+    }
+
     // reveal only once loaded, so a picture never shows at the previous one's position
     img.addEventListener('load', () => {
       if (active) preview.classList.add('is-on');
