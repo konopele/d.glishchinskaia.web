@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>тени — Дарья Глищинская</title>
+
+  <style>
+    /* Baseline responsive safety */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; overflow: hidden; }
+
+/* Forms/buttons tap comfort */
+button, a { touch-action: manipulation; }
+
+    @font-face{
+      font-family: "Montserrat";
+      src: url("fonts/montserrat/Montserrat/Montserrat-Italic.ttf") format("truetype");
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    :root{
+      --bg:#fff;
+      --fg:#000;
+      --accent:#86090f;
+
+      --mono: "Andale Mono", AndaleMono, "Lucida Console", Menlo, Consolas, monospace;
+
+      --topbar-h:56px;    /* white stripe above the pictures, holds the dots */
+      --end-gap:24px;
+      --intro-w:500px;
+
+      --dot-size:5px;
+      --dot-gap:6px;
+      --dot-shift:-10px;
+
+      /* the composition is 327 units high: 1u = 1/327 of the height below the stripe */
+      --u: calc((100vh - var(--topbar-h)) / 327);
+    }
+
+    @supports (height: 100dvh){
+      :root{ --u: calc((100dvh - var(--topbar-h)) / 327); }
+    }
+
+    body{
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    }
+
+    .menu-link{
+      position: fixed;
+      top: calc(var(--topbar-h) / 2);
+      left: 98%;
+      transform: translate(-50%, -50%) translateX(var(--dot-shift));
+      z-index: 30;
+      padding: 8px 12px;
+      text-decoration: none;
+      filter: blur(3.25px);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .menu-link:focus-visible{
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+    .dots{ display:flex; gap: var(--dot-gap); }
+    .dot{
+      width: var(--dot-size);
+      height: var(--dot-size);
+      border-radius: 50%;
+      background: var(--fg);
+      opacity: 0.9;
+    }
+
+    /* Native horizontal scroll: gives touch inertia for free */
+    .viewport{
+      position: fixed;
+      inset: 0;
+      padding-top: var(--topbar-h);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .viewport::-webkit-scrollbar{ display: none; }
+
+    .strip{
+      display: flex;
+      flex-wrap: nowrap;
+      width: max-content;
+      height: 100%;
+    }
+
+    .start-spacer,
+    .end-spacer{
+      flex: 0 0 var(--end-gap);
+    }
+
+    .intro-panel{
+      flex: 0 0 var(--intro-w);
+      position: relative;
+    }
+
+    .intro-title{
+      position: absolute;
+      left: 45%;
+      top: 25%;
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      font-weight: 400;
+      opacity: 0.75;
+      font-style: italic;
+    }
+
+    .intro-txt{
+      position: absolute;
+      top: 50%;
+      left: 30%;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--fg);
+      padding: 0;
+      font-family: inherit;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+      opacity: 0.55;
+      cursor: pointer;
+      font-style: italic;
+    }
+
+    /* Pictures are placed on the composition in units */
+    .composition{
+      flex: 0 0 auto;
+      position: relative;
+      width: calc(var(--u) * 959);
+      height: calc(var(--u) * 327);
+    }
+
+    .composition img{
+      position: absolute;
+      left: calc(var(--u) * var(--x));
+      top: calc(var(--u) * var(--y));
+      width: calc(var(--u) * var(--w));
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .video-btn{
+      position: absolute;
+      right: 0;
+      top: calc(var(--u) * 295);
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      padding: 0;
+      font-family: var(--mono);
+      font-size: max(11px, calc(var(--u) * 7.2));
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    @media (hover: hover){
+      .video-btn:hover{ color: var(--fg); }
+    }
+
+    /* Centered video pop-up */
+    .video-modal{
+      width: min(80vw, calc(80vh * 16 / 9));
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .video-modal::backdrop{ background: rgba(0, 0, 0, 0.6); }
+
+    .video-modal video,
+    .video-placeholder{
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+    }
+
+    .video-placeholder{
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 0.06em;
+    }
+
+    .video-close{
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      padding: 4px 10px;
+      font-family: var(--mono);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* --- Mobile: shorter intro, so the first picture is close --- */
+    @media (max-width: 768px){
+      :root{ --intro-w: 320px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Dots link to index.html -->
+  <a class="menu-link" href="index.html" aria-label="Open menu">
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="viewport" id="viewport">
+    <div class="strip">
+      <span class="start-spacer" aria-hidden="true"></span>
+
+      <div class="intro-panel">
+        <h1 class="intro-title">тени</h1>
+        <button class="intro-txt" id="txtBtn" type="button">txt</button>
+      </div>
+
+      <div class="composition">
+        <img src="shadows_img/013.webp" width="2000" height="1333" alt="" style="--x:143; --y:0; --w:490">
+        <img src="shadows_img/DSC05011.webp" width="1500" height="1125" alt="" style="--x:0; --y:83; --w:215">
+        <img src="shadows_img/002703470006.webp" width="1800" height="1193" alt="" style="--x:580; --y:77; --w:262">
+        <img src="shadows_img/DSC04977.webp" width="750" height="1000" alt="" style="--x:881; --y:193; --w:77">
+        <button class="video-btn" id="videoBtn" type="button">you can go through pages</button>
+      </div>
+
+      <span class="end-spacer" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <dialog class="video-modal" id="videoModal" aria-label="Video">
+    <!-- Placeholder: replace this div with <video src="..." controls></video> -->
+    <div class="video-placeholder">video</div>
+    <button class="video-close" id="videoClose" type="button" aria-label="Close">&times;</button>
+  </dialog>
+
+<script>
+  const viewport = document.getElementById('viewport');
+  const videoModal = document.getElementById('videoModal');
+
+  // mouse wheel scrolls sideways
+  window.addEventListener('wheel', (e) => {
+    if (videoModal.open) return;
+
+    // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
+    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
+
+    const speed = 1.2;
+    viewport.scrollLeft += delta * speed;
+
+    e.preventDefault();
+  }, { passive: false });
+
+  document.getElementById('videoBtn').addEventListener('click', () => videoModal.showModal());
+  document.getElementById('videoClose').addEventListener('click', () => videoModal.close());
+
+  // a click outside the video lands on the dialog itself
+  videoModal.addEventListener('click', (e) => {
+    if (e.target === videoModal) videoModal.close();
+  });
+
+  videoModal.addEventListener('close', () => {
+    const video = videoModal.querySelector('video');
+    if (video) video.pause();
+  });
+</script>
+
+</body>
+</html>
