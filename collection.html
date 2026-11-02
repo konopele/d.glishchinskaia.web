@@ -14,6 +14,14 @@ body { margin: 0; overflow: hidden; }
 /* Forms/buttons tap comfort */
 button, a { touch-action: manipulation; }
 
+    @font-face{
+      font-family: "Montserrat";
+      src: url("fonts/montserrat/Montserrat/Montserrat-Italic.ttf") format("truetype");
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+
     :root{
       --bg:#fff;
       --fg:#000;
@@ -37,7 +45,7 @@ button, a { touch-action: manipulation; }
     body{
       background: var(--bg);
       color: var(--fg);
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
     }
 
     .menu-link{
@@ -128,7 +136,7 @@ button, a { touch-action: manipulation; }
     .composition{
       flex: 0 0 auto;
       position: relative;
-      width: calc(var(--u) * 938);
+      width: calc(var(--u) * 939);
       height: calc(var(--u) * 320);
     }
 
@@ -167,13 +175,13 @@ button, a { touch-action: manipulation; }
       </div>
 
       <div class="composition">
-        <img src="collection_img/seven.png" width="1058" height="955" alt="" style="--x:0; --y:107; --w:137">
-        <img src="collection_img/four.png" width="915" height="1362" alt="" style="--x:194; --y:96; --w:117">
-        <img src="collection_img/two.png" width="1402" height="1722" alt="" style="--x:340; --y:94; --w:123">
-        <img src="collection_img/one.png" width="1160" height="1928" alt="" style="--x:480; --y:16; --w:94">
-        <img src="collection_img/six.png" width="777" height="1145" alt="" style="--x:626; --y:22; --w:99">
-        <img src="collection_img/five.png" width="2030" height="1008" alt="" style="--x:464; --y:190; --w:261">
-        <img src="collection_img/three.png" width="1265" height="2312" alt="" style="--x:777; --y:12; --w:161">
+        <img src="collection_img/seven.webp" width="1058" height="955" alt="" style="--x:0; --y:60; --w:137">
+        <img src="collection_img/four.webp" width="915" height="1362" alt="" style="--x:179; --y:109; --w:118">
+        <img src="collection_img/two.webp" width="1402" height="1722" alt="" style="--x:329; --y:80; --w:143">
+        <img src="collection_img/one.webp" width="1160" height="1928" alt="" style="--x:479; --y:10; --w:105">
+        <img src="collection_img/six.webp" width="777" height="1145" alt="" style="--x:625; --y:20; --w:100">
+        <img src="collection_img/five.webp" width="2000" height="993" alt="" style="--x:462; --y:190; --w:262">
+        <img src="collection_img/three.webp" width="1094" height="2000" alt="" style="--x:777; --y:12; --w:162">
       </div>
 
       <span class="end-spacer" aria-hidden="true"></span>

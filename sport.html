@@ -53,28 +53,28 @@ button, a { touch-action: manipulation; }
 
     @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Medium.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -143,9 +143,12 @@ body{
   padding-top: var(--top-gap);
   padding-bottom: var(--bottom-gap);   /* <- add */
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
   touch-action: pan-x;
 }
+.viewport::-webkit-scrollbar{ display: none; }
 
 .strip{
   height: calc(100% - var(--top-gap) - var(--bottom-gap));  /* <- change */
@@ -363,45 +366,21 @@ body{
   </div>
 
 <script>
-  const strip = document.getElementById('strip');
-  const stage = document.getElementById('stage');
+  const viewport = document.querySelector('.viewport');
 
-  let x = 0;
-
-  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
-
-  // ✅ bounds based on the visible stage, not the full window
-  function bounds(){
-    const stageW = stage.clientWidth;
-    const stripW = strip.scrollWidth; // includes padding-right end-gap
-    const minX = Math.min(0, stageW - stripW); // farthest left you can go
-    const maxX = 0;                             // flush left, never any left gap
-    return { minX, maxX };
-  }
-
-  function apply(){
-    const { minX, maxX } = bounds();
-    x = clamp(x, minX, maxX);
-    strip.style.transform = `translate3d(${x}px,0,0)`;
-  }
-
-  // ✅ wheel-only scroll
+  // mouse wheel scrolls sideways, touch uses native scrolling
   window.addEventListener('wheel', (e) => {
     // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
     const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
 
     const speed = 1.2; // tune
-    x -= delta * speed;
+    viewport.scrollLeft += delta * speed;
 
-    apply();
     e.preventDefault();
   }, { passive: false });
 
-  window.addEventListener('resize', apply);
-  window.addEventListener('load', () => { x = 0; apply(); });
-
   // -------------------------
-  // keep your modal code below (UNCHANGED)
+  // keep your modal code below
   // -------------------------
 
   const txtBtn = document.getElementById('txtBtn');
@@ -413,99 +392,17 @@ body{
     modalBackdrop.setAttribute('aria-hidden', String(!open));
   }
 
-  txtBtn.addEventListener('click', () => openModal(true));
-  modalClose.addEventListener('click', () => openModal(false));
-  modalBackdrop.addEventListener('click', (e) => {
-    if (e.target === modalBackdrop) openModal(false);
-  });
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') openModal(false);
-  });
-
-  // ===== Mobile: touch drag + inertia for the strip =====
-let isPointerDown = false;
-let lastX = 0;
-let lastT = 0;
-let dragV = 0;        // px per frame-ish (we'll compute from time)
-let dragging = false;
-
-function getClientX(e){
-  if (e.touches && e.touches.length) return e.touches[0].clientX;
-  if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
-  return e.clientX;
-}
-
-function onDown(e){
-  isPointerDown = true;
-  dragging = true;
-  lastX = getClientX(e);
-  lastT = performance.now();
-  dragV = 0;
-}
-
-function onMove(e){
-  if (!isPointerDown) return;
-
-  const cx = getClientX(e);
-  const now = performance.now();
-  const dx = cx - lastX;
-  const dt = Math.max(1, now - lastT);
-
-  // Move strip with finger
-  x += dx;
-
-  // Estimate velocity (px/ms)
-  dragV = dx / dt;
-
-  lastX = cx;
-  lastT = now;
-
-  const { minX, maxX } = bounds();
-  x = clamp(x, minX, maxX);
-
-  strip.style.transform = `translate3d(${x}px,0,0)`;
-}
-
-function onUp(){
-  if (!isPointerDown) return;
-  isPointerDown = false;
-
-  // Convert px/ms to your vx (px/frame at ~60fps)
-  vx = dragV * 16.67;     // inertia
-  dragging = false;
-}
-
-// Use Pointer Events when available (covers touch + pen + mouse)
-if (window.PointerEvent){
-  strip.addEventListener('pointerdown', (e) => {
-    // only primary finger
-    if (e.pointerType === 'mouse') return; // mouse handled by edge-hover
-    strip.setPointerCapture(e.pointerId);
-    onDown(e);
-  });
-
-  strip.addEventListener('pointermove', (e) => {
-    if (e.pointerType === 'mouse') return;
-    onMove(e);
-  });
-
-  strip.addEventListener('pointerup', (e) => {
-    if (e.pointerType === 'mouse') return;
-    onUp();
-  });
-
-  strip.addEventListener('pointercancel', onUp);
-} else {
-  // Fallback touch events
-  strip.addEventListener('touchstart', onDown, { passive: true });
-  strip.addEventListener('touchmove', onMove, { passive: true });
-  strip.addEventListener('touchend', onUp, { passive: true });
-  strip.addEventListener('touchcancel', onUp, { passive: true });
-}
-
-// ===== Modify your tick() slightly: don’t edge-scroll while dragging =====
-// Put this ONE LINE inside tick() right after you compute targetV:
-/// if (dragging) targetV = 0;
+  // runs once the modal markup is added to the page
+  if (modalBackdrop && modalClose) {
+    txtBtn.addEventListener('click', () => openModal(true));
+    modalClose.addEventListener('click', () => openModal(false));
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) openModal(false);
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') openModal(false);
+    });
+  }
 </script>
 
 </body>

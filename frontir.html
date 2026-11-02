@@ -24,28 +24,28 @@ button, a { touch-action: manipulation; }
 
     @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Light.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Regular.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Medium.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: "Montserrat";
-  src: url("fonts/montserrat/Montserrat-Italic.ttf") format("truetype");
+  src: url("fonts/montserrat/Montserrat/Montserrat-Italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -120,8 +120,12 @@ body{
   inset: 0;
   padding-top: var(--top-gap);
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  touch-action: pan-x;
 }
+.viewport::-webkit-scrollbar{ display: none; }
 
 /* ✅ menu-link anchored inside the stripe */
 .menu-link{
@@ -288,45 +292,21 @@ body{
   </div>
 
 <script>
-  const strip = document.getElementById('strip');
-  const stage = document.getElementById('stage');
+  const viewport = document.querySelector('.viewport');
 
-  let x = 0;
-
-  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
-
-  // ✅ bounds based on the visible stage, not the full window
-  function bounds(){
-    const stageW = stage.clientWidth;
-    const stripW = strip.scrollWidth; // includes padding-right end-gap
-    const minX = Math.min(0, stageW - stripW); // farthest left you can go
-    const maxX = 0;                             // flush left, never any left gap
-    return { minX, maxX };
-  }
-
-  function apply(){
-    const { minX, maxX } = bounds();
-    x = clamp(x, minX, maxX);
-    strip.style.transform = `translate3d(${x}px,0,0)`;
-  }
-
-  // ✅ wheel-only scroll
+  // mouse wheel scrolls sideways, touch uses native scrolling
   window.addEventListener('wheel', (e) => {
     // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
     const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
 
     const speed = 1.2; // tune
-    x -= delta * speed;
+    viewport.scrollLeft += delta * speed;
 
-    apply();
     e.preventDefault();
   }, { passive: false });
 
-  window.addEventListener('resize', apply);
-  window.addEventListener('load', () => { x = 0; apply(); });
-
   // -------------------------
-  // keep your modal code below (UNCHANGED)
+  // keep your modal code below
   // -------------------------
 
   const txtBtn = document.getElementById('txtBtn');
@@ -338,14 +318,17 @@ body{
     modalBackdrop.setAttribute('aria-hidden', String(!open));
   }
 
-  txtBtn.addEventListener('click', () => openModal(true));
-  modalClose.addEventListener('click', () => openModal(false));
-  modalBackdrop.addEventListener('click', (e) => {
-    if (e.target === modalBackdrop) openModal(false);
-  });
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') openModal(false);
-  });
+  // runs once the modal markup is added to the page
+  if (modalBackdrop && modalClose) {
+    txtBtn.addEventListener('click', () => openModal(true));
+    modalClose.addEventListener('click', () => openModal(false));
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) openModal(false);
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') openModal(false);
+    });
+  }
 </script>
 
 </body>
