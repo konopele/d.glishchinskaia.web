@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bram — Дарья Глищинская</title>
+
+  <style>
+    /* Baseline responsive safety */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; overflow: hidden; }
+
+/* Forms/buttons tap comfort */
+button, a { touch-action: manipulation; }
+
+    @font-face{
+      font-family: "Montserrat";
+      src: url("fonts/montserrat/Montserrat/Montserrat-Italic.ttf") format("truetype");
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    :root{
+      --bg:#fff;
+      --fg:#000;
+
+      --topbar-h:56px;    /* height of the area holding the dots */
+      --end-gap:24px;
+      --intro-w:500px;
+
+      --dot-size:5px;
+      --dot-gap:6px;
+      --dot-shift:-10px;
+
+      /* the composition is 1008 units high and fills the window: 1u = 1/1008 of its height */
+      --u: calc(100vh / 1008);
+    }
+
+    @supports (height: 100dvh){
+      :root{ --u: calc(100dvh / 1008); }
+    }
+
+    body{
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    }
+
+    .menu-link{
+      position: fixed;
+      top: calc(var(--topbar-h) / 2);
+      left: 98%;
+      transform: translate(-50%, -50%) translateX(var(--dot-shift));
+      z-index: 30;
+      padding: 8px 12px;
+      text-decoration: none;
+      filter: blur(3.25px);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .menu-link:focus-visible{
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+    .dots{ display:flex; gap: var(--dot-gap); }
+    .dot{
+      width: var(--dot-size);
+      height: var(--dot-size);
+      border-radius: 50%;
+      background: var(--fg);
+      opacity: 0.9;
+    }
+
+    /* Native horizontal scroll: gives touch inertia for free */
+    .viewport{
+      position: fixed;
+      inset: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .viewport::-webkit-scrollbar{ display: none; }
+
+    .strip{
+      display: flex;
+      flex-wrap: nowrap;
+      width: max-content;
+      height: 100%;
+    }
+
+    .start-spacer,
+    .end-spacer{
+      flex: 0 0 var(--end-gap);
+    }
+
+    .intro-panel{
+      flex: 0 0 var(--intro-w);
+      position: relative;
+    }
+
+    .intro-title{
+      position: absolute;
+      left: 45%;
+      top: 25%;
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      font-weight: 400;
+      opacity: 0.75;
+      font-style: italic;
+    }
+
+    .intro-txt{
+      position: absolute;
+      top: 50%;
+      left: 30%;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--fg);
+      padding: 0;
+      font-family: inherit;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+      opacity: 0.55;
+      cursor: pointer;
+      font-style: italic;
+    }
+
+    /* Pictures are placed on the composition in units */
+    .composition{
+      flex: 0 0 auto;
+      position: relative;
+      width: calc(var(--u) * 9742);
+      height: calc(var(--u) * 1008);
+    }
+
+    .composition img{
+      position: absolute;
+      left: calc(var(--u) * var(--x));
+      top: calc(var(--u) * var(--y));
+      width: calc(var(--u) * var(--w));
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* --- Mobile: shorter intro, so the first picture is close --- */
+    @media (max-width: 768px){
+      :root{ --intro-w: 320px; }
+    }
+  /* txt pop-up */
+.modal-backdrop{
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+}
+.modal-backdrop.open{ display: grid; }
+
+.modal{
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  padding: 48px 32px;
+  background: #fff;
+  color: #000;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.modal p{ margin: 0; opacity: 0.75; }
+
+.modal-close{
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #000;
+  padding: 6px 12px;
+  font: inherit;
+  font-style: normal;
+  font-size: 20px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+  <!-- Dots link to index.html -->
+  <a class="menu-link" href="index.html" aria-label="Open menu">
+    <span class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </span>
+  </a>
+
+  <div class="viewport" id="viewport">
+    <div class="strip">
+      <span class="start-spacer" aria-hidden="true"></span>
+
+      <div class="intro-panel">
+        <h1 class="intro-title">bram</h1>
+        <button class="intro-txt" id="txtBtn" type="button">txt</button>
+      </div>
+
+      <div class="composition">
+        <img src="bram_img/bram14.webp" width="678" height="1008" alt="" style="--x:3; --y:0; --w:678">
+        <img src="bram_img/bram13.webp" width="505" height="695" alt="" style="--x:782; --y:172; --w:504">
+        <img src="bram_img/bram15.webp" width="343" height="511" alt="" style="--x:1385; --y:135; --w:347">
+        <img src="bram_img/bram12.webp" width="574" height="973" alt="" style="--x:1809; --y:135; --w:302">
+        <img src="bram_img/bram9.webp" width="567" height="837" alt="" style="--x:2188; --y:171; --w:567">
+        <img src="bram_img/bram10.webp" width="325" height="484" alt="" style="--x:2874; --y:106; --w:324">
+        <img src="bram_img/bram11.webp" width="324" height="482" alt="" style="--x:3245; --y:106; --w:323">
+        <img src="bram_img/BRAM18.webp" width="565" height="833" alt="" style="--x:3692; --y:84; --w:565">
+        <img src="bram_img/bram1.webp" width="772" height="511" alt="" style="--x:4334; --y:497; --w:772">
+        <img src="bram_img/BRAM16.webp" width="465" height="700" alt="" style="--x:5224; --y:106; --w:465">
+        <img src="bram_img/bram7.webp" width="545" height="367" alt="" style="--x:5766; --y:585; --w:545">
+        <img src="bram_img/bram8.webp" width="362" height="244" alt="" style="--x:6080; --y:231; --w:362">
+        <img src="bram_img/bram5.webp" width="407" height="612" alt="" style="--x:6590; --y:204; --w:406">
+        <img src="bram_img/bram2.webp" width="483" height="717" alt="" style="--x:7145; --y:146; --w:482">
+        <img src="bram_img/bram3.webp" width="477" height="714" alt="" style="--x:7661; --y:146; --w:480">
+        <img src="bram_img/bram4.webp" width="480" height="717" alt="" style="--x:8174; --y:146; --w:480">
+        <img src="bram_img/BRAM17.webp" width="411" height="599" alt="" style="--x:8808; --y:292; --w:410">
+        <img src="bram_img/bram6.webp" width="366" height="544" alt="" style="--x:9376; --y:88; --w:366">
+      </div>
+
+      <span class="end-spacer" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
+      <p>the text will appear soon...</p>
+    </div>
+  </div>
+
+<script>
+  const viewport = document.getElementById('viewport');
+
+  // mouse wheel scrolls sideways
+  window.addEventListener('wheel', (e) => {
+    // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
+    const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
+
+    const speed = 1.2;
+    viewport.scrollLeft += delta * speed;
+
+    e.preventDefault();
+  }, { passive: false });
+</script>
+
+<script>
+  (function () {
+    const modalBackdrop = document.getElementById('modalBackdrop');
+
+    function openModal(open){
+      modalBackdrop.classList.toggle('open', open);
+      modalBackdrop.setAttribute('aria-hidden', String(!open));
+    }
+
+    document.getElementById('txtBtn').addEventListener('click', () => openModal(true));
+    document.getElementById('modalClose').addEventListener('click', () => openModal(false));
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) openModal(false);
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') openModal(false);
+    });
+  })();
+</script>
+
+</body>
+</html>

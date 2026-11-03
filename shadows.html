@@ -29,7 +29,7 @@ button, a { touch-action: manipulation; }
 
       --mono: "Andale Mono", AndaleMono, "Lucida Console", Menlo, Consolas, monospace;
 
-      --topbar-h:56px;    /* white stripe above the pictures, holds the dots */
+      --topbar-h:56px;    /* height of the area holding the dots */
       --end-gap:24px;
       --intro-w:500px;
 
@@ -37,12 +37,12 @@ button, a { touch-action: manipulation; }
       --dot-gap:6px;
       --dot-shift:-10px;
 
-      /* the composition is 327 units high: 1u = 1/327 of the height below the stripe */
-      --u: calc((100vh - var(--topbar-h)) / 327);
+      /* the composition is 327 units high and fills the window: 1u = 1/327 of its height */
+      --u: calc(100vh / 327);
     }
 
     @supports (height: 100dvh){
-      :root{ --u: calc((100dvh - var(--topbar-h)) / 327); }
+      :root{ --u: calc(100dvh / 327); }
     }
 
     body{
@@ -80,7 +80,6 @@ button, a { touch-action: manipulation; }
     .viewport{
       position: fixed;
       inset: 0;
-      padding-top: var(--topbar-h);
       overflow-x: auto;
       overflow-y: hidden;
       scrollbar-width: none;
@@ -279,7 +278,7 @@ button, a { touch-action: manipulation; }
       </div>
 
       <div class="composition">
-        <img src="shadows_img/013.webp" width="2000" height="1333" alt="" style="--x:143; --y:0; --w:490">
+        <img src="shadows_img/013.webp" width="2000" height="1333" alt="" style="--x:143; --y:0; --w:491">
         <img src="shadows_img/DSC05011.webp" width="1500" height="1125" alt="" style="--x:0; --y:83; --w:215">
         <img src="shadows_img/002703470006.webp" width="1800" height="1193" alt="" style="--x:580; --y:77; --w:262">
         <img src="shadows_img/DSC04977.webp" width="750" height="1000" alt="" style="--x:881; --y:193; --w:77">
