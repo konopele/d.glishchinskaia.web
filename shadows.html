@@ -257,6 +257,13 @@ button, a { touch-action: manipulation; }
   opacity: 0.6;
   cursor: pointer;
 }
+/* pictures stay blurred while loading, same as the rehearsal page */
+img.is-loading{
+  filter: blur(18px);
+  transform: translateZ(0);
+  /* tiny copy of the picture, shown until the full one arrives */
+  background: var(--thumb) center / 100% 100% no-repeat;
+}
 </style>
 </head>
 
@@ -278,10 +285,10 @@ button, a { touch-action: manipulation; }
       </div>
 
       <div class="composition">
-        <img src="shadows_img/013.webp" width="2000" height="1333" alt="" style="--x:143; --y:0; --w:491">
-        <img src="shadows_img/DSC05011.webp" width="1500" height="1125" alt="" style="--x:0; --y:83; --w:215">
-        <img src="shadows_img/002703470006.webp" width="1800" height="1193" alt="" style="--x:580; --y:77; --w:262">
-        <img src="shadows_img/DSC04977.webp" width="750" height="1000" alt="" style="--x:881; --y:193; --w:77">
+        <img src="shadows_img/013.webp" width="2000" height="1333" alt="" style="--thumb:url(data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABQBQCdASogABUAPt1cp04opKOiMBgIARAbiWcAAI94p26iT+9Ej1Aaxpy8Hg2xwirLYCAA/sffw4pyE5loQkvxXDjVNcCzKGGDQl5U9csEsiXQaZpS7j/fGZtG4NNJsdqJrh7qLP0ygL9qY+ipTemJHvW7AXeK/ufckiY9v/Oj8I6Q0hsJpm9280tDhElz0RQEAA==); --x:143; --y:0; --w:491">
+        <img src="shadows_img/DSC05011.webp" width="1500" height="1125" alt="" style="--thumb:url(data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAACQBQCdASogABgAPt1iq08opaQiKAqpEBuJZQDNwGk/1gB33DBf851diRv1FLS2/ZD+1Q9PgAD+/EssKIBSmmRlyE0tgLWa8NSq2Qt9mMrTBweW2HaGoSLpMRNoPWJ0KqpqMvlpy4Rdmy+M8hSuaEhUVdlLiIlp9Oip8KtF+XQ+8ZQkQRqgTyQi/Opn9aARbcplJcXhCbgiKjEeeF2qMrXIxxMOWP7Q/5DmK4AA); --x:0; --y:83; --w:215">
+        <img src="shadows_img/002703470006.webp" width="1800" height="1193" alt="" style="--thumb:url(data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAABwBQCdASogABUAPt1kqE2opiOiMBgIARAbiUAW994GrMjrKp4USnuBlSPOeOY1D58snLXwAPluqv6C6QMQw3B2lPR+UG0x3k/kf9qvJr8BHLDkZBIh9uyrLspruwC5wkfNlL+c8RI4Qlh0m5T9VLrhlueRbmttDeyRz0Ful31Ii6j+G1tvp88obW4Vq4IliCCyPuSVZT8tfiUgjjYgTkhHm2KrFEPJ8kuOqlRZTjtrcE0R2zvmEAAA); --x:580; --y:77; --w:262">
+        <img src="shadows_img/DSC04977.webp" width="750" height="1000" alt="" style="--thumb:url(data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAACwBQCdASoYACAAPtFYp0yoJaQiMAwBABoJaQDOOCG+57PYnpt7UJ42zMdaPGXrZ9vcVfsedgAA/q78bSUnraiRa6eV1Tpob9s+gSAjZhLRFQ1UmyJNSNMEv2VSwfCNIIPWgBlgCcAuNlGrAp/FKLEKc/UCFs1cITIP4Qva0JHRNpqCdfXnpjWAvWi+7pYjGehHk10+TGrmGy170VnbFyPRQhcTV9U7FTmqnULlrpkBJIEAAAA=); --x:881; --y:193; --w:77">
         <button class="video-btn" id="videoBtn" type="button">you may flick through pages</button>
       </div>
 
@@ -301,6 +308,18 @@ button, a { touch-action: manipulation; }
       <p>the text will appear soon...</p>
     </div>
   </div>
+
+<script>
+  // blur pictures while they load, same as the rehearsal page
+  document.querySelectorAll('img').forEach((img) => {
+    img.classList.toggle('is-loading', !img.complete);
+    img.addEventListener('load', () => img.classList.remove('is-loading'));
+    img.addEventListener('error', () => {
+      console.warn('Missing image:', img.getAttribute('src'));
+      img.style.display = 'none';
+    });
+  });
+</script>
 
 <script>
   const viewport = document.getElementById('viewport');

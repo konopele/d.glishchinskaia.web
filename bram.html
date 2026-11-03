@@ -195,6 +195,13 @@ button, a { touch-action: manipulation; }
   opacity: 0.6;
   cursor: pointer;
 }
+/* pictures stay blurred while loading, same as the rehearsal page */
+img.is-loading{
+  filter: blur(18px);
+  transform: translateZ(0);
+  /* tiny copy of the picture, shown until the full one arrives */
+  background: var(--thumb) center / 100% 100% no-repeat;
+}
 </style>
 </head>
 
@@ -216,24 +223,24 @@ button, a { touch-action: manipulation; }
       </div>
 
       <div class="composition">
-        <img src="bram_img/bram14.webp" width="678" height="1008" alt="" style="--x:3; --y:0; --w:678">
-        <img src="bram_img/bram13.webp" width="505" height="695" alt="" style="--x:782; --y:172; --w:504">
-        <img src="bram_img/bram15.webp" width="343" height="511" alt="" style="--x:1385; --y:135; --w:347">
-        <img src="bram_img/bram12.webp" width="574" height="973" alt="" style="--x:1809; --y:135; --w:302">
-        <img src="bram_img/bram9.webp" width="567" height="837" alt="" style="--x:2188; --y:171; --w:567">
-        <img src="bram_img/bram10.webp" width="325" height="484" alt="" style="--x:2874; --y:106; --w:324">
-        <img src="bram_img/bram11.webp" width="324" height="482" alt="" style="--x:3245; --y:106; --w:323">
-        <img src="bram_img/BRAM18.webp" width="565" height="833" alt="" style="--x:3692; --y:84; --w:565">
-        <img src="bram_img/bram1.webp" width="772" height="511" alt="" style="--x:4334; --y:497; --w:772">
-        <img src="bram_img/BRAM16.webp" width="465" height="700" alt="" style="--x:5224; --y:106; --w:465">
-        <img src="bram_img/bram7.webp" width="545" height="367" alt="" style="--x:5766; --y:585; --w:545">
-        <img src="bram_img/bram8.webp" width="362" height="244" alt="" style="--x:6080; --y:231; --w:362">
-        <img src="bram_img/bram5.webp" width="407" height="612" alt="" style="--x:6590; --y:204; --w:406">
-        <img src="bram_img/bram2.webp" width="483" height="717" alt="" style="--x:7145; --y:146; --w:482">
-        <img src="bram_img/bram3.webp" width="477" height="714" alt="" style="--x:7661; --y:146; --w:480">
-        <img src="bram_img/bram4.webp" width="480" height="717" alt="" style="--x:8174; --y:146; --w:480">
-        <img src="bram_img/BRAM17.webp" width="411" height="599" alt="" style="--x:8808; --y:292; --w:410">
-        <img src="bram_img/bram6.webp" width="366" height="544" alt="" style="--x:9376; --y:88; --w:366">
+        <img src="bram_img/bram14.webp" width="678" height="1008" alt="" style="--thumb:url(data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAABQBQCdASoWACAAPt1kp02opaOiMBgIARAbiWkAACxIw09LxAjjOALF2wyYmyS34Ce5CUAA/qDrfCBfN4O8R50m9nsUO9pVg6dfU7K+Q3iKvCTz/Gfsfcy2GZBv88ySbhiqaKnvpZ/neqlGbnixKtGs94MuMioDO4bxA+6WVpbRZ53Vflw1O4siuZKnF0wT2zGrp4SQjYydzAAA); --x:3; --y:0; --w:678">
+        <img src="bram_img/bram13.webp" width="505" height="695" alt="" style="--thumb:url(data:image/webp;base64,UklGRj4BAABXRUJQVlA4WAoAAAAQAAAAFgAAHwAAQUxQSK0AAAABgF7b2vGomZSUGtJEVlpIA9Z/27Zta2zP8zzjuSVExARotyeXV8vVqtdYLFc/Djc3UfVRsMM5E38n4j8SrQ/C8n+W82tBspwthTEr0DnqBDVAdVCbphDksgI6VkFL1Alq0wbNqxCRRwzLRQ10mgedO+QdsrOChgYISdkIeRevHWTVg8wWkNEK0ur4jX+kdyJmJiJ6JY1ZsCrleDlZrkb9QcpbbA9Gy06lWs0HFQBWUDggagAAALAEAJ0BKhcAIAA+3VqlTKilI6IwCAEQG4lpAMq0Gr1SB1Kv+utGPXSUuiLDNUAA/hWrTQEfJ8G6/3q2GUGuQT12Y1MkF9EzSXN7bTPlt9VvUXltHz8F56I6jycfsNSNJFxz8CldWbaNwAA=); --x:782; --y:172; --w:504">
+        <img src="bram_img/bram15.webp" width="343" height="511" alt="" style="--thumb:url(data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACwBACdASoVACAAPt1aqE6opKOiMBgIARAbiWkAABmDU/CGqJT/wehl76aD97ZsAMQlc3bg0UgS+1M6btt/gktjjAy3RnVN9L56Mi0MlNNKMGaSi5prJFz9BHl1BgaUeMYU1KwnulJfZM958GFAAA==); --x:1385; --y:135; --w:347">
+        <img src="bram_img/bram12.webp" width="574" height="973" alt="" style="--thumb:url(data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAAAQBQCdASoTACAAPt1eqU6opKOiMBgIARAbiWkAAI8/LJL1fuWr7TJvB51SY+eQiEHAAP7TWXRzmj4RM+zH19Q5oa9fX/pDbB6c7D4ogP9XQCOt7lgXH8FrPkj+GVgs/Y0mcnrLLLmkuMGCiz9gKkY6aPRdEecugOjrXTPqs9fmMmdeAGGR00aNRgTwCP3O54AAAA==); --x:1809; --y:135; --w:302">
+        <img src="bram_img/bram9.webp" width="567" height="837" alt="" style="--thumb:url(data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAAAQBQCdASoWACAAPtVYpEyoJSOiMAwBABqJaQAAPD51Ety/IuYuU/U4430ozycAu8IgAPafNppgAIPwfgXBP2AUdfOvl2Ng2YgcROyZLBEjUFB5w/EoZwe1bfhx12N0ykyI4cRHjhqhc9n9eO1HEjkOoeB3dAY766hhCd78BmqjytDbrKDXodOrw+dikBp3dfbyRJmd6ei1G494Dw9fpnMiU1AAAA==); --x:2188; --y:171; --w:567">
+        <img src="bram_img/bram10.webp" width="325" height="484" alt="" style="--thumb:url(data:image/webp;base64,UklGRuAAAABXRUJQVlA4INQAAADwBACdASoVACAAPt1kqE2opiOiMBgIARAbiWkAEgBggVS9WbGdsQH2xm3oiUgapaAA+RQoQvhQbQdKW+19oWyxMQSQ43VqBLk/Xp4CQFBfymc2Me/Dr1/WMtMLSrd1MrUpgGDJ9kken5rAFxTlCmAf3D1fgyrMUhdMCGIrL2GQsJoXvHNUZn/2AABV/6BLdJCElxdM37APNvEgK5+voAFSnAtpZb+zKmud5wdpHnpZR8S9PuP1sanXPcsxb2e+PCr2GtwcP5DMeUY4RLGe3dpOoAAAAA==); --x:2874; --y:106; --w:324">
+        <img src="bram_img/bram11.webp" width="324" height="482" alt="" style="--thumb:url(data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAABwBACdASoWACAAPt1eqEyopSQiMAgBEBuJaQAAMF3UnlazSrJAzj2ko/w5EAD4PXmy7jbkCk216ksDyIJd3grxYl1+Al8viBpr99zYaQl5mr3tGG5xRbFvHFQ6vu8HU1KrhV3jcvkSmjF9rxfrB7SorxR+tvo0SZEPb8/gnYDWMCUb+IRl7h0YaEk6KclVm2ihPhhHN0AAAA==); --x:3245; --y:106; --w:323">
+        <img src="bram_img/BRAM18.webp" width="565" height="833" alt="" style="--thumb:url(data:image/webp;base64,UklGRs4AAABXRUJQVlA4IMIAAAAQBQCdASoWACAAPt1ep0yopSOiMAgBEBuJaQAAPwVVsUA3/KpSU4JVjk9Ex8TngTmAAP5OGtViD12g9jxPPWy4S9nJFKEfxRvDPzOJosmG2CTk7CvyIe4xlzQz84d01YOjOlB4Vn3w0JgMRXyRkelj4hVfHxTuxlSJL7y4B91Q+29fNlpY5RymYO+OON0Yj+uRziBIp6ME/luKlV6TMS3bwLnqs7Vuhfv2HDR1BdObhpGItnIEThXasgpEPvRYcUAAAA==); --x:3692; --y:84; --w:565">
+        <img src="bram_img/bram1.webp" width="772" height="511" alt="" style="--thumb:url(data:image/webp;base64,UklGRtQAAABXRUJQVlA4IMgAAADQBACdASogABUAPt1irU6opaSiKAqpEBuJaQATyJiAFDL7q8bhxGd1L+AA3JjIAAD3gxalcCZLa6kdp2OE+Zl8I9lnH2YWfdLkPvEiGNHp3xi85OOlDBH4eUH2ryT/14kthRNHoPVOnndN56TPLwAW3bqPwSdwwud49DBdf9SuMkHG5YSaC1PfD46hoIG+ftt4wdhWbNbKy1mTBRVsUI2DhfzD8Mc7U3UX5kamLICIU3pR3IH97/BhB6OQ7+lm3EqTdaLXYAAAAA==); --x:4334; --y:497; --w:772">
+        <img src="bram_img/BRAM16.webp" width="465" height="700" alt="" style="--thumb:url(data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAQBQCdASoVACAAPt1apUyopSOiMAgBEBuJaQAAW4bi7n+YYLJGPceB7bhfbQR6+YnAAP6Lrl2377DzANHlH11txx0wDLUerFYwOm93v2HO4JyqQ83Zv9CP88JH8RKKVfETBu2i4QSpWGAqDUDLZZRwxXHOeO0i/+Moy3Yxpw64E9nDRvcaLAAA); --x:5224; --y:106; --w:465">
+        <img src="bram_img/bram7.webp" width="545" height="367" alt="" style="--thumb:url(data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAADQBACdASogABYAPt1iq08opaQiKAqpEBuJaQAAhjn/BK/Y2YsMG5PfutPUxNyiAAD8qhbbtY69UZtyLvOAnLSTpQXLOJUOMvx4J6wtHrp1nGOKPnfiYoWWJMvkWroeZkTGixVMCOjA1O8WiPMcKU+B+CQOlGQ8Hg/R7QnsZjixBO4Qr6PIzbRopLJ5nAZztZ5J9Z+TIoAAAA==); --x:5766; --y:585; --w:545">
+        <img src="bram_img/bram8.webp" width="362" height="244" alt="" style="--thumb:url(data:image/webp;base64,UklGRtoAAABXRUJQVlA4IM4AAAAwBQCdASogABYAPt1epkyopSOiMAgBEBuJaQAAXh/oLdZmWffwmERtK97OLpDIqRgIAAD+siuP1CXi6JZPu2xNa8b7GNAeN1hW2ubwx195ME4WTlQmgKc0Gzyaj3tdcFEiS3fzO9AkimCMKdmFyJlVDKJA8MarfElVOeS+1ZlGUifbGhT7A7E0aUcm/nmzMxbYPrPL6/OaJVezchJ6wq8Ntfq8zjxeQcjLNFU75XY/gzjLPPGnnmW46DkdPvKj87d0fXtpjy3Hrj9kbEAAAA==); --x:6080; --y:231; --w:362">
+        <img src="bram_img/bram5.webp" width="407" height="612" alt="" style="--thumb:url(data:image/webp;base64,UklGRlYBAABXRUJQVlA4WAoAAAAQAAAAFAAAHwAAQUxQSMQAAAABgFtt27KGDZiCig1YwSkd4u7u7i6VS+leubtrmayQkv+87/9UOf8zQkRMgGNqeXl1YWqyrKA4Ox5KL64oyHDa9kD8K/8QQ/5XVRExcPUEhVU1D24Igo1byixn7J5S8UtQhH8oyXeCieA9xX1DEOScEhTRE4Igc5+Sc0zJXabUz0IIhcdQQtU3pfaTUvhGaX2idN1T2k8odXuU3GmIJUWk27QmqOpGSsViShp9Bohxmysrt7K5rrKguL2zp621f2ljd9gOVlA4IGwAAABQBACdASoVACAAPt1apUyopSOiMAgBEBuJaQAAXiA+fqMaQctCdNVI6A8AAP4ekByYAZEY9/G9w4WwHDo+oWGhnoY5u9xDNXi1658W4pT6i9QHfOiKvvyktG3D0w0zTMDYcFwlCM8yOMUIoAA=); --x:6590; --y:204; --w:406">
+        <img src="bram_img/bram2.webp" width="483" height="717" alt="" style="--thumb:url(data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAABwBQCdASoWACAAPt1eqE4opSOiMBgIARAbiWkACwchiZIxQAZZ4XYk312ppRs8NtG97lmgAP6SrAOTMt4XbrJj9qbIBXgZTPByWPxTj4v1oclDpehjD/y9sMcqzCrhh7eh0Rmc2fibA1CHtL/KG3Hhbqlf7k0U5fXPJzJWwo1L4HxRzh/8nR7QIg0SNO4CIYnsqcWwag9C/CO5cWg+3Pjaj3+CmV0AAAA=); --x:7145; --y:146; --w:482">
+        <img src="bram_img/bram3.webp" width="477" height="714" alt="" style="--thumb:url(data:image/webp;base64,UklGRs4AAABXRUJQVlA4IMIAAACQBQCdASoVACAAPt1cpkyopSOiMAgBEBuJaQASAH1aHfLuD8VBDdpnECDuRFKu5jIm21BMYAD1zEvVcLHH8lSFgdrMO++vytZKjv2UjT8/1jRIW+kIYUOf1eHgeBBVn86X53EeM5VdUA4JsuhhRlpYrVDg/0LWYdt1XHS/05nQ9JwEVtzZccZRHXEuJLCPXkENdwIFC0SBAEQXgWYl5gwfJvTWCYfuolN8ZmB3FucxCLxRI2BvWmcwJu8RsXqrxuWAAA==); --x:7661; --y:146; --w:480">
+        <img src="bram_img/bram4.webp" width="480" height="717" alt="" style="--thumb:url(data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAADwBACdASoVACAAPt1kqE2opiOiMBgIARAbiWkAAB84KpRO0VqfMpI6Zmv/duOEfdAA+gjmMuT7uofslcVjBkIUlWB0RrhO90fSMmgkovb56809LfsyFfsZisioPBDz2+nh8YmPlbiG/7klF6CaIK/1oAhdKx+H/gRyxXMJ7pkY6S+crOd+f+mbPwokqjbpIDIjTSu7qshq9o1MPeS6DNmDC4gQWRaz8029nqRcr1EkKmfnH+AAAA==); --x:8174; --y:146; --w:480">
+        <img src="bram_img/BRAM17.webp" width="411" height="599" alt="" style="--thumb:url(data:image/webp;base64,UklGRqQBAABXRUJQVlA4WAoAAAAQAAAAFQAAHwAAQUxQSOkAAAABkGNr27FX31rp7EEYVQZglypd2badVJmAbdu2nRyrsp7nvY+/ZwgRMQGappl7pmc1X759//bt2fxkb1dbmK3mlz/9CN0fKpcBgIiUglKKmYgIX1Z/fGfoVep+FwzdjMN+kMTiMVhi+R2UxPV3CDJ2vkgQ2qbAIgcSjOFnUPoITTcSjLgzsET0rgQhfUOmcEkmuw6kjxFVKhOTJRMeJ6HgGQXWB3bNBgmQQ5wEIzhZQiEoHKwPcEsDCfxwrlX6FF7bxOK7UvxX4j/pB90amT6D4AtDzb3o6tnB9Nj40mLn9vHqbFtLd3u0AQBWUDgglAAAABAFAJ0BKhYAIAA+3WKrT6ilJCIoCqkQG4lpAM+gD712Q/KEJ8lbsis3SXy2CFj7WmQA/oIbAHV9s3DRgGSSPS4XbGal80lJoF4mBeM7j2mSKMhoeCYTFyhw+gFKYivZ9VkUqzDmsNXG8+BGON3J4dKwn3rx9DDSEM/p16oXxR3Ozr14oFNad/QZN2B1Webrm+dgAAA=); --x:8808; --y:292; --w:410">
+        <img src="bram_img/bram6.webp" width="366" height="544" alt="" style="--thumb:url(data:image/webp;base64,UklGRtQAAABXRUJQVlA4IMgAAAAwBQCdASoWACAAPt1ep0yopSOiMAgBEBuJaQAAWSgdvGadnOp0ZC0zQo8aPS6R1jRtIAD+tCUapsdBG+bd+fGY3kFouwuI2LprlwXvBDZTd62isBefsdp16nSNQbJbD/xQOyC4Vlz0X7ol7ZrQjdGPF/rRe5UaXCZwK13LBLVUGQEzFlzfTGau4z7LtUX8KejO/rcUUXfR7vtZkxh5G3LiaIWpQ+BJM9ydmFKGLhArXwwyQwTwzGu5WvrKPdeufMkiYGjo+AAAAA==); --x:9376; --y:88; --w:366">
       </div>
 
       <span class="end-spacer" aria-hidden="true"></span>
@@ -246,6 +253,18 @@ button, a { touch-action: manipulation; }
       <p>the text will appear soon...</p>
     </div>
   </div>
+
+<script>
+  // blur pictures while they load, same as the rehearsal page
+  document.querySelectorAll('img').forEach((img) => {
+    img.classList.toggle('is-loading', !img.complete);
+    img.addEventListener('load', () => img.classList.remove('is-loading'));
+    img.addEventListener('error', () => {
+      console.warn('Missing image:', img.getAttribute('src'));
+      img.style.display = 'none';
+    });
+  });
+</script>
 
 <script>
   const viewport = document.getElementById('viewport');

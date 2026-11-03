@@ -164,7 +164,14 @@ button, a { touch-action: manipulation; }
       }
       .contacts a{ padding: 4px 0; }
     }
-  </style>
+  /* pictures stay blurred while loading, same as the rehearsal page */
+img.is-loading{
+  filter: blur(18px);
+  transform: translateZ(0);
+  /* tiny copy of the picture, shown until the full one arrives */
+  background: var(--thumb) center / 100% 100% no-repeat;
+}
+</style>
 </head>
 
 <body>
@@ -195,7 +202,7 @@ button, a { touch-action: manipulation; }
       <a class="title" href="cv-bio.html">bio, CV</a>
     </nav>
 
-    <img class="logo" src="index_img/daria_glishchinskaia_копия.webp" alt="Daria Glishchinskaia">
+    <img class="logo" width="1500" height="256" src="index_img/daria_glishchinskaia_копия.webp" alt="Daria Glishchinskaia" style="--thumb:url(data:image/webp;base64,UklGRtoAAABXRUJQVlA4WAoAAAAQAAAAHwAABQAAQUxQSDsAAAABUBPJVqMNNQiipEQFAqioGVzk8pMzDiJiAlAttdYKStdSn+Kapo9kk5/xvKrmla1rELW8oTIuLKv5DQBWUDggeAAAAHADAJ0BKiAABgA+3VypTKilJCIwCAEQG4lpAAPjHbvyl+hgQAD++ffK5bN84V64f3NyhGf5TPseWtG5cPCpH/G2OnBqlVeVuGcl0JVc+gnrgk1DbBVkm7bqtVJ6hYUfmg2XeQHTFzU8MB3/KZfcPytoxO8DP5wAAA==)">
   </header>
 
   <div class="hover-preview" aria-hidden="true">
@@ -206,6 +213,18 @@ button, a { touch-action: manipulation; }
     <a href="mailto:daria.glishchinskaia@gmail.com">daria.glishchinskaia@gmail.com</a>
     <a href="https://www.instagram.com/dqsshq">@dqsshq</a>
   </footer>
+
+<script>
+  // blur pictures while they load, same as the rehearsal page
+  document.querySelectorAll('img.logo').forEach((img) => {
+    img.classList.toggle('is-loading', !img.complete);
+    img.addEventListener('load', () => img.classList.remove('is-loading'));
+    img.addEventListener('error', () => {
+      console.warn('Missing image:', img.getAttribute('src'));
+      img.style.display = 'none';
+    });
+  });
+</script>
 
 <script>
   (function () {

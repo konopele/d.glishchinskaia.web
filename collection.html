@@ -196,6 +196,13 @@ button, a { touch-action: manipulation; }
   opacity: 0.6;
   cursor: pointer;
 }
+/* pictures stay blurred while loading, same as the rehearsal page */
+img.is-loading{
+  filter: blur(18px);
+  transform: translateZ(0);
+  /* tiny copy of the picture, shown until the full one arrives */
+  background: var(--thumb) center / 100% 100% no-repeat;
+}
 </style>
 </head>
 
@@ -217,13 +224,13 @@ button, a { touch-action: manipulation; }
       </div>
 
       <div class="composition">
-        <img src="collection_img/seven.webp" width="1058" height="955" alt="" style="--x:0; --y:60; --w:137">
-        <img src="collection_img/four.webp" width="915" height="1362" alt="" style="--x:179; --y:109; --w:118">
-        <img src="collection_img/two.webp" width="1402" height="1722" alt="" style="--x:329; --y:80; --w:143">
-        <img src="collection_img/one.webp" width="1160" height="1928" alt="" style="--x:479; --y:10; --w:105">
-        <img src="collection_img/six.webp" width="777" height="1145" alt="" style="--x:625; --y:20; --w:100">
-        <img src="collection_img/five.webp" width="2000" height="993" alt="" style="--x:462; --y:190; --w:262">
-        <img src="collection_img/three.webp" width="1094" height="2000" alt="" style="--x:777; --y:12; --w:162">
+        <img src="collection_img/seven.webp" width="1058" height="955" alt="" style="--thumb:url(data:image/webp;base64,UklGRmICAABXRUJQVlA4WAoAAAAQAAAAHwAAHAAAQUxQSGUBAAABkGttmxla38wkex+zs0vbtlGZvUvb6ljZ5wpsdLZt++T/5yuyM8klRMQEuGXP/r3ZVR8GRS9l+lEtY4s6Lwn9P+6EK2oR/5Oqr0ptbIupfpdK4WkU3+iyV/0/vl33sU1hiogxjgnlPclbrpDIjqSQ9Cp/68EWgTEpTwrHm6iQCUyYFp6AK2R6BpW94YpYG3K7nDO5rLtLLYvCzYhzYQaF2QkHI85T873XAK9fWiHKMYvKUOX75ojCrvgwCt91RBz0i3mVP3oiNgHUPBR+Gwy4rHP8n4dK7qgEZ8uqf52Sh155tR8QmRSqbKGS9CFkQu6qDzgDWOAohaQXH0BVftlQH3CAMw3+Jv/lK0nxWaSQX5bWhIVFXZI80GvvV1IC6BPy5TQAKO02afWU+kDdxT+Z+CzSJ+Q8ZDsHNDtHehURUfWkF/mYclEUGcBEsFt+Mm8q0AFNh0+cu2bLkWNnH/z5+fXrp1MAVlA4INYAAADwBQCdASogAB0APt1WqEyopCQiMBgMARAbiWUAvlQQDyQCZwCF2uN7UlyEOLSPm4xNcP3F3S5hAAD8zvV7e2qNrVLgCQIZg9KGDNez6Oj0c/KyKfcIFPr6NNCb1RESfdQlk/DsqzqGRf/Dcy88+QWCD+SUe1PLDWxLQfV+cHh3jqWF/m15KnoYvwqotMc8Sbq9Zfqj0pfy/KEQNLL3OXhLKCfIW+/FITBt+/P+dT5uGMP3ZEvuhHZFI9+vtdQ8xbo9IdelQnu94HG/qm++juC3f1CLbFAA); --x:0; --y:60; --w:137">
+        <img src="collection_img/four.webp" width="915" height="1362" alt="" style="--thumb:url(data:image/webp;base64,UklGRkYBAABXRUJQVlA4WAoAAAAQAAAAFAAAHwAAQUxQSKQAAAABgCPbtmmr9Q+pbTuzbZvfVv5w9v7+q34LImICrl+enm7PbhbL9Xg87PXas/ns0vTGyOwFCfpefE9HSsxZ8F8Fx/qQwgSSbkJKRUi2BmmkINUEpJWEjIJ8AvSikLYfMghDOm7IxAMZOyEzD4B4a4GsdJCFEbJUAQRPtQDicw3kQv1/HhWQGz0dicTvj6dnNyP38sfHq/lo2urXUvl4Ktcsx/xmCVZQOCB8AAAAsAQAnQEqFQAgAD7dXKZMqKUjojAIARAbiWkAzuwhvKd34+2fyc8pwQxDHGBFwAD+9CntNHuTX79MNmBZOUb1pLYn72atcsOpaNfsGRv+wdo2WXXBEUEDj4nCCruoWoA1T8e6KtRR5nMZJnqNhUOQtKUeGG0K4nWxVAAAAA==); --x:179; --y:109; --w:118">
+        <img src="collection_img/two.webp" width="1402" height="1722" alt="" style="--thumb:url(data:image/webp;base64,UklGRqoCAABXRUJQVlA4WAoAAAAQAAAAGQAAHwAAQUxQSF0BAAABkLNtm2m7M3pnZp19TpLKtm2rs5Patm3USZXStp1Udp3SquxkrZnvDWZ/KyImAHrnkgRbLraAQU5rAaAr+bWncToLrD09pul1/uQ16Aw67ibpSXrpD6ewtlVK7z2F9LxrraKAQ/xFUkgKf9SALZKgb+pZVPixCkzMYcg7kWKeN2ERdej+i4GaC9ZFjC33mBlV95DY/xKsZEZ1CLMRTbBEclC4vfp/Fu1FcjDjoYjJJf539uS/EixmphKSnALAoOITBo3w/aHpfQFY0+QZhcoQ3tYHYABnOzBQ6zkehcQBpoA+QeXltkkQ7/NMVCn7wf1nmp/NKFT+5jE4RPfRByoznq7gTGSEpEKl5z4Dg+hWeio9T8FaxLepgk9rG4eix1XCzXAo/ooSE59+HwsH5ZMQIoHkUiTQrmIqJD0/PVrnEqNKjpE+ZDxfE7mNnfOe5IVysC6XQYezd+YbWOQGAFZQOCAmAQAAcAYAnQEqGgAgAD7dZqtQqKUjoqgIARAbiWcADnpbz0gUzvyP1Fk6sRcXePfn/m2ly6+4hpxg9lmfK21AAP7nH4E095CrOx+NlLDudQy8iiPu6+RZMz7VfR6rbjNQi51T8EdvrKCOFX/F1mVYr9H61Ys9JgCGx24Ds0w3M+5Q6R3vylEiWwP8veuBf9GZq7ithdv5YbGVa/AvYxWzvsEg2vzyKcX3TeQRXG5MPLRJUAADxp0HYZiSQmRpRLKJBuF+VgMYfdyDH8p4rM0ogz+HZx90lJesmtBSxhGvetzxcUQ8NJSVv26/uv2GDVThyEjPuQQhkOvhkr+fdDrwzpYgwFRDOcP20B0LZX/xq9vRepP8Rk8f1dWAH8kLNJ1A36H/+c3QAAAA); --x:329; --y:80; --w:143">
+        <img src="collection_img/one.webp" width="1160" height="1928" alt="" style="--thumb:url(data:image/webp;base64,UklGRiICAABXRUJQVlA4WAoAAAAQAAAAEgAAHwAAQUxQSCsBAAABkGttu2k738RhaZudfU53ok6dnVS+hT1SGZXtlqVzAaxS2TbmnP8XzDXPLUTEBCBac+PJdAwtKIQCAGXb1ak3pLv9mw9WQwMWOXePFCEZyG5lYEo+kyKkBOEvOQYDbKQLzA6+F2bp7yBMdMwh7yeFaSdgX8tUDsC+5VQ2wd4OISlwAmYXXYrwdzN01X2GpO910Kh+KSHlcyWUxXz6lG9VUMjDNvoMBk7CQOvyz5QMx3WwgMVmuoS1/xk1gz7hYASzEzxvQv83MyHwDtR/o5QM4ctiABoDCWToirRIguc8ANDqMn2G494I2n6LxAIfFgGAwWK6GIWz/oPFObqYZy6iTdVj8Rl7IjCYRjrnhIFXYjBY+Z4kgwgzoFG1ZuuZFyTPZ8EAQM2WN7fKAABWUDgg0AAAADAFAJ0BKhMAIAA+3VymTKilI6IwCAEQG4lnAMoG8B2wzf9qox7s/zZUvk5J2qovSVdAAPfJucK8LsxDmzd60bxxbIAPQD+xQwmFczqoCAqnxUoA/1zRIj4xPOpRLITOB8TcZN/0MJuo73+FU8AonvtJXadZPDTx7Qcb/po9nN7TcaRRZfBTpxwbVR40XIf7lMc8WMvw4EF8nui8zRc2GsB8OS06mgQ+1Su/6FQzjWvO0sBvqvvrgHYHErycF6h5tXuCM7QjE675bjEgXg8AAAA=); --x:479; --y:10; --w:105">
+        <img src="collection_img/six.webp" width="777" height="1145" alt="" style="--thumb:url(data:image/webp;base64,UklGRmABAABXRUJQVlA4WAoAAAAQAAAAFQAAHwAAQUxQSFYAAAABcBBJkiL5F3t8w7DP3w8CImICplFdGeHubqrCdD+PHsgFtP5eg2rDJCj2AY0D4yeIfs++ShkjgmHFkIH8X52gIzB7InpshVlRA3ScRETMoub3kZW9AlZQOCDkAAAA8AUAnQEqFgAgAD7dYq1PKKWkoigKqRAbiWkACBpoFGvy0Zrb1VdQooLQxHdAQ9NVyne9e7jKdMAA/l7D8nWRst5RS2R9jUhsVhWdC5z1658jkzTU2iYQt4W+XauIwlRESKIQKlOT9mIiHY5+z+Ogxa88PmlEt+l6YO9XXMLsI2TpF1Q181sXnvNIuIC5Nh5AiKayhx5VPCjAia6AySqCjnCix1oiUL/jGqq+a/9TOueos3TjkMkRQoB2J+Wv79PN3qhLMKLt777LKdm6S0LBTzJplRPjC3thJYrYdvQiiUn8nwAA); --x:625; --y:20; --w:100">
+        <img src="collection_img/five.webp" width="2000" height="993" alt="" style="--thumb:url(data:image/webp;base64,UklGRtQAAABXRUJQVlA4IMgAAADQBACdASogABAAPt1cp00opSOiMAgBEBuJaQAFEB7q0DYbnpMETxIgRry8k8aqAAD+wczfd37qd9g+P7syFfRmo+zUBCTCGZZJdYj6CDCMaQnFqWQ6rtX5sEyRSDABu5A8rRI1r6NW/ovxabNslA/6ffmEgfJ7tsN666ed3FGiDi1f/FcWP1KTsV5bGn0ghfzBCdonxz5h8rgS5GNW9exPYz6rayz++dswphKgZ+Pw4ETesvjub/F5gllZOOJWIshwD7KIIAAAAA==); --x:462; --y:190; --w:262">
+        <img src="collection_img/three.webp" width="1094" height="2000" alt="" style="--thumb:url(data:image/webp;base64,UklGRo4BAABXRUJQVlA4WAoAAAAQAAAAEQAAHwAAQUxQSMsAAAANgFvbtmpl7efv4e6aU4OlVEDdFED03d3/Re+hhIiYAF5fsiKNszRL4yzKsnTC2xnGHmu3jAD9EE4dUoSvU5sCf6cmqQHaFP8QmvokyNAOEvxFIwpMrU0hQ/94jrfTfDYPQy+YLPMlxukqc8jHaawE65AdnHyc+mwaoEeKv1OXzABdcpz8Omxj7bBv6rJnEC1yU58t04ANJx8XMOAUrdcgSQDLBaMoDQJ+XTs0h8dSfHt28XBxerQdSIQzxu3RR6X0Xuqye3t7c7+/CQBWUDggnAAAADAFAJ0BKhIAIAA+3WKpTailpCIwGAgBEBuJZwDImBDvbkYmStfJ32OVHmJ6PdbdHMcAAP5agF6P+qo1A8jIkFa3vCWsYjAnij5fmXVrB72RNdfFXtRwCWWriKppCflnLv3s11KhzmGTBVVK32zvJ+wDZg6jgEXHKQLWMAraYBCF+4rpjpq7/Sl4zTJkRTSlL+Tc1L81ehRproAAAA==); --x:777; --y:12; --w:162">
       </div>
 
       <span class="end-spacer" aria-hidden="true"></span>
@@ -236,6 +243,18 @@ button, a { touch-action: manipulation; }
       <p>the text will appear soon...</p>
     </div>
   </div>
+
+<script>
+  // blur pictures while they load, same as the rehearsal page
+  document.querySelectorAll('img').forEach((img) => {
+    img.classList.toggle('is-loading', !img.complete);
+    img.addEventListener('load', () => img.classList.remove('is-loading'));
+    img.addEventListener('error', () => {
+      console.warn('Missing image:', img.getAttribute('src'));
+      img.style.display = 'none';
+    });
+  });
+</script>
 
 <script>
   const viewport = document.getElementById('viewport');

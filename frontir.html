@@ -291,6 +291,13 @@ body{
   opacity: 0.6;
   cursor: pointer;
 }
+/* pictures stay blurred while loading, same as the rehearsal page */
+img.is-loading{
+  filter: blur(18px);
+  transform: translateZ(0);
+  /* tiny copy of the picture, shown until the full one arrives */
+  background: var(--thumb) center / 100% 100% no-repeat;
+}
 </style>
 </head>
 
@@ -315,14 +322,14 @@ body{
     <button class="intro-txt" id="txtBtn" type="button">txt</button>
   </div>
 
-  <img src="front/01.jpg" alt="">
-  <img src="front/02.jpg" alt="">
-  <img src="front/03.jpg" alt="">
-  <img src="front/04.jpg" alt="">
-  <img src="front/05.jpg" alt="">
-  <img src="front/06.jpg" alt="">
-  <img src="front/07.jpg" alt="">
-  <img src="front/08.jpg" alt="">
+  <img src="front/01.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAQBQCdASoVACAAPtlWpEyoJKOiN/VYAQAbCWkAAUWW2wJaGfDH6/uPzyF2MCleu3KIAP4Vb7ze4NG40r1Mu9onSd4mtF0gTVvU0DUo7QrjqRPMNjSIPriKI85e2Tn8mBTxhPtCAAA=)">
+  <img src="front/02.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwBQCdASoVACAAPtFQoUyoJKMiN/qoAQAaCWkAzfwUvBsZ8OEMhap5u+UW6qPa0Is/4AD7km8T7SoWSenhSXvasOkYMkGH9cRjEuue8L0vWACUnSG2Nmq7xkW/414qCytH/U44ONoQhHiRPi6JygAA)">
+  <img src="front/03.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAACQBQCdASoVACAAPt1iqk8opaOiKAqpEBuJaQASAATgWZ9SwoCeOL8kJBKqxcrpk19KHKaYwAD+Il6wVXXqFUbg4JRZDyxV/uldcEkw64RFf0k0EegTK/BgB7LHfS3+Vnb/QN0G30sZvf8vwaLzVGTsPBvqbXCvWKXTNLhdiDFi/IovEJeWx9nQl9U8aI/XhVrdVi8kpUb+1DHpZDunP2OJeTgAAA==)">
+  <img src="front/04.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAADQBACdASoVACAAPtlaoUyoJSMiMAwBABsJaQAAYdkJ3BPdU10hSJ+iezUC+89sAADiXaCNF3tfAmm2XJzJqY0prxAtA2UHFwJ21TiOvVp7BmZaVzvJZHnl3X4m55QQ4myEQWC+WivAFdarXD+zvrkZy2fNSuQmOdmld+AA)">
+  <img src="front/05.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADQBACdASoVACAAPt1cqE6opKOiMBgIARAbiWkAz2Qw6q6golcvxZN01wEK/fEWgADhyBjzOvGE3ZB4GJaN5V+a22JyymZx1uH6j4Q4mezuuwxwaVSKJW4ng+HEWU4HleKMahXVr4Xx9Bn0vSJF+fI1481gvepAAAA=)">
+  <img src="front/06.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADwBACdASoVACAAPt1irU8opaSiKAqpEBuJaQDM0DTruBcZwrj3xGywcF0drjY48gAA/sAeodHFelvILaVhEimB+cnWyTIwCJbAU2NQhOIE+3cyfOUBJwg0kP4t8MTEGIpTFpc0ozNbi9tIp6hYAA==)">
+  <img src="front/07.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAwBQCdASoVACAAPt1cpkyopSOiMAgBEBuJaQDMWBZ1OdVK6NczRx4bAyFlYm/y+30qnADwPQvIBW9YSYClRtgIqv8PXNHg/0vy3XxwoVuOYKfO3LimZPBQ1yRrOHT/+dYFG//aAA4n5yntfhuHeGScDu52ABIxWF5D1pBSRSUVGrfTnxg4GgAA)">
+  <img src="front/08.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAADwBACdASoVACAAPt1orFEopaQiqAgBEBuJaQASAAhNcIjlYp//mLYKqtk0aqcFMmAA/vWhR+2TP6qncFyh8jSj24Zdigy/SsVJuNaX6l9BE+ild2usBXQwekdAF9z72RRKgqDmHALzd1ZJxWtQ/qUbeCtDxoWDcrx83rmEw4XzZAy2GzVOsq70Gr4X62ZC09Ig3e1vdFd5IXhtidcCEVOWWCp6TlQ5hWfmIAAA)">
 
   <span class="end-spacer" aria-hidden="true"></span>
 </div>
@@ -339,6 +346,18 @@ body{
       <p>the text will appear soon...</p>
     </div>
   </div>
+
+<script>
+  // blur pictures while they load, same as the rehearsal page
+  document.querySelectorAll('img').forEach((img) => {
+    img.classList.toggle('is-loading', !img.complete);
+    img.addEventListener('load', () => img.classList.remove('is-loading'));
+    img.addEventListener('error', () => {
+      console.warn('Missing image:', img.getAttribute('src'));
+      img.style.display = 'none';
+    });
+  });
+</script>
 
 <script>
   const viewport = document.querySelector('.viewport');

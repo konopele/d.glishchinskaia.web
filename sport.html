@@ -358,6 +358,13 @@ body{
   opacity: 0.6;
   cursor: pointer;
 }
+/* pictures stay blurred while loading, same as the rehearsal page */
+img.is-loading{
+  filter: blur(18px);
+  transform: translateZ(0);
+  /* tiny copy of the picture, shown until the full one arrives */
+  background: var(--thumb) center / 100% 100% no-repeat;
+}
 </style>
 </head>
 
@@ -383,20 +390,20 @@ body{
 
 
         <!-- 14 photos in THE SAME STRIP (same sizing + movement as frontier) -->
-<div class="item large"><img src="sport/01.jpg" alt=""></div>
-<div class="item large"><img src="sport/02.jpg" alt=""></div>
-<div class="item small"><img src="sport/03.jpg" alt=""></div>
-<div class="item large"><img src="sport/04.jpg" alt=""></div>
-<div class="item small"><img src="sport/05.jpg" alt=""></div>
-<div class="item large"><img src="sport/06.jpg" alt=""></div>
-<div class="item large"><img src="sport/07.jpg" alt=""></div>
-<div class="item large"><img src="sport/08.jpg" alt=""></div>
-<div class="item small"><img src="sport/09.jpg" alt=""></div>
-<div class="item small"><img src="sport/10.jpg" alt=""></div>
-<div class="item large"><img src="sport/11.jpg" alt=""></div>
-<div class="item small"><img src="sport/12.jpg" alt=""></div>
-<div class="item small"><img src="sport/13.jpg" alt=""></div>
-<div class="item large"><img src="sport/14.jpg" alt=""></div>
+<div class="item large"><img src="sport/01.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRvAAAABXRUJQVlA4IOQAAABQBQCdASoVACAAPt1apkyopSOiMAgBEBuJaQATwFiAroE732ArstAJ3auIcWl6hEPoThwA9jIunDUwBrGambnJ0nd/MbdSmZEwnHu3Lgm7mY6u4YkXL1CI1CxPKA9XY7j7kdnElCYMzyedNpdLilEVEzgcVuY0gc5mp3F7lnxeRngV/LDJojfihbD9gdPyTUcYhf8N0Pd38/8YisMiLBCH4YRK4r8HAIw/ufDglR6Fb+t9+TRGKBvb4l+YowbRc2Rzp1xn4Yt8kcXXR777C6CT3FpoWvq7ELk+MAV9rMWzhnyPYAA=)"></div>
+<div class="item large"><img src="sport/02.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAACwBQCdASoVACAAPt1ip04opaOiMBgIARAbiWkAAIrZHiV2ptfkfhvacDZd2Olh9kSmOfY2YMAA/uUjLpvZeEuVKnz2GgqOKqO19JhjUz63IjO0b48UNdneFpk1QIiS25QamptcOUxEd+BYmbvlrvWfD90moS7WE0M96vzP4adVqa52QyOQtllXzhDBRTU4KbasHZHDcszdW0Mex+3gmfL1VVusRF5jM/MAAA==)"></div>
+<div class="item small"><img src="sport/03.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRs4AAABXRUJQVlA4IMIAAABwBQCdASoVACAAPt1irE8opaQiKAqpEBuJaQAOcHYANWaV3TQzv+bJEi72dPaIdaEMjm4AAP7ys/2YJUjydKEaV9MFyyFTh1JNSYmjFhRv0Ern2KhvsdEBjgDmBEITwKhiGEQmQNZAjRmm7nMJmPAYshQW2QyXftEzEnk6APERYdlvqrhfHLsQY7H0YI5LeZhnybAjbGFT2J6q73iwoYJCsHuCbP1TQtnVP4MEE1W+gGEFwvEPBiKpS7WYHkFdcgAAAA==)"></div>
+<div class="item large"><img src="sport/04.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRhIBAABXRUJQVlA4IAYBAAAwBgCdASogACAAPt1kqE+opSOiKAqpEBuJaQAUYHSCfUnW3dtPrepBX+AEBKNE7ehWQUgZXy/z1woAAP76mXYTL5hzM8l+cKabpNSRyfjbYWEdTu1C/OSg3giKYZaXJEKCSqEA/p62YLAWzO+ULOxO05M9K7UhK5OKm/DSqsAFljhY3GLgF4Yww0obKDOZ4WCIQOAzpKl/k7U/9/eGT1l+0biKiRMb41ad+2gzDV8iQm9WdwEtGk1ZuYFjGYIcED35ahFsQ4dCIYdRJa/HwccOT/y+TpFtRgzTDpiAds2Gd7l5SrCy0tcJG3G7NHGPZSWPwev/VymYIvGj2LwdpE6zcW64QgAA)"></div>
+<div class="item small"><img src="sport/05.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAABQBQCdASoVACAAPt1kp02opaOiMBgIARAbiWkAAIrVOtxyrYvY0KOoNwcPAVH0clQ7MNAA/vQyve4E5hzmeFMBCiHu/DVMpRPX1Tw3pWSR9XA6LtMWqQ25v4mBPRrhFY5cf6teuIR9xhs7LSSAJAg0OmJT1EfiaBivOSEPXTEIZH4LYbxmf1MJ1bR9nSoEAUIwdBcVFaBjyAAA)"></div>
+<div class="item large"><img src="sport/06.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRiIBAABXRUJQVlA4IBYBAADQBgCdASogACAAPt1aqU8opKOiMBgIARAbiWkAFGB0g+D9YHaXOjE5EIDuoEVGj6gb0OFoU+zwgsgheMwPKAAA/uzCqLpNkVf1Y06xvQFtCwctdPlyyIZGKBUstcq97S8QTwi3TM/MzII+6Qxn2VevSiUm1/c+MsIZRwMNaPIxld+ikQojLVC+eOoSX7nbaO9cRvxABdsgrkXmjY+Wt0lmkq2JtN9lzFSd8XgLqiygvDVRTOXpDTNYRvoEWGrn9w10FTPGy4Aj4njdpiwqRg0s40hDWXE8MQphM60uDZV5fjrkS8J8+cZLxTC9Zv+ud53yd/mJWodmdlzoZ12fyWax6mPEkmM0XIjIqy7v8NEx7Nk4n6AAAA==)"></div>
+<div class="item large"><img src="sport/07.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAAAwBQCdASoVACAAPt1eqU6opSOiMBgIARAbiWkAAI91WTqV6yK+JobbvgtK5MhUSCAAAAD++RDzRysYYJHpegFw45IqKPo++yGVrgpkAH6se7YJVcU7mCNBC/IZR08LNjPUJlFtAQ7hkF9hQNQTJ+pk3kFATPn/IbIgjXd8z9QyjyBFQjQc4CxCywaLBrDkaX2mRu0+n3HBSu2RtYLxIH1DJwHpqzG0gAAAAA==)"></div>
+<div class="item large"><img src="sport/08.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRv4AAABXRUJQVlA4IPIAAABwBQCdASogACAAPt1gqE0opaQiMAgBEBuJaQAFEB72Mvz5aZFJxug6B1rtriMkGXCBNOQAAP7+h9PYdd8otixjf8RaCRXJeb4b2SlfrKUcL+dJpmVb3guBjD5RFusV5oWnXRgl7vRU3tsE6DL7U/Scz6vn4+05zXzysE7AKRuNKCZoVv3frEEcrBRMXp1ySmt1qvzHsXJoFS6vsM3nVTsRnPbgJ1LouygNnE9msnFzazgUrGP0zA7jsxipFGyvsErIfjfKikHvbKNX8nOZPinaXdp75zolArUJJoD1GzFtjU/8ukGLZGysAkURzQmnNH8AAA==)"></div>
+<div class="item small"><img src="sport/09.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAAAQBQCdASogABUAPt1cpkyopSOiMAgBEBuJaQAOiaLN+2anMwiNF2Fgjv7OqoZzsSggAP0af0xJyWb0s9ZTxKgDt3JSuxALk8aIWFlOijxXfcOLbZ/n/H/81D8c1rm+HPmsLgFFoPchKF5IcYdZSDHfj1ChaN7YCrEJXPb/FGBU+f/IAFhdRv+iJy6rUoLtpPZs6fcKKXBCiLTcaI9Uspg0nFE6164i0gAAAA==)"></div>
+<div class="item small"><img src="sport/10.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRuIAAABXRUJQVlA4INYAAAAwBgCdASogACAAPsVQnkynpSKiN+gA8BiJaQASBFnZa2TbLRzD3BNA5icmiTxKxghBujo9TYnmerIAAP7vg3Lgn4uZtES0JLA5PyflMrWOUTCTk7GeV7jiK9bMvV4cuYBj4OjvKfX1Zj920qbaS2vOU4TkszQcYPVaXrNWIohg6YY4LTkv2G9aSm6nrTauD/74rpvhwfSJreHJl5UY5Icfsug3El2c4kJpzRB0fOPwHaaGxSlqkDXVib/zkd9Q9paB8kuXwiR+1nJ3pdIMqDOh53+z4AAA)"></div>
+<div class="item large"><img src="sport/11.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRq4AAABXRUJQVlA4IKIAAABQBQCdASoVACAAPt1kqk+opaOiKAqpEBuJaQAALozT+OuImg8EU7G1smCbnYQNyUcHAMAA/vV5rkv4zjKH9kwP74qcMT7yqBtf5jQe/dNBTWxyfmqeI8M9L2BzzzHZ0v+EwM9qf1QmWmi+97VfG+iw1CDn5ejmDKA01CYbpXgaJj7Xi8LRKRyvFpyJx+LBMNY4vJjBMHW/SHYA3wYrAUThAAA=)"></div>
+<div class="item small"><img src="sport/12.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAAAQBQCdASogACAAPtVaoUyoJSMiMAwBABqJaQAA62SGJrOVsuYy4P/FlVNmCGTCg7AAAP7xujzO28nK5wksSTVaabhWftxvGGTqI02iu+JTTwQUbUGQe0xcIUiONsOgIJBNIITv1qdjxcDz0B/znkb87U7LUfjKBBUuKQdDQkcOptggOdzUwolLOMlMkH5aOHY0RwHqatKP4rfMqieTYsjM0DKGedF3B6XhaIW4oCKbavjh/xl/R5gA)"></div>
+<div class="item small"><img src="sport/13.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAACQBQCdASoVACAAPt1gqU4opaOiMBgIARAbiWkAEU+EHp/uULM/TvlTnpHLY6CcGzJj3crgAAD+9eLn3mV3VkV69npt6sbQH8qyygUxJIlnv0CS+EsbMFR5sEPCBRNBTs1T52NN2htQuhpt3ROLIqj64xm81xIDZk3WMiM4WaVmsCcX4cZ5HDe2Jq34bbyal0/ekp7HnjQejheBQNoOVCe889iO8+M11EK5n2E5jc++pK1tte4MFWyVP7+KHdrf8yr/9sXhWn/fQAAA)"></div>
+<div class="item large"><img src="sport/14.jpg" alt="" style="--thumb:url(data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAAAQBQCdASogABUAPt1ep0yopSOiMAgBEBuJaQAOcAICj+uJvGYlwLM69yI5+8+Cz+MAAP7SAlKo52kvaz0ArG2sFbsTYqee+Z4tq+KjFmf2WEiIXbysUwdOhILQwgisQzicweTnsJWa30R3R8s5prc6mHzJL2cQcvZ5L+nAJ6v4ZutwT6zX9LnpLQJnpbqj174HOMaxWmhBJT1dsp9aNrMyFgp3TFlHSeYsGF4MiG0ljP23IpMeAAAA)"></div>
 
   <span class="end-spacer" aria-hidden="true"></span>
 </div>
@@ -413,6 +420,18 @@ body{
       <p>the text will appear soon...</p>
     </div>
   </div>
+
+<script>
+  // blur pictures while they load, same as the rehearsal page
+  document.querySelectorAll('img').forEach((img) => {
+    img.classList.toggle('is-loading', !img.complete);
+    img.addEventListener('load', () => img.classList.remove('is-loading'));
+    img.addEventListener('error', () => {
+      console.warn('Missing image:', img.getAttribute('src'));
+      img.style.display = 'none';
+    });
+  });
+</script>
 
 <script>
   const viewport = document.querySelector('.viewport');
