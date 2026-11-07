@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bio, CV — Daria Glishchinskaia</title>
+
+  <style>
+    /* Baseline responsive safety */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; overflow-x: hidden; }
+img { max-width: 100%; height: auto; }
+
+/* Forms/buttons tap comfort */
+a { touch-action: manipulation; }
+
+    :root{
+      /* colors */
+      --bg:#fff;
+      --text:#86090f;
+      --body:#222;
+      --hover:#000;
+
+      /* fonts */
+      --mono: "Andale Mono", AndaleMono, "Lucida Console", Menlo, Consolas, monospace;
+
+      /* everything below is sized in em, so the whole layout scales with this */
+      --font: clamp(12px, calc((100vw - 32px) / 47.3), 15px);
+    }
+
+    body{
+      background: var(--bg);
+      color: var(--body);
+      font-family: var(--mono);
+      font-size: var(--font);
+      line-height: 1.2;
+    }
+
+    a, a:visited{
+      color: inherit;
+      text-decoration: none;
+    }
+    a:hover{ color: var(--hover); }
+
+    .page{
+      width: 47.3em;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 3.1em 4.6em 0 6em;
+    }
+
+    .head{
+      margin: 0 0 2em;
+      color: var(--text);
+      font-size: 1.5em;
+      font-weight: 400;
+      line-height: 1.15;
+    }
+    .head a{ display: inline-block; }
+
+    /* two columns, as in the layout */
+    .grid{
+      display: grid;
+      grid-template-columns: 14.6em 20.1em;
+      grid-template-areas:
+        "photo bio"
+        "cv    bio"
+        "cv    other";
+      grid-template-rows: auto auto 1fr;
+      column-gap: 2em;
+    }
+
+    .photo{ grid-area: photo; margin-top: 3.7em; }
+    .bio{ grid-area: bio; }
+    .cv{ grid-area: cv; margin-top: 3.2em; }
+    .other{ grid-area: other; margin: 5.2em 0 0 5.5em; }
+
+    .photo img{
+      display: block;
+      width: 13.9em;
+    }
+
+    h2{
+      margin: 0 0 1.1em;
+      font-size: 1.4em;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    p{ margin: 0 0 1.2em; }
+    .label{ margin-bottom: 1.2em; }
+
+    .contacts{
+      padding: 6em 16px 2.6em;
+      color: var(--text);
+      font-size: 0.85em;
+      line-height: 1.35;
+      text-align: center;
+    }
+    .contacts a{ display: block; }
+
+    /* pictures stay blurred while loading, same as the rehearsal page */
+    img.is-loading{
+      filter: blur(18px);
+      transform: translateZ(0);
+      /* tiny copy of the picture, shown until the full one arrives */
+      background: var(--thumb) center / 100% 100% no-repeat;
+    }
+
+    /* --- Mobile: one column --- */
+    @media (max-width: 640px){
+      :root{ --font: 14px; }
+
+      .page{ padding: 24px 16px 0; }
+
+      .grid{
+        grid-template-columns: 1fr;
+        grid-template-areas: "photo" "bio" "cv" "other";
+        grid-template-rows: none;
+      }
+
+      .photo{ margin: 0 0 2em; }
+      .cv{ margin-top: 1.2em; }
+      .other{ margin: 0; }
+      .photo img{ width: 100%; }
+
+      .contacts{ padding-top: 3em; }
+      .contacts a{ padding: 4px 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <h1 class="head"><a href="index.html">Daria Glishchinskaia</a><br>bio, CV</h1>
+
+    <div class="grid">
+      <div class="photo">
+        <img src="cvbio/img1.webp" width="900" height="598" alt="Daria Glishchinskaia" style="--thumb:url(data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAAAwBQCdASogABUAPt1eqU6opSOiMBgIARAbiWkAAI9WT1NnCm/rFZ6hhtW6nvwO1zMWAAD+9gxWyMdZzqzcRrm5mXglrCFzeZiWHtJ53nq7GZ3gvn4ZYY39Ygex9tvoOmHq6lZZpIxVAcaKb6OTi4WQoZbjOKnpL0/DK2MVtZaedPavlvRqQtXbPe+3fA5c4t4iVCBrWIGw7ksC22B42Nx6jr7KgX3XOmj76kz7ZfenKUZOwAAAAA==)">
+      </div>
+
+      <section class="bio">
+        <h2>BIO</h2>
+        <p>Daria Glishchinskaia was born in 1998 in Domodedovo. In 2021, she obtained a bachelor’s degree in Art History from RSUH; in 2025, she graduated from the Rodchenko Art School. Now she lives and engages in artistic practices between Moscow, Milan, and Paris. Daria’s main mediums for expression are photography and analog photographic processes. Her practice also includes work with sculpture, installation, and artist’s books.<br>
+        Daria explores the characteristics of human psychological states at the edge of affect, the interpretation of people’s perception of reality, and the representation of historical and cultural memory.</p>
+      </section>
+
+      <section class="cv">
+        <h2>CV</h2>
+
+        <p class="label">Solo exhibitions:</p>
+        <p>Rehearsal<br>Korney gallery, Moscow<br>2025</p>
+
+        <p class="label">Group exhibitions:</p>
+        <p>Uncomfortable mirror<br>Ekaterina Cultural Foundation, Moscow<br>2025</p>
+        <p>The village that doesn’t sleep<br>CCI Fabrika, Moscow<br>2024</p>
+        <p>Repetition and Difference. Part 2<br>Agency. Art Ru, Moscow<br>2023</p>
+        <p>Repetition and Difference. Part 1<br>CCI Fabrika, Moscow<br>2023</p>
+        <p>In development<br>MAMM exhibition hall, Moscow<br>2023</p>
+        <p>All I Can Carry<br>MAMM exhibition hall, Moscow<br>2023</p>
+        <p>Photography In Rodchenko Art School<br>MAMM exhibition hall, Moscow<br>2023</p>
+        <p>Please, Don’t Think Too Much<br>Art-space NII Sreda, Moscow<br>2022</p>
+
+        <p class="label">Awards:</p>
+        <p>Grant for the project Collection of vulnerable objects by GES-2, the Vaults</p>
+        <p>The book Shadows is a part of the collection at the Garage Museum.</p>
+      </section>
+
+      <section class="other">
+        <p class="label">Other activities:</p>
+        <p>Pile art fair<br>2026</p>
+        <p>Catalog art fair<br>2026</p>
+        <p>Rassada market<br>Museum of Moscow<br>2024</p>
+        <p>Catalog art fair<br>2024</p>
+        <p>Workshop for Kamchatka children’s camp. Dark room printing, project thinking<br>2023</p>
+        <p>Ground zine fest<br>Ground Solyanka gallery<br>2023</p>
+        <p>Lecture «Experimental photographic printing in history of art»<br>Na Kashirke gallery<br>2022</p>
+        <p>WIN-WIN market<br>Winzavod CCA<br>2022</p>
+
+        <p class="label">Education:</p>
+        <p>Rodchenko art school, student<br>2022 - 2025</p>
+        <p>Bachelor’s degree: history of art (Russian State University for the Humanities)<br>2017 - 2021</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="contacts">
+    <a href="mailto:daria.glishchinskaia@gmail.com">daria.glishchinskaia@gmail.com</a>
+    <a href="https://www.instagram.com/dqsshq">@dqsshq</a>
+  </footer>
+
+<script>
+  // blur pictures while they load, same as the rehearsal page
+  document.querySelectorAll('img').forEach((img) => {
+    img.classList.toggle('is-loading', !img.complete);
+    img.addEventListener('load', () => img.classList.remove('is-loading'));
+    img.addEventListener('error', () => {
+      console.warn('Missing image:', img.getAttribute('src'));
+      img.style.display = 'none';
+    });
+  });
+</script>
+
+</body>
+</html>
