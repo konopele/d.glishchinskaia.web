@@ -105,7 +105,8 @@ button, a { touch-action: manipulation; }
     .intro-title{
       position: absolute;
       left: 45%;
-      top: 25%;
+      top: calc(25vh - var(--topbar-h));
+      top: calc(25dvh - var(--topbar-h)); /* 25% of the window, as on shadows */
       margin: 0;
       font-size: 18px;
       letter-spacing: 0.08em;
@@ -116,7 +117,8 @@ button, a { touch-action: manipulation; }
 
     .intro-txt{
       position: absolute;
-      top: 50%;
+      top: calc(50vh - var(--topbar-h));
+      top: calc(50dvh - var(--topbar-h)); /* 50% of the window, as on shadows */
       left: 30%;
       appearance: none;
       border: 0;
