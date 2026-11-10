@@ -155,6 +155,8 @@ button, a { touch-action: manipulation; }
     /* --- Mobile: shorter intro, so the first picture is close --- */
     @media (max-width: 768px){
       :root{ --intro-w: 320px; }
+      /* start position on phones: title, txt and first picture 60px further left */
+      .intro-panel{ margin-left: -60px; }
     }
   /* txt pop-up */
 .modal-backdrop{
