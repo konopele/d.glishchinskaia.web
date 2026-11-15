@@ -273,6 +273,8 @@ img.is-loading{
 
   // mouse wheel scrolls sideways
   window.addEventListener('wheel', (e) => {
+    // while the txt popup is open, the wheel scrolls its text, not the pictures
+    if (e.target.closest && e.target.closest('.modal-backdrop')) return;
     // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
     const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
 

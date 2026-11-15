@@ -292,6 +292,23 @@ body{
   opacity: 0.6;
   cursor: pointer;
 }
+/* long project texts: wider, left-aligned, scrolls inside the popup if taller than the screen */
+.modal.long{
+  width: min(100%, 640px);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 48px 40px 40px;
+  font-size: 15px;
+  line-height: 1.55;
+  text-align: left;
+}
+.modal.long p + p{ margin-top: 1em; }
+.modal.long .byline{ opacity: 0.7; }
+@media (max-width: 640px){
+  .modal.long{ padding: 44px 22px 28px; font-size: 14px; }
+}
 /* pictures stay blurred while loading, same as the rehearsal page */
 img.is-loading{
   filter: blur(18px);
@@ -349,9 +366,11 @@ img.is-loading{
   </div>
 
   <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal long" role="dialog" aria-modal="true">
       <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
-      <p>the text will appear soon...</p>
+      <p><span class="byline">text by Andrew Jakovlev</span></p>
+      <p>Travel is driven by the search for a liminal experience—a patient, physical movement toward the unprecedented, leading to a sudden awareness of the &quot;here and now&quot; at the very edge of a boundary. In places where the connection to the mundane dissolves, one begins to hear the whisper of a presence. The solitary, the abandoned, and the lost—all serve to link one’s personal experience with the lives of others, in a way that is both vague and tremulous—much like the horizon itself. And just as the earth remains steadfast and the sky eternal, between them lies this presence.</p>
+      <p>This series consists of photographs taken during various journeys, united by a recurring compositional structure. Each landscape features a three-layered arrangement: the ground and the sky appear in ever-changing configurations, while, in the middle, an object—an artifact of civilization—is placed. This object illuminates the boundary between humanity and nature, between the fleeting moment and the passage of time, and between external and internal experience. The images are framed in a vertical orientation, departing from the traditional landscape format; this verticality serves to underscore the dialectic between the earthly and the celestial.</p>
     </div>
   </div>
 
@@ -372,6 +391,8 @@ img.is-loading{
 
   // mouse wheel scrolls sideways, touch uses native scrolling
   window.addEventListener('wheel', (e) => {
+    // while the txt popup is open, the wheel scrolls its text, not the pictures
+    if (e.target.closest && e.target.closest('.modal-backdrop')) return;
     // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
     const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
 

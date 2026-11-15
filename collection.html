@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>collection of vulnerable objects — Daria Glishchinskaia</title>
+  <title>collection of fragile objects — Daria Glishchinskaia</title>
 
   <style>
     /* Baseline responsive safety */
@@ -223,7 +223,7 @@ img.is-loading{
       <span class="start-spacer" aria-hidden="true"></span>
 
       <div class="intro-panel">
-        <h1 class="intro-title">collection of vulnerable objects</h1>
+        <h1 class="intro-title">collection of fragile objects</h1>
         <button class="intro-txt" id="txtBtn" type="button">txt</button>
       </div>
 
@@ -265,6 +265,8 @@ img.is-loading{
 
   // mouse wheel scrolls sideways
   window.addEventListener('wheel', (e) => {
+    // while the txt popup is open, the wheel scrolls its text, not the pictures
+    if (e.target.closest && e.target.closest('.modal-backdrop')) return;
     // use vertical as primary (mouse wheel), fall back to deltaX (trackpad)
     const delta = (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) ? e.deltaY : e.deltaX;
 
